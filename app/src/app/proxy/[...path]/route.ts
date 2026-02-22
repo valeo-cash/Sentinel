@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { nanoid } from "nanoid";
 import { db } from "@/db/client";
-import { teams, agents, payments } from "@/db/schema";
+import { teams, agents, payments, apiKeys } from "@/db/schema";
 import { and, eq, gte, sql } from "drizzle-orm";
 
 const USDC_DECIMALS = 1_000_000;
@@ -32,10 +32,33 @@ function extractTarget(pathSegments: string[]) {
 async function authenticateProxy(req: NextRequest) {
   const key =
     req.headers.get("x-sentinel-key") ||
+    req.headers.get("X-Sentinel-Key") ||
     req.nextUrl.searchParams.get("sentinel_key");
+
+  console.log("PROXY DEBUG - X-Sentinel-Key:", req.headers.get("x-sentinel-key"));
+  console.log("PROXY DEBUG - sentinel_key param:", req.nextUrl.searchParams.get("sentinel_key"));
+  console.log("PROXY DEBUG - resolved key:", key ? `${key.slice(0, 8)}...` : "null");
+
   if (!key) return null;
 
   const hash = createHash("sha256").update(key).digest("hex");
+
+  const [apiKeyRow] = await db
+    .select({ teamId: apiKeys.teamId })
+    .from(apiKeys)
+    .where(eq(apiKeys.keyHash, hash))
+    .limit(1);
+
+  if (apiKeyRow) {
+    await db.update(apiKeys).set({ lastUsedAt: new Date() }).where(eq(apiKeys.keyHash, hash));
+    const [team] = await db
+      .select({ id: teams.id, name: teams.name, plan: teams.plan })
+      .from(teams)
+      .where(eq(teams.id, apiKeyRow.teamId))
+      .limit(1);
+    if (team) return team;
+  }
+
   const [team] = await db
     .select({ id: teams.id, name: teams.name, plan: teams.plan })
     .from(teams)
