@@ -27,6 +27,9 @@ importers:
       eslint:
         specifier: ^10.0.1
         version: 10.0.1(jiti@2.6.1)
+      next:
+        specifier: ^15.5.12
+        version: 15.5.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
@@ -5159,7 +5162,7 @@ snapshots:
 
   '@types/better-sqlite3@7.6.13':
     dependencies:
-      '@types/node': 22.19.11
+      '@types/node': 25.3.0
     optional: true
 
   '@types/chai@5.2.3':
