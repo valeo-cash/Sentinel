@@ -28,7 +28,7 @@ const response = await fetchWithPayment("https://api.example.com/paid");`}</code
         <pre>
           <code>{`import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
@@ -44,7 +44,7 @@ const response = await secureFetch("https://api.example.com/paid");`}</code>
 
         <h2>Migration Steps</h2>
         <ol>
-          <li>Install <code>@valeo/x402</code></li>
+          <li>Install <code>@x402sentinel/x402</code></li>
           <li>Wrap your x402 fetch with <code>wrapWithSentinel</code></li>
           <li>Replace all usages of the old fetch with the wrapped one</li>
           <li>Add try/catch for <code>SentinelBudgetError</code> where you want graceful handling</li>

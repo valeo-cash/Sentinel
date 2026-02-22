@@ -67,7 +67,7 @@ for (const agent of agents) {
 
         <h2>Top Spenders</h2>
         <pre>
-          <code>{`import { topSpenders } from "@valeo/x402/dashboard";
+          <code>{`import { topSpenders } from "@x402sentinel/x402/dashboard";
 
 const top = await topSpenders(storage, 10, "last_day");
 
@@ -78,7 +78,7 @@ for (const entry of top) {
 
         <h2>Spend by Agent</h2>
         <pre>
-          <code>{`import { spendByAgent } from "@valeo/x402/dashboard";
+          <code>{`import { spendByAgent } from "@x402sentinel/x402/dashboard";
 
 const result = await spendByAgent(storage, "agent-weather-001", "last_week");
 console.log(result.spend, result.count);

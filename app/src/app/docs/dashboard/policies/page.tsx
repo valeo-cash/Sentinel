@@ -47,7 +47,7 @@ export default function DashboardPoliciesPage() {
           <code>{`const alerts = await dashboard.getAlerts();
 const violationAlerts = alerts.filter((a) => a.type === "violation");
 
-import { violations } from "@valeo/x402/dashboard";
+import { violations } from "@x402sentinel/x402/dashboard";
 const blockedRecords = await violations(storage, "last_day");`}</code>
         </pre>
 

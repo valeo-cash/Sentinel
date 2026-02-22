@@ -31,8 +31,8 @@ export default function DashboardOverviewPage() {
 
         <h2>Getting Started</h2>
         <pre>
-          <code>{`import { MemoryStorage } from "@valeo/x402";
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+          <code>{`import { MemoryStorage } from "@x402sentinel/x402";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 const storage = new MemoryStorage();
 const dashboard = new SentinelDashboard({ storage });`}</code>

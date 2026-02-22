@@ -21,7 +21,7 @@ Sentinel defines four error classes. Handle them appropriately in your agent cod
 Thrown when a payment would violate the budget policy. The request fails before payment.
 
 ```ts
-import { wrapWithSentinel, SentinelBudgetError } from "@valeo/x402";
+import { wrapWithSentinel, SentinelBudgetError } from "@x402sentinel/x402";
 
 try {
   await secureFetch("https://api.example.com/expensive");
@@ -54,7 +54,7 @@ try {
 Audit failures are **never fatal**. Sentinel catches them internally and does not block the request. If you use `AuditLogger` directly, catch and log:
 
 ```ts
-import { AuditLogger, SentinelAuditError } from "@valeo/x402";
+import { AuditLogger, SentinelAuditError } from "@x402sentinel/x402";
 
 try {
   await logger.log(record);
@@ -77,7 +77,7 @@ Audit failures should not block business logic. Log and alert, but allow the pay
 Thrown at `wrapWithSentinel` time when config is invalid:
 
 ```ts
-import { wrapWithSentinel, validateConfig, SentinelConfigError } from "@valeo/x402";
+import { wrapWithSentinel, validateConfig, SentinelConfigError } from "@x402sentinel/x402";
 
 try {
   validateConfig({ agentId: "", budget: { maxPerCall: "not-a-number" } });
@@ -93,7 +93,7 @@ try {
 Validate config before wrapping:
 
 ```ts
-import { validateConfig } from "@valeo/x402";
+import { validateConfig } from "@x402sentinel/x402";
 
 validateConfig({
   agentId: "agent-1",

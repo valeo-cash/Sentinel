@@ -19,7 +19,7 @@ export default function StorageBackendsPage() {
           for development or short-lived processes.
         </p>
         <pre>
-          <code>{`import { MemoryStorage } from "@valeo/x402";
+          <code>{`import { MemoryStorage } from "@x402sentinel/x402";
 
 const storage = new MemoryStorage(10_000);  // max 10k records`}</code>
         </pre>
@@ -30,7 +30,7 @@ const storage = new MemoryStorage(10_000);  // max 10k records`}</code>
           writes and flushes periodically. Best for local persistence.
         </p>
         <pre>
-          <code>{`import { FileStorage } from "@valeo/x402";
+          <code>{`import { FileStorage } from "@x402sentinel/x402";
 
 const storage = new FileStorage(".valeo/audit.jsonl", 10);
 // filePath, flushThreshold (records before flush)`}</code>
@@ -67,7 +67,7 @@ const storage = new FileStorage(".valeo/audit.jsonl", 10);
           Falls back to in-memory if unreachable.
         </p>
         <pre>
-          <code>{`import { ApiStorage } from "@valeo/x402";
+          <code>{`import { ApiStorage } from "@x402sentinel/x402";
 
 const storage = new ApiStorage({
   apiKey: process.env.VALEO_API_KEY!,

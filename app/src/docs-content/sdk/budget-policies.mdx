@@ -20,7 +20,7 @@ import {
   liberalPolicy,
   unlimitedPolicy,
   customPolicy,
-} from "@valeo/x402";
+} from "@x402sentinel/x402";
 ```
 
 | Preset | Per Call | Per Hour | Per Day | Use Case |
@@ -72,7 +72,7 @@ Patterns use glob-style matching. `https://api.*.com/*` matches `https://api.wea
 For direct control, use `BudgetManager`:
 
 ```ts
-import { BudgetManager, standardPolicy } from "@valeo/x402";
+import { BudgetManager, standardPolicy } from "@x402sentinel/x402";
 
 const manager = new BudgetManager(standardPolicy());
 const evaluation = manager.evaluate(paymentContext);

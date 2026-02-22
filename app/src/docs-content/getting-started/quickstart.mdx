@@ -8,9 +8,9 @@ description: Install Sentinel and wrap your x402 fetch in 4 lines
 ## Install
 
 ```bash
-npm install @valeo/x402
+npm install @x402sentinel/x402
 # or
-pnpm add @valeo/x402
+pnpm add @x402sentinel/x402
 ```
 
 <Callout type="info" title="Peer Dependencies">
@@ -24,7 +24,7 @@ Add 4 lines to your existing x402 setup:
 ```ts
 import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });

@@ -1,5 +1,5 @@
 {
-  "name": "@valeo/x402",
+  "name": "@x402sentinel/x402",
   "version": "0.1.0",
   "description": "Enterprise audit, compliance, and budget enforcement for x402 payments",
   "type": "module",

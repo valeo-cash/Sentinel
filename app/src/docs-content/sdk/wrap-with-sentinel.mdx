@@ -42,7 +42,7 @@ A drop-in replacement fetch function with the same signature as `fetch`. Use it 
 ## Example
 
 ```ts
-import { wrapWithSentinel, standardPolicy, MemoryStorage } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy, MemoryStorage } from "@x402sentinel/x402";
 
 const secureFetch = wrapWithSentinel(fetchWithPayment, {
   agentId: "agent-weather-001",

@@ -33,7 +33,7 @@ Each `AuditRecord` includes:
 Use `AuditLogger.query` or access storage directly:
 
 ```ts
-import { AuditLogger } from "@valeo/x402";
+import { AuditLogger } from "@x402sentinel/x402";
 
 const logger = new AuditLogger({ storage });
 
@@ -82,7 +82,7 @@ for (const alert of alerts) {
 Or use standalone functions:
 
 ```ts
-import { violations, anomalies } from "@valeo/x402/dashboard";
+import { violations, anomalies } from "@x402sentinel/x402/dashboard";
 
 const blocked = await violations(storage, "last_day");
 const flagged = await anomalies(storage, "last_day");

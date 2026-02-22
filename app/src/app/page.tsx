@@ -34,7 +34,7 @@ export default function LandingPage() {
               { icon: Play, label: "Playground", href: "/playground", external: false },
               { icon: BookOpen, label: "Docs", href: "/docs", external: false },
               { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
-              { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },
+              { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@x402sentinel/x402", external: true },
             ].map(({ icon: Icon, label, href, external }) => {
               const cls =
                 "group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(243,240,235,0.06)] transition-all duration-200";
@@ -94,7 +94,7 @@ export default function LandingPage() {
                 <code>
                   <span className="text-muted">$</span>{" "}
                   <span className="text-success">npm install</span>{" "}
-                  <span className="text-foreground">@valeo/x402</span>
+                  <span className="text-foreground">@x402sentinel/x402</span>
                   {"\n\n"}
                   <span className="text-muted">$</span>{" "}
                   <span className="text-success">cat</span>{" "}
@@ -103,7 +103,7 @@ export default function LandingPage() {
                   <span className="text-info">import</span>{" "}
                   <span className="text-foreground">{"{ wrapWithSentinel, standardPolicy }"}</span>{" "}
                   <span className="text-info">from</span>{" "}
-                  <span className="text-accent">{'"@valeo/x402"'}</span>
+                  <span className="text-accent">{'"@x402sentinel/x402"'}</span>
                   <span className="text-muted">;</span>
                   {"\n\n"}
                   <span className="text-info">const</span>{" "}
@@ -237,7 +237,7 @@ export default function LandingPage() {
               {[
                 {
                   icon: Package,
-                  title: "SDK — @valeo/x402",
+                  title: "SDK — @x402sentinel/x402",
                   desc: "Drop-in wrapper for x402 fetch. Budget enforcement, audit logging, spike detection. npm install and go.",
                   href: "/docs/sdk/wrap-with-sentinel",
                 },
@@ -335,7 +335,7 @@ export default function LandingPage() {
               <p className="text-xs uppercase tracking-widest text-muted mb-3">Resources</p>
               <div className="space-y-2">
                 <a href="https://github.com/valeo-cash/Sentinel" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted hover:text-white transition-colors">GitHub</a>
-                <a href="https://www.npmjs.com/package/@valeo/x402" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted hover:text-white transition-colors">npm</a>
+                <a href="https://www.npmjs.com/package/@x402sentinel/x402" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted hover:text-white transition-colors">npm</a>
               </div>
             </div>
             <div>

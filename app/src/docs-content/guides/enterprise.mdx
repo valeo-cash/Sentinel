@@ -12,7 +12,7 @@ For production deployments, use persistent storage and consider the remote API f
 Replace in-memory storage with `FileStorage` for persistence across restarts:
 
 ```ts
-import { wrapWithSentinel, FileStorage, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, FileStorage, standardPolicy } from "@x402sentinel/x402";
 
 const storage = new FileStorage("/var/lib/sentinel/audit.jsonl", 20);
 
@@ -43,7 +43,7 @@ Call `storage.destroy()` on process exit to stop the auto-flush timer and flush 
 For centralized audit across multiple nodes, use `ApiStorage`:
 
 ```ts
-import { ApiStorage, wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { ApiStorage, wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const storage = new ApiStorage({
   apiKey: process.env.VALEO_API_KEY!,

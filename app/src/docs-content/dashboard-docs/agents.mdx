@@ -38,7 +38,7 @@ for (const agent of agents) {
 Get the top N spending agents in a time range:
 
 ```ts
-import { topSpenders } from "@valeo/x402/dashboard";
+import { topSpenders } from "@x402sentinel/x402/dashboard";
 
 const top = await topSpenders(storage, 10, "last_day");
 
@@ -52,7 +52,7 @@ for (const entry of top) {
 Query spend for a specific agent:
 
 ```ts
-import { spendByAgent } from "@valeo/x402/dashboard";
+import { spendByAgent } from "@x402sentinel/x402/dashboard";
 
 const result = await spendByAgent(storage, "agent-weather-001", "last_week");
 console.log(result.spend, result.count);

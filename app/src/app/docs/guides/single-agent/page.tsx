@@ -21,7 +21,7 @@ export default function SingleAgentPage() {
 
         <h2>Step 1: Install</h2>
         <pre>
-          <code>{`npm install @valeo/x402`}</code>
+          <code>{`npm install @x402sentinel/x402`}</code>
         </pre>
 
         <h2>Step 2: Wrap Your Fetch</h2>
@@ -29,7 +29,7 @@ export default function SingleAgentPage() {
         <pre>
           <code>{`import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
@@ -62,8 +62,8 @@ const data = await response.json();`}</code>
         <h2>Step 5: Query Audit Data</h2>
         <p>Use AuditLogger or SentinelDashboard to inspect spend:</p>
         <pre>
-          <code>{`import { AuditLogger } from "@valeo/x402";
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+          <code>{`import { AuditLogger } from "@x402sentinel/x402";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 const logger = new AuditLogger({ storage });
 const summary = await logger.summarize();
@@ -80,7 +80,7 @@ const report = await dashboard.getSpend({ range: "last_day" });`}</code>
 
         <h2>Step 6: Handle Budget Errors</h2>
         <pre>
-          <code>{`import { SentinelBudgetError } from "@valeo/x402";
+          <code>{`import { SentinelBudgetError } from "@x402sentinel/x402";
 
 try {
   const res = await secureFetch(url);

@@ -62,7 +62,7 @@ export default function DashboardPaymentsPage() {
 
         <h2>Querying Payments</h2>
         <pre>
-          <code>{`import { AuditLogger } from "@valeo/x402";
+          <code>{`import { AuditLogger } from "@x402sentinel/x402";
 
 const logger = new AuditLogger({ storage });
 
@@ -93,7 +93,7 @@ console.log(report.byEndpoint);`}</code>
 
         <h2>Violations &amp; Anomalies</h2>
         <pre>
-          <code>{`import { violations, anomalies } from "@valeo/x402/dashboard";
+          <code>{`import { violations, anomalies } from "@x402sentinel/x402/dashboard";
 
 const blocked = await violations(storage, "last_day");
 const flagged = await anomalies(storage, "last_day");

@@ -118,11 +118,10 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="rounded-xl border border-border bg-card p-8">
-          <div className="flex items-center gap-2.5 mb-1">
-            <Image src="/sentinel_logo.png" alt="Sentinel" width={32} height={32} />
-            <h1 className="text-xl font-bold text-accent tracking-wide">SENTINEL</h1>
+          <div className="flex justify-center mb-4">
+            <Image src="/sentinel_logo.png" alt="Sentinel" width={48} height={48} />
           </div>
-          <p className="text-sm text-muted mb-6">Sign in to access the agent dashboard.</p>
+          <p className="text-sm text-muted mb-6 text-center">Sign in to access the agent dashboard.</p>
 
           {/* Tab Toggle */}
           <div className="flex rounded-lg border border-border bg-background p-1 mb-6">

@@ -15,7 +15,7 @@ export default function EnterprisePage() {
         <h2>File Storage</h2>
         <p>Replace in-memory storage with FileStorage for persistence:</p>
         <pre>
-          <code>{`import { wrapWithSentinel, FileStorage, standardPolicy } from "@valeo/x402";
+          <code>{`import { wrapWithSentinel, FileStorage, standardPolicy } from "@x402sentinel/x402";
 
 const storage = new FileStorage("/var/lib/sentinel/audit.jsonl", 20);
 
@@ -42,7 +42,7 @@ const secureFetch = wrapWithSentinel(fetchWithPayment, {
         <h2>Remote API Storage</h2>
         <p>For centralized audit across multiple nodes, use ApiStorage:</p>
         <pre>
-          <code>{`import { ApiStorage, wrapWithSentinel, standardPolicy } from "@valeo/x402";
+          <code>{`import { ApiStorage, wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const storage = new ApiStorage({
   apiKey: process.env.VALEO_API_KEY!,

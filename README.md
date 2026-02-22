@@ -36,7 +36,7 @@ const response = await fetchWithPayment("https://api.example.com/paid");
 ```ts
 import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402"; // <-- add
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402"; // <-- add
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
@@ -55,9 +55,9 @@ That's it. Same `fetch` interface. Budget enforcement + audit trail included.
 ### Install
 
 ```bash
-npm install @valeo/x402
+npm install @x402sentinel/x402
 # or
-pnpm add @valeo/x402
+pnpm add @x402sentinel/x402
 ```
 
 ---
@@ -143,7 +143,7 @@ import {
   liberalPolicy,       // $10/call, $100/hr, $1000/day
   unlimitedPolicy,     // no limits (audit only)
   customPolicy,        // override any defaults
-} from "@valeo/x402";
+} from "@x402sentinel/x402";
 ```
 
 | Preset | Per Call | Per Hour | Per Day |
@@ -167,7 +167,7 @@ const policy = customPolicy({
 ### Error Handling
 
 ```ts
-import { SentinelBudgetError } from "@valeo/x402";
+import { SentinelBudgetError } from "@x402sentinel/x402";
 
 try {
   await secureFetch("https://api.example.com/expensive");
@@ -213,7 +213,7 @@ Every payment produces an `AuditRecord` with:
 ### Storage Backends
 
 ```ts
-import { MemoryStorage, FileStorage, ApiStorage } from "@valeo/x402";
+import { MemoryStorage, FileStorage, ApiStorage } from "@x402sentinel/x402";
 
 // In-memory (default) — 10k records, FIFO eviction
 const memory = new MemoryStorage(10_000);
@@ -228,7 +228,7 @@ const api = new ApiStorage({ apiKey: "val_..." });
 ### Querying
 
 ```ts
-import { AuditLogger } from "@valeo/x402";
+import { AuditLogger } from "@x402sentinel/x402";
 
 const logger = new AuditLogger({ storage: memory });
 
@@ -250,7 +250,7 @@ const csv = await logger.exportCSV();
 ## Dashboard
 
 ```ts
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 const dashboard = new SentinelDashboard({ storage: myStorage });
 
@@ -334,7 +334,7 @@ class AuditLogger {
 Sentinel is an SDK + Dashboard + API + Docs in a single monorepo:
 
 ```
-├── /                      SDK (@valeo/x402)
+├── /                      SDK (@x402sentinel/x402)
 ├── app/                   Next.js 15 application
 │   ├── /login             API key authentication
 │   ├── /dashboard         Real-time analytics dashboard

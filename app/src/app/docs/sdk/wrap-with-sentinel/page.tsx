@@ -107,7 +107,7 @@ export default function WrapWithSentinelPage() {
 
         <h2>Usage Example</h2>
         <pre>
-          <code>{`import { wrapWithSentinel, standardPolicy, MemoryStorage } from "@valeo/x402";
+          <code>{`import { wrapWithSentinel, standardPolicy, MemoryStorage } from "@x402sentinel/x402";
 
 const secureFetch = wrapWithSentinel(fetchWithPayment, {
   agentId: "agent-weather-001",

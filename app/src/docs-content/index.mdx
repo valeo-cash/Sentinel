@@ -55,7 +55,7 @@ const response = await fetchWithPayment("https://api.example.com/paid");
 ```ts
 import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });

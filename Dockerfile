@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/app/node_modules ./app/node_modules
 COPY . .
-RUN pnpm --filter @valeo/x402 build
+RUN pnpm --filter @x402sentinel/x402 build
 RUN pnpm --filter sentinel-app build
 
 FROM base AS runner

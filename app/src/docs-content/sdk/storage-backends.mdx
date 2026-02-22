@@ -12,7 +12,7 @@ Sentinel uses pluggable storage backends for audit records. All implement the `S
 In-memory storage with configurable capacity and FIFO eviction. Default when no storage is specified.
 
 ```ts
-import { MemoryStorage } from "@valeo/x402";
+import { MemoryStorage } from "@x402sentinel/x402";
 
 const storage = new MemoryStorage(10_000); // max 10k records, FIFO eviction
 ```
@@ -28,7 +28,7 @@ const storage = new MemoryStorage(10_000); // max 10k records, FIFO eviction
 JSONL file-based storage. Append-only, one record per line. Buffered writes with configurable flush.
 
 ```ts
-import { FileStorage } from "@valeo/x402";
+import { FileStorage } from "@x402sentinel/x402";
 
 const storage = new FileStorage(".valeo/audit.jsonl", 10);
 ```
@@ -49,7 +49,7 @@ FileStorage creates the directory if it doesn't exist. Safe for multi-process ap
 Remote API storage. Batches records and POSTs to api.valeo.money. Falls back to in-memory if unreachable.
 
 ```ts
-import { ApiStorage } from "@valeo/x402";
+import { ApiStorage } from "@x402sentinel/x402";
 
 const storage = new ApiStorage({
   apiKey: "val_...",

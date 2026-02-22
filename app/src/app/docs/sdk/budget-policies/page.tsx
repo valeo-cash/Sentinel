@@ -20,7 +20,7 @@ export default function BudgetPoliciesPage() {
   liberalPolicy,
   unlimitedPolicy,
   customPolicy,
-} from "@valeo/x402";`}</code>
+} from "@x402sentinel/x402";`}</code>
         </pre>
 
         <table>

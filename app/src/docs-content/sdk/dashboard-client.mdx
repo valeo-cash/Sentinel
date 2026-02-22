@@ -10,7 +10,7 @@ Client for querying Sentinel audit data. Runs queries locally against the config
 ## Import
 
 ```ts
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 ```
 
 ## Constructor
@@ -79,8 +79,8 @@ Reserved for future remote API export. Currently throws.
 ## Example
 
 ```ts
-import { MemoryStorage } from "@valeo/x402";
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+import { MemoryStorage } from "@x402sentinel/x402";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 const storage = new MemoryStorage();
 const dashboard = new SentinelDashboard({ storage });
@@ -107,7 +107,7 @@ import {
   topSpenders,
   violations,
   anomalies,
-} from "@valeo/x402/dashboard";
+} from "@x402sentinel/x402/dashboard";
 
 const result = await spendByAgent(storage, "agent-1", "last_week");
 const top = await topSpenders(storage, 10, "last_day");

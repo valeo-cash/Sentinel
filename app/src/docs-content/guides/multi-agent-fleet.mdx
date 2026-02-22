@@ -12,7 +12,7 @@ When you have multiple agents, you can share a single storage backend and option
 Create one storage instance and pass it to all agents. All audit records go to the same place:
 
 ```ts
-import { MemoryStorage, wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { MemoryStorage, wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const sharedStorage = new MemoryStorage(50_000);
 
@@ -36,7 +36,7 @@ const agent2Fetch = wrapWithSentinel(fetchWithPayment, {
 Use `SentinelDashboard` to query by team:
 
 ```ts
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 const dashboard = new SentinelDashboard({ storage: sharedStorage });
 
@@ -56,7 +56,7 @@ Sentinel enforces budgets **per agent**. Each `wrapWithSentinel` call gets its o
 **Workaround**: Use a custom `beforePayment` hook to check team-level spend:
 
 ```ts
-import { spendByTeam } from "@valeo/x402/dashboard";
+import { spendByTeam } from "@x402sentinel/x402/dashboard";
 
 const agentFetch = wrapWithSentinel(fetchWithPayment, {
   agentId: "agent-1",

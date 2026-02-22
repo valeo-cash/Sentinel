@@ -9,9 +9,9 @@ export default function QuickstartPage() {
       <div className="prose prose-invert max-w-none">
         <h2>Install</h2>
         <pre>
-          <code>{`npm install @valeo/x402
+          <code>{`npm install @x402sentinel/x402
 # or
-pnpm add @valeo/x402`}</code>
+pnpm add @x402sentinel/x402`}</code>
         </pre>
         <p>
           Sentinel requires <code>@x402/core</code> and <code>@x402/fetch</code>{" "}
@@ -23,7 +23,7 @@ pnpm add @valeo/x402`}</code>
         <pre>
           <code>{`import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });

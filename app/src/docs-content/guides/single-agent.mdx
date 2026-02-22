@@ -16,7 +16,7 @@ This guide walks you through adding Sentinel to a single AI agent that makes x40
 ## Step 1: Install
 
 ```bash
-npm install @valeo/x402
+npm install @x402sentinel/x402
 ```
 
 ## Step 2: Wrap Your Fetch
@@ -26,7 +26,7 @@ Locate where you create your x402-wrapped fetch. Add the Sentinel wrap:
 ```ts
 import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+import { wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
@@ -65,8 +65,8 @@ const secureFetch = wrapWithSentinel(fetchWithPayment, {
 Use `AuditLogger` or `SentinelDashboard` to inspect spend:
 
 ```ts
-import { AuditLogger } from "@valeo/x402";
-import { SentinelDashboard } from "@valeo/x402/dashboard";
+import { AuditLogger } from "@x402sentinel/x402";
+import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 // Get storage from your wrap config (you'll need to pass it in)
 const logger = new AuditLogger({ storage });
@@ -86,7 +86,7 @@ Create the storage instance once and pass it to both `wrapWithSentinel` and `Sen
 Wrap paid calls in try/catch for `SentinelBudgetError`:
 
 ```ts
-import { SentinelBudgetError } from "@valeo/x402";
+import { SentinelBudgetError } from "@x402sentinel/x402";
 
 try {
   const res = await secureFetch(url);

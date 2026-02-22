@@ -24,7 +24,7 @@ export default function ErrorHandlingPage() {
           attempted amount.
         </p>
         <pre>
-          <code>{`import { wrapWithSentinel, SentinelBudgetError } from "@valeo/x402";
+          <code>{`import { wrapWithSentinel, SentinelBudgetError } from "@x402sentinel/x402";
 
 try {
   const res = await secureFetch(url);
@@ -45,7 +45,7 @@ try {
           <code>record</code> for debugging.
         </p>
         <pre>
-          <code>{`import { AuditLogger, SentinelAuditError } from "@valeo/x402";
+          <code>{`import { AuditLogger, SentinelAuditError } from "@x402sentinel/x402";
 
 try {
   await logger.log(record);
@@ -63,7 +63,7 @@ try {
           wrapping.
         </p>
         <pre>
-          <code>{`import { wrapWithSentinel, validateConfig, SentinelConfigError } from "@valeo/x402";
+          <code>{`import { wrapWithSentinel, validateConfig, SentinelConfigError } from "@x402sentinel/x402";
 
 const config = { agentId: "agent-1", budget: standardPolicy() };
 validateConfig(config);  // throws SentinelConfigError if invalid

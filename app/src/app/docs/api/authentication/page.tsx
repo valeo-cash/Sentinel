@@ -27,7 +27,7 @@ export default function AuthenticationPage() {
 
         <h2>Usage in ApiStorage</h2>
         <pre>
-          <code>{`import { ApiStorage } from "@valeo/x402";
+          <code>{`import { ApiStorage } from "@x402sentinel/x402";
 
 const storage = new ApiStorage({
   apiKey: process.env.VALEO_API_KEY!,

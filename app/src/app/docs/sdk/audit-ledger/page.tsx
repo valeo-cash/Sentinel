@@ -90,7 +90,7 @@ exportJSON(query?: AuditQuery): Promise<string>`}</code>
 
         <h2>Usage Example</h2>
         <pre>
-          <code>{`import { AuditLogger, MemoryStorage } from "@valeo/x402";
+          <code>{`import { AuditLogger, MemoryStorage } from "@x402sentinel/x402";
 
 const logger = new AuditLogger({
   storage: new MemoryStorage(10_000),

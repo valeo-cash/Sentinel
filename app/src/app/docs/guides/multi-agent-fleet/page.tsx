@@ -18,7 +18,7 @@ export default function MultiAgentFleetPage() {
           records go to the same place:
         </p>
         <pre>
-          <code>{`import { MemoryStorage, wrapWithSentinel, standardPolicy } from "@valeo/x402";
+          <code>{`import { MemoryStorage, wrapWithSentinel, standardPolicy } from "@x402sentinel/x402";
 
 const sharedStorage = new MemoryStorage(50_000);
 
@@ -40,7 +40,7 @@ const agent2Fetch = wrapWithSentinel(fetchWithPayment, {
         <h2>Team-Level Queries</h2>
         <p>Use SentinelDashboard to query by team:</p>
         <pre>
-          <code>{`import { SentinelDashboard } from "@valeo/x402/dashboard";
+          <code>{`import { SentinelDashboard } from "@x402sentinel/x402/dashboard";
 
 const dashboard = new SentinelDashboard({ storage: sharedStorage });
 
@@ -62,7 +62,7 @@ const agents = await dashboard.getAgents();`}</code>
         <h3>Workaround: Custom beforePayment Hook</h3>
         <p>Use a custom hook to check team-level spend:</p>
         <pre>
-          <code>{`import { spendByTeam } from "@valeo/x402/dashboard";
+          <code>{`import { spendByTeam } from "@x402sentinel/x402/dashboard";
 
 const agentFetch = wrapWithSentinel(fetchWithPayment, {
   agentId: "agent-1",

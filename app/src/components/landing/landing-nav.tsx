@@ -17,7 +17,7 @@ const iconLinks = [
   { icon: Play, label: "Playground", href: "/playground", external: false },
   { icon: BookOpen, label: "Docs", href: "/docs", external: false },
   { icon: Github, label: "GitHub", href: "https://github.com/valeo-cash/Sentinel", external: true },
-  { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },
+  { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@x402sentinel/x402", external: true },
   { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
 ] as const;
 
