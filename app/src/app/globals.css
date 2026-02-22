@@ -55,12 +55,25 @@
   background-color: #1a1a1f !important;
 }
 
-pre, pre code, [data-rehype-pretty-code-figure] pre,
-.prose pre, .prose code, figure pre {
+pre {
   background-color: #111116 !important;
+  border: 1px solid #1E1E2A !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  overflow-x: auto !important;
+  position: relative;
+}
+
+pre code {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: inherit !important;
   color: #e5e7eb !important;
-  border: 1px solid #1E1E2A;
-  border-radius: 8px;
+  border-radius: 0 !important;
 }
 
 code:not(pre code) {
@@ -69,7 +82,31 @@ code:not(pre code) {
   padding: 2px 6px !important;
   border-radius: 4px !important;
   font-size: 0.9em !important;
-  border-color: #1E1E2A !important;
+  font-family: "JetBrains Mono", ui-monospace, monospace !important;
+  border: 1px solid #1E1E2A !important;
+}
+
+.code-copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 150ms ease, background-color 150ms ease;
+  z-index: 10;
+}
+
+.code-copy-btn:hover {
+  color: #f3f0eb;
+  background-color: #1E1E2A;
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {

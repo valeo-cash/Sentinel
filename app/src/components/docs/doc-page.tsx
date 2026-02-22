@@ -1,5 +1,6 @@
 import { DocsPage, DocsBody, DocsTitle, DocsDescription } from "fumadocs-ui/page";
 import type { ReactNode } from "react";
+import { CodeBlockEnhancer } from "./code-block-enhancer";
 
 interface DocPageProps {
   title: string;
@@ -12,7 +13,12 @@ export function DocPage({ title, description, children }: DocPageProps) {
     <DocsPage>
       <DocsTitle>{title}</DocsTitle>
       {description && <DocsDescription>{description}</DocsDescription>}
-      <DocsBody>{children}</DocsBody>
+      <DocsBody>
+        <div className="docs-content">
+          {children}
+          <CodeBlockEnhancer />
+        </div>
+      </DocsBody>
     </DocsPage>
   );
 }
