@@ -7,26 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  test-sdk:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [20, 22]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-      - run: pnpm install
-      - run: pnpm --filter @x402sentinel/x402 typecheck
-      - run: pnpm --filter @x402sentinel/x402 test
-      - run: pnpm --filter @x402sentinel/x402 build
-
-  build-app:
-    runs-on: ubuntu-latest
-    needs: test-sdk
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
@@ -39,23 +21,4 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - run: pnpm install
-      - run: pnpm --filter @x402sentinel/x402 build
-      - run: pnpm --filter sentinel-app build
-
-  publish-sdk:
-    runs-on: ubuntu-latest
-    needs: [test-sdk, build-app]
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org
-      - run: pnpm install
-      - run: pnpm --filter @x402sentinel/x402 build
-      - run: pnpm --filter @x402sentinel/x402 publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: cd app && pnpm install && pnpm build
