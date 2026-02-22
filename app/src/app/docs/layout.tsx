@@ -1,4 +1,3 @@
-import "fumadocs-ui/style.css";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import type { ReactNode } from "react";
 import { pageTree } from "@/lib/docs-source";

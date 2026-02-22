@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "fumadocs-ui/css/preset.css";
+@import "fumadocs-ui/css/neutral.css";
 
 @theme {
   --color-background: #0A0A0F;
@@ -17,7 +19,6 @@
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-serif: "DM Serif Display", ui-serif, Georgia, serif;
 }
 
 html {
