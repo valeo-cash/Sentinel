@@ -1,23 +1,31 @@
 import type { SentinelConfig } from "../types/config";
 import type { PaymentContext } from "../types/index";
 import type { AuditRecord } from "../types/audit";
-import type { BudgetEvaluation } from "../types/budget";
+import type { BudgetEvaluation, BudgetViolation } from "../types/budget";
 import { BudgetManager } from "../budget/index";
 import { AuditLogger } from "../audit/index";
 import { enrichRecord } from "../audit/enrichment";
-import { parsePaymentResponse, parsePaymentRequired, extractFromPaymentRequired } from "./headers";
+import {
+  parsePaymentResponse,
+  parsePaymentHeader,
+  extractFromPaymentRequired,
+  normalizeAmountToUSDC,
+} from "./headers";
+import { SentinelBudgetError } from "../errors";
 import { formatUSDCHuman, parseUSDC } from "../utils/money";
 
 export interface InterceptorDeps {
   budgetManager: BudgetManager | null;
   auditLogger: AuditLogger;
   config: SentinelConfig;
+  priceCache: Map<string, string>;
 }
 
 /**
  * Pre-request interception: build context and evaluate budget.
- * Called BEFORE the underlying fetch. If the request is not a paid endpoint
- * (no amount info yet), we build a placeholder context with "0.000000" amount.
+ * Checks endpoint allowlist/blocklist AND cumulative spend limits.
+ * Amount is unknown at this point, so cumulative checks catch the case
+ * where hourly/daily/total limits are already exceeded.
  */
 export function beforeRequest(
   url: string,
@@ -44,13 +52,9 @@ export function beforeRequest(
     metadata: { ...(deps.config.metadata ?? {}) },
   };
 
-  // We can't know the exact amount before the request (x402 determines it from the 402 response).
-  // Budget pre-checks that don't depend on amount (endpoint filtering) can still run.
-  // The full budget evaluation happens when we know the amount from the response headers.
   if (deps.budgetManager) {
-    // Run endpoint-only checks (blocked/allowed endpoints)
     const eval_ = deps.budgetManager.evaluate(context);
-    if (!eval_.allowed && eval_.violation.type === "blocked_endpoint") {
+    if (!eval_.allowed) {
       return { proceed: false, context, evaluation: eval_ };
     }
   }
@@ -61,6 +65,8 @@ export function beforeRequest(
 /**
  * Post-response interception: parse payment headers, evaluate full budget, log audit record.
  * Called AFTER the underlying fetch returns. Reads ONLY headers, never the body.
+ *
+ * May throw SentinelBudgetError if a 402 price exceeds budget limits.
  */
 export async function afterResponse(
   response: Response,
@@ -75,12 +81,17 @@ export async function afterResponse(
   if (paymentResponseHeader) {
     const settlement = parsePaymentResponse(paymentResponseHeader);
     if (settlement) {
-      // Enrich context from settlement
       context.network = settlement.network ?? context.network;
 
-      // We need the amount from the original payment requirements.
-      // Since x402 already handled the 402->200 cycle, we may also have amount info
-      // in a custom header or we parse from context. For now, use what's available.
+      // Recover the amount from the price cache (set during a prior 402 for this URL)
+      if (context.amount === "0.000000") {
+        const cachedAmount = deps.priceCache.get(context.endpoint);
+        if (cachedAmount) {
+          context.amount = cachedAmount;
+          deps.priceCache.delete(context.endpoint);
+        }
+      }
+
       const policyEvaluation = determinePolicyEvaluation(context, deps);
       let budgetRemaining: string | null = null;
 
@@ -122,22 +133,39 @@ export async function afterResponse(
     }
   }
 
-  // Case 2: Leaked 402 — x402 failed to complete payment
+  // Case 2: 402 — parse price, enforce budget, cache for later
   if (response.status === 402) {
-    const paymentRequiredHeader = response.headers.get("payment-required");
-    if (paymentRequiredHeader) {
+    const rawHeader =
+      response.headers.get("payment-required") ||
+      response.headers.get("x-payment");
+
+    if (rawHeader) {
       try {
-        const paymentRequired = parsePaymentRequired(paymentRequiredHeader);
-        const extracted = extractFromPaymentRequired(paymentRequired);
-        if (extracted) {
-          context.amount = extracted.amount;
-          context.asset = extracted.asset;
-          context.network = extracted.network;
-          context.scheme = extracted.scheme;
-          context.payTo = extracted.payTo;
+        const paymentRequired = parsePaymentHeader(rawHeader);
+        if (paymentRequired) {
+          const extracted = extractFromPaymentRequired(paymentRequired);
+          if (extracted) {
+            const humanAmount = normalizeAmountToUSDC(extracted.amount);
+            context.amount = humanAmount;
+            context.asset = extracted.asset;
+            context.network = extracted.network;
+            context.scheme = extracted.scheme;
+            context.payTo = extracted.payTo;
+
+            deps.priceCache.set(context.endpoint, humanAmount);
+          }
         }
       } catch {
-        // unparseable header — log what we have
+        // unparseable header — continue with what we have
+      }
+    }
+
+    // Evaluate budget against the extracted price
+    if (deps.budgetManager && context.amount !== "0.000000") {
+      const eval_ = deps.budgetManager.evaluate(context);
+      if (!eval_.allowed) {
+        await logBlocked(context, eval_.violation, deps);
+        throw new SentinelBudgetError(eval_.violation);
       }
     }
 
@@ -162,6 +190,29 @@ export async function afterResponse(
 
   // Case 3: Non-payment response (no payment headers, not 402)
   return null;
+}
+
+async function logBlocked(
+  context: PaymentContext,
+  violation: BudgetViolation,
+  deps: InterceptorDeps,
+): Promise<void> {
+  try {
+    await deps.auditLogger.logBlocked(context, violation, {
+      humanSponsor: deps.config.humanSponsor,
+      metadata: deps.config.metadata,
+    });
+  } catch {
+    // audit failures never block
+  }
+
+  if (deps.config.hooks?.onBudgetExceeded) {
+    try {
+      await deps.config.hooks.onBudgetExceeded(violation);
+    } catch {
+      // hooks must never block
+    }
+  }
 }
 
 function determinePolicyEvaluation(

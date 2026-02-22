@@ -31,7 +31,8 @@ export function wrapWithSentinel(
   const budgetManager = config.budget ? new BudgetManager(config.budget) : null;
   const auditLogger = new AuditLogger(config.audit ?? { enabled: true, storage: new MemoryStorage() });
 
-  const deps: InterceptorDeps = { budgetManager, auditLogger, config };
+  const priceCache = new Map<string, string>();
+  const deps: InterceptorDeps = { budgetManager, auditLogger, config, priceCache };
 
   const sentinelFetch: typeof fetch = async (
     input: RequestInfo | URL,

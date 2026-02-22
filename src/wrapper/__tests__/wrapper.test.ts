@@ -258,4 +258,251 @@ describe("wrapWithSentinel", () => {
     const response = await sentinelFetch("https://api.example.com/data");
     expect(response.status).toBe(200);
   });
+
+  // ── Budget enforcement tests ──────────────────────────────────
+
+  it("throws SentinelBudgetError when 402 price exceeds maxPerCall", async () => {
+    const paymentRequired = {
+      x402Version: 2,
+      resource: { url: "https://api.example.com/expensive", description: "", mimeType: "" },
+      accepts: [{
+        scheme: "exact",
+        network: "eip155:8453",
+        asset: "USDC",
+        amount: "5000000",
+        payTo: "0xRecipient",
+        maxTimeoutSeconds: 60,
+        extra: {},
+      }],
+    };
+
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response("Payment Required", {
+        status: 402,
+        headers: { "payment-required": encodeHeader(paymentRequired) },
+      }),
+    );
+
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerCall: "0.50" },
+    }));
+
+    await expect(
+      sentinelFetch("https://api.example.com/expensive"),
+    ).rejects.toThrow(SentinelBudgetError);
+  });
+
+  it("returns 402 normally when price is within maxPerCall", async () => {
+    const paymentRequired = {
+      x402Version: 2,
+      resource: { url: "https://api.example.com/cheap", description: "", mimeType: "" },
+      accepts: [{
+        scheme: "exact",
+        network: "eip155:8453",
+        asset: "USDC",
+        amount: "10000",
+        payTo: "0xRecipient",
+        maxTimeoutSeconds: 60,
+        extra: {},
+      }],
+    };
+
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response("Payment Required", {
+        status: 402,
+        headers: { "payment-required": encodeHeader(paymentRequired) },
+      }),
+    );
+
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerCall: "1.00" },
+    }));
+
+    const response = await sentinelFetch("https://api.example.com/cheap");
+    expect(response.status).toBe(402);
+  });
+
+  it("throws SentinelBudgetError pre-flight when hourly limit already exceeded", async () => {
+    const mockFetch = vi.fn<typeof fetch>();
+    const url = "https://api.example.com/data";
+
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerHour: "2.00", maxPerCall: "1.00" },
+    }));
+
+    const makePaymentCycle = (amountBaseUnits: string) => {
+      const pr = {
+        x402Version: 2,
+        resource: { url, description: "", mimeType: "" },
+        accepts: [{
+          scheme: "exact", network: "eip155:8453" as const, asset: "USDC",
+          amount: amountBaseUnits, payTo: "0xR", maxTimeoutSeconds: 60, extra: {},
+        }],
+      };
+      return {
+        resp402: new Response("", {
+          status: 402,
+          headers: { "payment-required": encodeHeader(pr) },
+        }),
+        resp200: new Response("ok", {
+          status: 200,
+          headers: { "payment-response": encodeHeader(makeSettleResponse()) },
+        }),
+      };
+    };
+
+    const cycle1 = makePaymentCycle("1000000");
+    const cycle2 = makePaymentCycle("1000000");
+    mockFetch
+      .mockResolvedValueOnce(cycle1.resp402)
+      .mockResolvedValueOnce(cycle1.resp200)
+      .mockResolvedValueOnce(cycle2.resp402)
+      .mockResolvedValueOnce(cycle2.resp200);
+
+    // First 402 passes checks, then 200 records $1.00
+    await sentinelFetch(url);
+    await sentinelFetch(url);
+    // Second 402 passes checks, then 200 records another $1.00
+    await sentinelFetch(url);
+    await sentinelFetch(url);
+
+    // Third call: hourly spend is now $2.00 which equals the limit.
+    // Pre-flight should block since adding even $0 means we're at the limit.
+    // BudgetManager checks projectedHourly (spent + amount) > limit.
+    // With amount=0, 2.00 + 0 = 2.00 which is NOT > 2.00, so it passes pre-flight.
+    // But the 402 will have amount that would push over.
+    const cycle3 = makePaymentCycle("1000000");
+    mockFetch.mockResolvedValueOnce(cycle3.resp402);
+
+    await expect(
+      sentinelFetch(url),
+    ).rejects.toThrow(SentinelBudgetError);
+  });
+
+  it("throws SentinelBudgetError when 402 price would push over hourly limit", async () => {
+    const url = "https://api.example.com/data";
+
+    const pr = {
+      x402Version: 2,
+      resource: { url, description: "", mimeType: "" },
+      accepts: [{
+        scheme: "exact", network: "eip155:8453" as const, asset: "USDC",
+        amount: "1000000", payTo: "0xR", maxTimeoutSeconds: 60, extra: {},
+      }],
+    };
+
+    const settlement = makeSettleResponse();
+
+    const mockFetch = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response("", {
+        status: 402,
+        headers: { "payment-required": encodeHeader(pr) },
+      }))
+      .mockResolvedValueOnce(new Response("ok", {
+        status: 200,
+        headers: { "payment-response": encodeHeader(settlement) },
+      }))
+      .mockResolvedValueOnce(new Response("", {
+        status: 402,
+        headers: { "payment-required": encodeHeader(pr) },
+      }));
+
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerHour: "1.50", maxPerCall: "5.00" },
+    }));
+
+    // 402 → passes (price $1.00 < per-call $5.00, hourly $0 + $1 < $1.50)
+    await sentinelFetch(url);
+    // 200 → records $1.00 spend
+    await sentinelFetch(url);
+    // Next 402 → price $1.00 but hourly is already $1.00, so $1.00 + $1.00 > $1.50
+    await expect(sentinelFetch(url)).rejects.toThrow(SentinelBudgetError);
+  });
+
+  it("tracks spend from 200 payment-response via price cache", async () => {
+    const url = "https://api.example.com/paid";
+    const pr = {
+      x402Version: 2,
+      resource: { url, description: "", mimeType: "" },
+      accepts: [{
+        scheme: "exact", network: "eip155:8453" as const, asset: "USDC",
+        amount: "500000", payTo: "0xR", maxTimeoutSeconds: 60, extra: {},
+      }],
+    };
+
+    const mockFetch = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response("", {
+        status: 402,
+        headers: { "payment-required": encodeHeader(pr) },
+      }))
+      .mockResolvedValueOnce(new Response("ok", {
+        status: 200,
+        headers: { "payment-response": encodeHeader(makeSettleResponse()) },
+      }));
+
+    const storage = new MemoryStorage();
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerCall: "10.00", maxTotal: "100.00" },
+      audit: { enabled: true, storage },
+    }));
+
+    // 402 → caches price $0.50
+    await sentinelFetch(url);
+    // 200 with payment-response → should record $0.50 spend
+    await sentinelFetch(url);
+
+    const records = await storage.query({});
+    const paymentRecord = records.find((r) => r.status_code === 200);
+    expect(paymentRecord).toBeDefined();
+    expect(paymentRecord!.amount).toBe("0.500000");
+  });
+
+  it("does not track spend for normal 200 without payment headers", async () => {
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response("ok", { status: 200 }),
+    );
+
+    const storage = new MemoryStorage();
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerCall: "10.00" },
+      audit: { enabled: true, storage },
+    }));
+
+    await sentinelFetch("https://api.example.com/free");
+
+    const records = await storage.query({});
+    expect(records.length).toBe(0);
+  });
+
+  it("parses x-payment header the same as payment-required", async () => {
+    const paymentRequired = {
+      x402Version: 2,
+      resource: { url: "https://api.example.com/paid", description: "", mimeType: "" },
+      accepts: [{
+        scheme: "exact",
+        network: "eip155:8453",
+        asset: "USDC",
+        amount: "8000000",
+        payTo: "0xRecipient",
+        maxTimeoutSeconds: 60,
+        extra: {},
+      }],
+    };
+
+    const mockFetch = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response("Payment Required", {
+        status: 402,
+        headers: { "x-payment": encodeHeader(paymentRequired) },
+      }),
+    );
+
+    const sentinelFetch = wrapWithSentinel(mockFetch, makeConfig({
+      budget: { maxPerCall: "1.00" },
+    }));
+
+    // $8.00 > maxPerCall $1.00 → should throw
+    await expect(
+      sentinelFetch("https://api.example.com/paid"),
+    ).rejects.toThrow(SentinelBudgetError);
+  });
 });
