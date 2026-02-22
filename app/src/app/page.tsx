@@ -1,35 +1,61 @@
 import Link from "next/link";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
 
+const T = "text-[#f5f0eb]";
+const M = "text-[#a09a94]";
+const A = "text-[#F59E0B]";
+const BG = "bg-[#201e1f]";
+const CARD = "bg-[#2a2725]";
+const BDR = "border-[#3a3533]";
+
+function SectionHeading({ children, id }: { children: React.ReactNode; id?: string }) {
+  return (
+    <div id={id} className="mb-10">
+      <h2 className={`font-serif text-3xl md:text-4xl ${T} mb-4`}>{children}</h2>
+      <div className={`h-px ${BDR.replace("border", "bg")}`} />
+    </div>
+  );
+}
+
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className={`min-h-screen ${BG} ${T} font-mono`}>
       <LandingNav />
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section id="top" className="pt-32 pb-20 md:pt-40 md:pb-28">
-        <div className="max-w-3xl mx-auto px-6">
-          <p className="text-sm text-zinc-500 mb-4 tracking-wide">
+      <section id="top" className="pt-32 pb-12 md:pt-44 md:pb-16">
+        <div className="max-w-4xl mx-auto px-6">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#a09a94] mb-8">
             Valeo Infrastructure &middot; February 2026
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-6">
-            Where Did The Money Go?{" "}
-            <span className="text-accent">Now You Know.</span>
+          <h1 className="font-serif text-4xl md:text-6xl text-[#f5f0eb] leading-[1.15] mb-6">
+            Where Did The Money Go?
+            <br />
+            <span className={A}>Now You Know.</span>
           </h1>
-          <p className="text-lg leading-relaxed text-zinc-400 mb-6">
+          <p className="font-serif italic text-lg md:text-xl leading-relaxed text-[#a09a94] mb-8 max-w-3xl">
             AI agents are spending real money autonomously. The x402 protocol
             enables internet-native payments — but gives you zero visibility
             into which agent spent how much on what endpoint and who approved
             it. Sentinel fixes this with a single line of code.
           </p>
-          <p className="text-sm text-zinc-600">6 min read</p>
+          <div className={`inline-block border ${BDR} px-3 py-1.5`}>
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]">
+              8 min read
+            </span>
+          </div>
         </div>
       </section>
 
+      {/* ── Thick divider ──────────────────────────────────── */}
+      <div className="max-w-4xl mx-auto px-6 py-6">
+        <div className="h-[2px] bg-[#3a3533]" />
+      </div>
+
       {/* ── Opening Paragraphs ───────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6 space-y-6 text-lg leading-relaxed text-zinc-400">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6 space-y-7 font-mono text-[15px] md:text-[16px] leading-[1.85] tracking-[0.01em] text-[#a09a94]">
             <p>
               Every x402 payment today is a black box. Money leaves a wallet,
               hits an endpoint, and… that&apos;s it. No log. No budget. No
@@ -39,7 +65,7 @@ export default function LandingPage() {
             </p>
             <p>
               This isn&apos;t a theoretical problem.{" "}
-              <span className="font-semibold text-white">
+              <span className="font-semibold text-[#f5f0eb]">
                 KPMG published a report in February 2026
               </span>{" "}
               showing that 75% of enterprise leaders rank compliance as the #1
@@ -49,9 +75,9 @@ export default function LandingPage() {
             </p>
             <p>
               Meanwhile, the x402 ecosystem is thriving:{" "}
-              <span className="font-semibold text-white">161M+ transactions</span>,{" "}
-              <span className="font-semibold text-white">$43M+ in volume</span>,{" "}
-              <span className="font-semibold text-white">417K+ buyers</span>.
+              <span className="font-semibold text-[#f5f0eb]">161M+ transactions</span>,{" "}
+              <span className="font-semibold text-[#f5f0eb]">$43M+ in volume</span>,{" "}
+              <span className="font-semibold text-[#f5f0eb]">417K+ buyers</span>.
               Zero audit tooling. Until now.
             </p>
           </div>
@@ -60,22 +86,24 @@ export default function LandingPage() {
 
       {/* ── Stats Row ────────────────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="py-16 md:py-24">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-center md:divide-x md:divide-[#3a3533]">
               {[
                 { value: "1 line", label: "of code to add" },
                 { value: "0 config", label: "to start tracking" },
                 { value: "$0", label: "to get started" },
-              ].map((stat) => (
+              ].map((stat, i) => (
                 <div
                   key={stat.value}
-                  className="bg-card border border-border rounded-xl p-6 text-center"
+                  className={`text-center px-12 py-6 md:py-0 ${i > 0 ? "border-t md:border-t-0 border-[#3a3533]" : ""}`}
                 >
-                  <p className="text-3xl md:text-4xl font-bold text-white mb-1">
+                  <p className="font-serif text-4xl md:text-5xl text-[#f5f0eb] mb-2">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-zinc-400">{stat.label}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -85,12 +113,10 @@ export default function LandingPage() {
 
       {/* ── How It Works ─────────────────────────────────── */}
       <FadeIn>
-        <section id="how-it-works" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              How It Works
-            </h2>
-            <p className="text-lg leading-relaxed text-zinc-400 mb-10">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading id="how-it-works">How It Works</SectionHeading>
+            <p className="font-mono text-[15px] md:text-[16px] leading-[1.85] text-[#a09a94] mb-12">
               Sentinel wraps your x402 fetch function. One function call.
               Every payment that passes through is intercepted, budget-checked,
               and logged — before and after execution. Your code doesn&apos;t
@@ -98,10 +124,10 @@ export default function LandingPage() {
               visibility.
             </p>
 
-            <p className="text-sm text-zinc-500 mb-4 tracking-wide uppercase">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94] mb-5">
               Flow — Payment to Audit Trail
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-14">
               {[
                 "Your Agent",
                 "x402 Payment",
@@ -113,32 +139,32 @@ export default function LandingPage() {
                 "Dashboard Updated",
               ].map((step, i, arr) => (
                 <div key={step} className="flex items-center gap-2">
-                  <div className="bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-zinc-300 whitespace-nowrap">
+                  <div className={`border ${BDR} px-3 py-2 font-mono text-xs text-[#a09a94] whitespace-nowrap`}>
                     {step}
                   </div>
                   {i < arr.length - 1 && (
-                    <span className="text-zinc-600 text-lg">&rarr;</span>
+                    <span className="text-[#3a3533] text-sm">&rarr;</span>
                   )}
                 </div>
               ))}
             </div>
 
-            <div className="space-y-6 text-lg leading-relaxed text-zinc-400">
+            <div className="space-y-7 font-mono text-[15px] md:text-[16px] leading-[1.85] text-[#a09a94]">
               <p>
-                <span className="font-semibold text-white">PRE-FLIGHT:</span>{" "}
+                <span className="font-semibold text-[#f5f0eb]">PRE-FLIGHT:</span>{" "}
                 Generate a unique event ID. Check the agent&apos;s budget
                 against configured policies. If the budget is exceeded, throw
                 immediately — no payment is made, no money is spent.
               </p>
               <p>
-                <span className="font-semibold text-white">EXECUTE:</span>{" "}
+                <span className="font-semibold text-[#f5f0eb]">EXECUTE:</span>{" "}
                 x402 handles the payment normally. Sentinel never touches the
                 payment flow. It never consumes the response body.
               </p>
               <p>
-                <span className="font-semibold text-white">POST-FLIGHT:</span>{" "}
+                <span className="font-semibold text-[#f5f0eb]">POST-FLIGHT:</span>{" "}
                 Parse the payment receipt from the{" "}
-                <code className="text-sm bg-card border border-border rounded px-1.5 py-0.5 font-mono">
+                <code className={`text-xs ${CARD} border ${BDR} px-1.5 py-0.5 font-mono text-[#f5f0eb]`}>
                   PAYMENT-RESPONSE
                 </code>{" "}
                 header. Build a structured audit record. Log to your chosen
@@ -151,17 +177,15 @@ export default function LandingPage() {
 
       {/* ── Before and After ─────────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-              Before and After
-            </h2>
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading>Before and After</SectionHeading>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-card border border-border rounded-xl overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-border text-xs text-zinc-500 uppercase tracking-wider">
+              <div className={`${CARD} border ${BDR} overflow-hidden`}>
+                <div className={`px-4 py-2.5 border-b ${BDR} font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]`}>
                   Before
                 </div>
-                <pre className="p-5 text-sm font-mono text-zinc-400 overflow-x-auto leading-relaxed">
+                <pre className="p-5 text-sm font-mono text-[#a09a94] overflow-x-auto leading-relaxed">
                   <code>{`const res = await x402Fetch(
   "https://api.example.com/data"
 );
@@ -172,11 +196,11 @@ export default function LandingPage() {
 // this to your CFO.`}</code>
                 </pre>
               </div>
-              <div className="bg-card border border-accent/30 rounded-xl overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-accent/30 text-xs text-accent uppercase tracking-wider">
+              <div className={`${CARD} border border-[#F59E0B]/30 overflow-hidden`}>
+                <div className="px-4 py-2.5 border-b border-[#F59E0B]/30 font-mono text-[10px] uppercase tracking-[0.2em] text-[#F59E0B]">
                   After
                 </div>
-                <pre className="p-5 text-sm font-mono text-zinc-300 overflow-x-auto leading-relaxed">
+                <pre className="p-5 text-sm font-mono text-[#f5f0eb] overflow-x-auto leading-relaxed">
                   <code>{`import {
   wrapWithSentinel,
   standardPolicy,
@@ -206,15 +230,14 @@ const res = await fetch(
 
       {/* ── What It Actually Does ─────────────────────────── */}
       <FadeIn>
-        <section id="features" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              What It Actually Does
-            </h2>
-            <p className="text-lg text-zinc-400 mb-10">
-              Not &ldquo;can help with.&rdquo; Does. Here&apos;s the real
-              list.
-            </p>
+        <section className="py-16 md:py-24">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="max-w-4xl">
+              <SectionHeading id="features">What It Actually Does</SectionHeading>
+              <p className="font-mono text-[15px] text-[#a09a94] mb-10">
+                Not &ldquo;can help with.&rdquo; Does. Here&apos;s the real list.
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 {
@@ -268,13 +291,13 @@ const res = await fetch(
               ].map((card) => (
                 <div
                   key={card.title}
-                  className="bg-card border border-border rounded-xl p-6"
+                  className={`border ${BDR} ${CARD} p-6`}
                 >
-                  <span className={`text-xs font-medium uppercase tracking-wider ${card.color} mb-2 block`}>
+                  <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${card.color} mb-3 block`}>
                     {card.category}
                   </span>
-                  <h3 className="text-white font-semibold mb-2">{card.title}</h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed">
+                  <h3 className="font-serif text-xl text-[#f5f0eb] mb-2">{card.title}</h3>
+                  <p className="font-mono text-sm text-[#a09a94] leading-relaxed">
                     {card.desc}
                   </p>
                 </div>
@@ -286,48 +309,46 @@ const res = await fetch(
 
       {/* ── Budget Policies ───────────────────────────────── */}
       <FadeIn>
-        <section id="budget" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Budget Policies
-            </h2>
-            <p className="text-lg text-zinc-400 mb-8">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading id="budget">Budget Policies</SectionHeading>
+            <p className="font-mono text-[15px] text-[#a09a94] mb-10">
               Four presets out of the box. Or build your own.
             </p>
-            <div className="overflow-x-auto mb-10">
-              <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto mb-12">
+              <table className="w-full text-left font-mono text-sm">
                 <thead>
-                  <tr className="border-b border-border text-zinc-500">
-                    <th className="py-3 pr-4 font-medium">Preset</th>
-                    <th className="py-3 pr-4 font-medium">Per Call</th>
-                    <th className="py-3 pr-4 font-medium">Per Hour</th>
-                    <th className="py-3 font-medium">Per Day</th>
+                  <tr className={`border-b ${BDR} text-[#a09a94]`}>
+                    <th className="py-3 pr-6 font-medium text-[10px] uppercase tracking-[0.15em]">Preset</th>
+                    <th className="py-3 pr-6 font-medium text-[10px] uppercase tracking-[0.15em]">Per Call</th>
+                    <th className="py-3 pr-6 font-medium text-[10px] uppercase tracking-[0.15em]">Per Hour</th>
+                    <th className="py-3 font-medium text-[10px] uppercase tracking-[0.15em]">Per Day</th>
                   </tr>
                 </thead>
-                <tbody className="text-zinc-300">
+                <tbody className="text-[#f5f0eb]">
                   {[
                     ["conservativePolicy()", "$0.10", "$5.00", "$50.00"],
                     ["standardPolicy()", "$1.00", "$25.00", "$200.00"],
                     ["liberalPolicy()", "$10.00", "$100.00", "$1,000.00"],
                     ["unlimitedPolicy()", "—", "—", "—"],
                   ].map(([preset, perCall, perHour, perDay]) => (
-                    <tr key={preset} className="border-b border-border/60">
-                      <td className="py-3 pr-4 font-mono text-accent text-xs">
+                    <tr key={preset} className={`border-b ${BDR}/60`}>
+                      <td className="py-3 pr-6 text-[#F59E0B] text-xs">
                         {preset}
                       </td>
-                      <td className="py-3 pr-4">{perCall}</td>
-                      <td className="py-3 pr-4">{perHour}</td>
-                      <td className="py-3">{perDay}</td>
+                      <td className="py-3 pr-6 text-sm">{perCall}</td>
+                      <td className="py-3 pr-6 text-sm">{perHour}</td>
+                      <td className="py-3 text-sm">{perDay}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-border text-xs text-zinc-500 uppercase tracking-wider">
+            <div className={`${CARD} border ${BDR} overflow-hidden`}>
+              <div className={`px-4 py-2.5 border-b ${BDR} font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]`}>
                 Custom Policy
               </div>
-              <pre className="p-5 text-sm font-mono text-zinc-300 overflow-x-auto leading-relaxed">
+              <pre className="p-5 text-sm font-mono text-[#f5f0eb] overflow-x-auto leading-relaxed">
                 <code>{`const fetch = wrapWithSentinel(x402Fetch, {
   agentId: "trader-bot",
   budget: {
@@ -350,20 +371,18 @@ const res = await fetch(
 
       {/* ── The Audit Record ─────────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              The Audit Record
-            </h2>
-            <p className="text-lg text-zinc-400 mb-8">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading>The Audit Record</SectionHeading>
+            <p className="font-mono text-[15px] text-[#a09a94] mb-10">
               Every payment produces this. Structured, queryable, exportable.
               Turn &ldquo;where did the money go?&rdquo; into a SQL query.
             </p>
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-border text-xs text-zinc-500 uppercase tracking-wider">
+            <div className={`${CARD} border ${BDR} overflow-hidden`}>
+              <div className={`px-4 py-2.5 border-b ${BDR} font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]`}>
                 AuditRecord
               </div>
-              <pre className="p-5 text-sm font-mono text-zinc-300 overflow-x-auto leading-relaxed">
+              <pre className="p-5 text-sm font-mono text-[#f5f0eb] overflow-x-auto leading-relaxed">
                 <code>{`{
   "record_id": "rec_7kQ3mXvB9pLw",
   "timestamp": "2026-02-22T14:32:01.847Z",
@@ -394,12 +413,10 @@ const res = await fetch(
 
       {/* ── The Dashboard ─────────────────────────────────── */}
       <FadeIn>
-        <section id="dashboard" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              The Dashboard
-            </h2>
-            <div className="space-y-6 text-lg leading-relaxed text-zinc-400 mb-10">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading id="dashboard">The Dashboard</SectionHeading>
+            <div className="space-y-7 font-mono text-[15px] md:text-[16px] leading-[1.85] text-[#a09a94] mb-12">
               <p>
                 The SDK logs payments. The dashboard makes them useful. A
                 real-time analytics interface built on Next.js 15 with 18 API
@@ -407,29 +424,29 @@ const res = await fetch(
                 individual transaction drill-downs.
               </p>
               <p>
-                <span className="font-semibold text-white">KPI cards</span> —
+                <span className="font-semibold text-[#f5f0eb]">KPI cards</span> —
                 total spent, payment count, active agents, average payment.{" "}
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-[#f5f0eb]">
                   Spend-over-time charts
                 </span>{" "}
                 — area charts with hourly/daily/weekly buckets.{" "}
-                <span className="font-semibold text-white">Drill-downs</span>{" "}
+                <span className="font-semibold text-[#f5f0eb]">Drill-downs</span>{" "}
                 — by agent, endpoint, category, network.{" "}
-                <span className="font-semibold text-white">CSV export</span>{" "}
+                <span className="font-semibold text-[#f5f0eb]">CSV export</span>{" "}
                 for auditors.{" "}
-                <span className="font-semibold text-white">Alert feed</span>{" "}
+                <span className="font-semibold text-[#f5f0eb]">Alert feed</span>{" "}
                 for budget violations and anomalies.{" "}
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-[#f5f0eb]">
                   Policy management
                 </span>{" "}
                 UI for creating and editing budget rules.
               </p>
             </div>
 
-            <p className="text-sm text-zinc-500 mb-4 tracking-wide uppercase">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94] mb-5">
               Flow — Data Pipeline
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
               {[
                 "SDK Logs Payment",
                 "API Ingests Event",
@@ -439,25 +456,25 @@ const res = await fetch(
                 "CSV Exports",
               ].map((step, i, arr) => (
                 <div key={step} className="flex items-center gap-2">
-                  <div className="bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-zinc-300 whitespace-nowrap">
+                  <div className={`border ${BDR} px-3 py-2 font-mono text-xs text-[#a09a94] whitespace-nowrap`}>
                     {step}
                   </div>
                   {i < arr.length - 1 && (
-                    <span className="text-zinc-600 text-lg">&rarr;</span>
+                    <span className="text-[#3a3533] text-sm">&rarr;</span>
                   )}
                 </div>
               ))}
             </div>
 
             <div className="text-center">
-              <p className="text-zinc-400 mb-4">
+              <p className="font-mono text-sm text-[#a09a94] mb-5">
                 Live at{" "}
-                <span className="text-accent">sentinel.valeocash.com</span>.
+                <span className="text-[#F59E0B]">sentinel.valeocash.com</span>.
                 Login with your API key.
               </p>
               <Link
                 href="/login"
-                className="inline-block px-6 py-3 bg-accent text-background font-semibold rounded-lg hover:bg-amber-400 transition-colors"
+                className="inline-block px-6 py-3 bg-[#F59E0B] text-[#201e1f] font-mono text-sm font-semibold hover:bg-amber-400 transition-colors"
               >
                 Open Dashboard &rarr;
               </Link>
@@ -468,21 +485,19 @@ const res = await fetch(
 
       {/* ── Sentinel vs. Flying Blind ─────────────────────── */}
       <FadeIn>
-        <section id="comparison" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-              Sentinel vs. Flying Blind
-            </h2>
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading id="comparison">Sentinel vs. Flying Blind</SectionHeading>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left font-mono text-sm">
                 <thead>
-                  <tr className="border-b border-border text-zinc-500">
-                    <th className="py-3 pr-4 font-medium">Capability</th>
-                    <th className="py-3 pr-4 font-medium">Without Sentinel</th>
-                    <th className="py-3 font-medium">With Sentinel</th>
+                  <tr className={`border-b ${BDR}`}>
+                    <th className="py-3 pr-6 font-medium text-[10px] uppercase tracking-[0.15em] text-[#a09a94]">Capability</th>
+                    <th className="py-3 pr-6 font-medium text-[10px] uppercase tracking-[0.15em] text-[#a09a94]">Without Sentinel</th>
+                    <th className="py-3 font-medium text-[10px] uppercase tracking-[0.15em] text-[#a09a94]">With Sentinel</th>
                   </tr>
                 </thead>
-                <tbody className="text-zinc-300">
+                <tbody>
                   {[
                     ["Budget limits", "✗ None", "✓ Per-call, hourly, daily, total"],
                     ["Audit trail", "✗ None", "✓ Every payment logged"],
@@ -493,12 +508,12 @@ const res = await fetch(
                     ["Multi-chain", "✗ Per-chain tracking", "✓ Unified view"],
                     ["Integration effort", "—", "✓ One line of code"],
                   ].map(([cap, without, withS]) => (
-                    <tr key={cap} className="border-b border-border/60">
-                      <td className="py-3 pr-4 font-medium text-white">
+                    <tr key={cap} className={`border-b ${BDR}/60`}>
+                      <td className="py-3 pr-6 text-[#f5f0eb] font-medium text-sm">
                         {cap}
                       </td>
-                      <td className="py-3 pr-4 text-zinc-500">{without}</td>
-                      <td className="py-3 text-accent">{withS}</td>
+                      <td className="py-3 pr-6 text-[#a09a94]/60 text-sm">{without}</td>
+                      <td className="py-3 text-[#F59E0B] text-sm">{withS}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -510,12 +525,10 @@ const res = await fetch(
 
       {/* ── Multi-Chain Support ────────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Multi-Chain Support
-            </h2>
-            <p className="text-lg leading-relaxed text-zinc-400 mb-8">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading>Multi-Chain Support</SectionHeading>
+            <p className="font-mono text-[15px] leading-[1.85] text-[#a09a94] mb-10">
               Sentinel works on any chain x402 supports. Same wrapper. Same
               dashboard. All chains in one view.
             </p>
@@ -529,10 +542,10 @@ const res = await fetch(
               ].map((c) => (
                 <div
                   key={c.id}
-                  className="bg-card border border-border rounded-lg p-4 text-center"
+                  className={`border ${BDR} p-4 text-center`}
                 >
-                  <p className="text-sm font-medium text-white">{c.chain}</p>
-                  <p className="text-xs text-zinc-500 font-mono mt-1">
+                  <p className="font-serif text-sm text-[#f5f0eb]">{c.chain}</p>
+                  <p className="font-mono text-[10px] text-[#a09a94] mt-1.5">
                     {c.id}
                   </p>
                 </div>
@@ -544,11 +557,11 @@ const res = await fetch(
 
       {/* ── Who This Is For ───────────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-              Who This Is For
-            </h2>
+        <section className="py-16 md:py-24">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="max-w-4xl">
+              <SectionHeading>Who This Is For</SectionHeading>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 {
@@ -566,12 +579,12 @@ const res = await fetch(
               ].map((persona) => (
                 <div
                   key={persona.title}
-                  className="bg-card border border-border rounded-xl p-6"
+                  className={`border ${BDR} ${CARD} p-6`}
                 >
-                  <h3 className="text-white font-semibold mb-3">
+                  <h3 className="font-serif text-xl text-[#f5f0eb] mb-3">
                     {persona.title}
                   </h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed">
+                  <p className="font-mono text-sm text-[#a09a94] leading-relaxed">
                     {persona.body}
                   </p>
                 </div>
@@ -583,30 +596,32 @@ const res = await fetch(
 
       {/* ── Built for x402 Ecosystem ──────────────────────── */}
       <FadeIn>
-        <section id="ecosystem" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Built for the x402 Ecosystem
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <section className="py-16 md:py-24">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="max-w-4xl">
+              <SectionHeading id="ecosystem">Built for the x402 Ecosystem</SectionHeading>
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-center md:divide-x md:divide-[#3a3533] mb-12">
               {[
                 { value: "161M+", label: "Transactions" },
                 { value: "$43M+", label: "Payment Volume" },
                 { value: "417K+", label: "Buyers" },
                 { value: "83K+", label: "Sellers" },
-              ].map((stat) => (
+              ].map((stat, i) => (
                 <div
                   key={stat.label}
-                  className="bg-card border border-border rounded-xl p-5 text-center"
+                  className={`text-center px-10 py-6 md:py-0 ${i > 0 ? "border-t md:border-t-0 border-[#3a3533]" : ""}`}
                 >
-                  <p className="text-2xl md:text-3xl font-bold text-white mb-1">
+                  <p className="font-serif text-3xl md:text-4xl text-[#f5f0eb] mb-2">
                     {stat.value}
                   </p>
-                  <p className="text-xs text-zinc-400">{stat.label}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
-            <p className="text-lg leading-relaxed text-zinc-400">
+            <p className="font-mono text-[15px] leading-[1.85] text-[#a09a94] max-w-4xl">
               Sentinel is the compliance layer this ecosystem needs. Built by
               Valeo. Open source. MIT licensed.
             </p>
@@ -616,46 +631,26 @@ const res = await fetch(
 
       {/* ── The Stack ─────────────────────────────────────── */}
       <FadeIn>
-        <section className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-              Under the Hood
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading>Under the Hood</SectionHeading>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
               {[
-                {
-                  label: "SDK",
-                  value: "TypeScript, zero runtime deps, CJS + ESM",
-                },
-                {
-                  label: "Dashboard",
-                  value: "Next.js 15, Tailwind CSS, Recharts",
-                },
-                {
-                  label: "Database",
-                  value: "SQLite (Turso) via Drizzle ORM",
-                },
-                {
-                  label: "API",
-                  value: "18 REST endpoints, bearer auth",
-                },
-                {
-                  label: "Testing",
-                  value: "82 tests, Vitest",
-                },
-                {
-                  label: "Deployment",
-                  value: "Vercel + Turso (or Docker self-hosted)",
-                },
+                { label: "SDK", value: "TypeScript, zero runtime deps, CJS + ESM" },
+                { label: "Dashboard", value: "Next.js 15, Tailwind CSS, Recharts" },
+                { label: "Database", value: "SQLite (Turso) via Drizzle ORM" },
+                { label: "API", value: "18 REST endpoints, bearer auth" },
+                { label: "Testing", value: "82 tests, Vitest" },
+                { label: "Deployment", value: "Vercel + Turso (or Docker self-hosted)" },
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-baseline gap-3 py-3 border-b border-border/60"
+                  className={`flex items-baseline gap-4 py-3 border-b ${BDR}/60`}
                 >
-                  <span className="text-sm text-zinc-500 w-24 shrink-0">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#a09a94] w-24 shrink-0">
                     {item.label}
                   </span>
-                  <span className="text-sm text-zinc-300">{item.value}</span>
+                  <span className="font-mono text-sm text-[#f5f0eb]">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -665,12 +660,10 @@ const res = await fetch(
 
       {/* ── Roadmap ───────────────────────────────────────── */}
       <FadeIn>
-        <section id="roadmap" className="pb-20 md:pb-28">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-              Roadmap
-            </h2>
-            <div className="space-y-4">
+        <section className="py-16 md:py-24">
+          <div className="max-w-4xl mx-auto px-6">
+            <SectionHeading id="roadmap">Roadmap</SectionHeading>
+            <div className="space-y-5">
               {[
                 "Endpoint health monitoring — uptime, latency, pricing",
                 "Live payment feed — real-time animated stream",
@@ -681,10 +674,10 @@ const res = await fetch(
               ].map((item) => (
                 <div
                   key={item}
-                  className="flex items-start gap-3 text-zinc-400"
+                  className="flex items-start gap-3 font-mono text-[15px] text-[#a09a94]"
                 >
-                  <span className="text-accent mt-0.5">○</span>
-                  <span className="text-base leading-relaxed">{item}</span>
+                  <span className="text-[#F59E0B] mt-0.5">○</span>
+                  <span className="leading-relaxed">{item}</span>
                 </div>
               ))}
             </div>
@@ -693,32 +686,32 @@ const res = await fetch(
       </FadeIn>
 
       {/* ── Footer ────────────────────────────────────────── */}
-      <footer className="border-t border-border py-16">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="text-zinc-400 mb-2">
+      <footer className="border-t border-[#3a3533] py-16">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <p className="font-mono text-sm text-[#a09a94] mb-2">
             Sentinel is infrastructure by{" "}
-            <span className="text-white font-semibold">Valeo</span>.
+            <span className="text-[#f5f0eb]">Valeo</span>.
           </p>
-          <p className="text-sm text-zinc-500 mb-6">
+          <p className="font-mono text-xs text-[#a09a94]/60 mb-6">
             $VALEO token on Solana &middot;{" "}
             <a
-              href="https://valeo.money"
+              href="https://valeocash.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent hover:text-amber-400 transition-colors"
+              className="text-[#F59E0B] hover:text-amber-400 transition-colors"
             >
-              valeo.money
+              valeocash.com
             </a>
           </p>
-          <p className="text-xs text-zinc-600 mb-8">
-            Built by iF &middot; February 2026
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#a09a94]/40 mb-8">
+            Acquired by Valeo &middot; February 2026
           </p>
-          <div className="flex items-center justify-center gap-6 text-sm text-zinc-500">
+          <div className="flex items-center justify-center gap-6 font-mono text-xs text-[#a09a94]/60">
             <a
               href="https://github.com/valeo-cash/Sentinel"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
+              className="hover:text-[#f5f0eb] transition-colors"
             >
               GitHub
             </a>
@@ -726,29 +719,23 @@ const res = await fetch(
               href="https://www.npmjs.com/package/@valeo/x402"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
+              className="hover:text-[#f5f0eb] transition-colors"
             >
               npm
             </a>
-            <Link
-              href="/docs"
-              className="hover:text-white transition-colors"
-            >
+            <Link href="/docs" className="hover:text-[#f5f0eb] transition-colors">
               Docs
             </Link>
-            <Link
-              href="/login"
-              className="hover:text-white transition-colors"
-            >
+            <Link href="/login" className="hover:text-[#f5f0eb] transition-colors">
               Dashboard
             </Link>
             <a
-              href="https://valeo.money"
+              href="https://valeocash.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
+              className="hover:text-[#f5f0eb] transition-colors"
             >
-              valeo.money
+              valeocash.com
             </a>
           </div>
         </div>
