@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     const resend = new Resend(resendKey);
     const { data, error } = await resend.emails.send({
-      from: "Sentinel <noreply@valeocash.com>",
+      from: "Sentinel <onboarding@resend.dev>",
       to: email.toLowerCase().trim(),
       subject: "Sign in to Sentinel",
       html: `
