@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Shield,
   FileText,
+  ArrowRightLeft,
 } from "lucide-react";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
 
@@ -242,7 +243,7 @@ export default function LandingPage() {
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 text-center">
               Our products
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 {
                   icon: Package,
@@ -257,6 +258,12 @@ export default function LandingPage() {
                   href: "/login",
                 },
                 {
+                  icon: ArrowRightLeft,
+                  title: "Proxy",
+                  desc: "Zero-code integration. Change one URL. Every payment tracked. No SDK, no npm install, no code changes.",
+                  href: "/proxy",
+                },
+                {
                   icon: Shield,
                   title: "Budget Policies",
                   desc: "Per-call, hourly, daily, total limits. Spike detection. Endpoint allowlists/blocklists. Preset or custom.",
@@ -268,7 +275,7 @@ export default function LandingPage() {
                   desc: "Structured records for every payment. Agent, endpoint, amount, tx hash, timing, context. Queryable. Exportable.",
                   href: "/docs/sdk/audit-ledger",
                 },
-              ].map(({ icon: Icon, title, desc, href }) => (
+              ].map(({ icon: Icon, title, desc, href }, i) => (
                 <Link
                   key={title}
                   href={href}
@@ -323,6 +330,7 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <Link href="/docs/sdk/wrap-with-sentinel" className="block text-sm text-muted hover:text-white transition-colors">SDK</Link>
                 <Link href="/login" className="block text-sm text-muted hover:text-white transition-colors">Dashboard</Link>
+                <Link href="/proxy" className="block text-sm text-muted hover:text-white transition-colors">Proxy</Link>
                 <Link href="/docs" className="block text-sm text-muted hover:text-white transition-colors">Docs</Link>
               </div>
             </div>

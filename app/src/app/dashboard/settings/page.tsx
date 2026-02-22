@@ -1,56 +1,84 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { CopyButton } from "@/components/shared/copy-button";
 import { useSummary } from "@/lib/hooks/use-analytics";
 import { useTimeRange } from "@/lib/hooks/use-time-range";
+import { Key, Plus, Trash2, LogOut } from "lucide-react";
 
-const SDK_CODE = `import { Sentinel } from "@valeo/sentinel";
-
-const sentinel = new Sentinel({
-  apiKey: process.env.SENTINEL_API_KEY!,
-});
-
-// Wrap your agent's payment calls
-const result = await sentinel.audit({
-  agent_id: "my-agent",
-  endpoint: "https://api.example.com/charge",
-  method: "POST",
-  amount: "0.01",
-  // ... other fields
-});`;
+interface ApiKeyEntry {
+  id: string;
+  name: string;
+  keyPrefix: string;
+  lastUsedAt: string | null;
+  createdAt: string;
+}
 
 export default function SettingsPage() {
-  const { api, team } = useAuth();
+  const { api, team, logout } = useAuth();
   const { from, to } = useTimeRange();
   const { data: summary } = useSummary(from, to);
 
-  const [rotateConfirm, setRotateConfirm] = useState(false);
-  const [rotateLoading, setRotateLoading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
-  const maskedKey = "sk_sentinel_••••••••••••••••••••";
-  const storedKey =
-    typeof window !== "undefined" ? localStorage.getItem("sentinel_api_key") : null;
-  const keyToCopy = storedKey ?? maskedKey;
+  // API Key management
+  const [keys, setKeys] = useState<ApiKeyEntry[]>([]);
+  const [newKeyName, setNewKeyName] = useState("");
+  const [showNewKey, setShowNewKey] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
 
-  const handleRotateKey = useCallback(async () => {
-    setRotateLoading(true);
+  const fetchKeys = useCallback(async () => {
     try {
-      const res = await api.rotateKey();
-      const key = (res as { api_key?: string; apiKey?: string }).api_key ?? (res as { apiKey?: string }).apiKey;
-      if (key) {
-        localStorage.setItem("sentinel_api_key", key);
-        setRotateConfirm(false);
-        window.location.reload();
+      const res = await fetch("/api/v1/api-keys", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setKeys(data.data ?? []);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchKeys();
+  }, [fetchKeys]);
+
+  const handleCreateKey = useCallback(async () => {
+    setCreating(true);
+    try {
+      const res = await fetch("/api/v1/api-keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ name: newKeyName || "Default" }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setShowNewKey(data.api_key);
+        setNewKeyName("");
+        setShowCreate(false);
+        fetchKeys();
       }
     } catch (err) {
-      console.error("Rotate failed:", err);
+      console.error("Create key failed:", err);
     } finally {
-      setRotateLoading(false);
+      setCreating(false);
     }
-  }, [api]);
+  }, [newKeyName, fetchKeys]);
+
+  const handleDeleteKey = useCallback(async (id: string) => {
+    try {
+      await fetch(`/api/v1/api-keys/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      setKeys((prev) => prev.filter((k) => k.id !== id));
+    } catch (err) {
+      console.error("Delete key failed:", err);
+    }
+  }, []);
 
   const handleExportPayments = useCallback(async () => {
     try {
@@ -68,9 +96,7 @@ export default function SettingsPage() {
 
   const handleExportSummary = useCallback(() => {
     const data = summary ?? {};
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -89,6 +115,7 @@ export default function SettingsPage() {
       <h1 className="text-xl font-semibold">Settings</h1>
 
       <div className="space-y-6">
+        {/* Team Info */}
         <section className="rounded-xl border border-border bg-card p-6">
           <h2 className="mb-4 text-sm font-medium text-muted">Team Info</h2>
           <div className="space-y-3">
@@ -112,57 +139,115 @@ export default function SettingsPage() {
           </div>
         </section>
 
+        {/* API Keys */}
         <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="mb-4 text-sm font-medium text-muted">API Key</h2>
-          <div className="flex items-center gap-2">
-            <code className="rounded bg-muted/30 px-2 py-1 font-mono text-sm">
-              {maskedKey}
-            </code>
-            <CopyButton text={keyToCopy} />
-            {!rotateConfirm ? (
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-medium text-muted flex items-center gap-2">
+              <Key className="w-4 h-4" />
+              API Keys
+            </h2>
+            <button
+              onClick={() => setShowCreate(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-foreground hover:bg-card-hover transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Generate Key
+            </button>
+          </div>
+
+          <p className="text-xs text-muted mb-4">
+            API keys authenticate SDK and proxy requests. Generate keys here and use them with{" "}
+            <code className="text-accent">Authorization: Bearer sk_sentinel_...</code>
+          </p>
+
+          {/* New key revealed */}
+          {showNewKey && (
+            <div className="mb-4 rounded-lg border border-accent/40 bg-accent/5 p-4">
+              <p className="text-xs text-accent font-medium mb-2">
+                New key generated — copy it now, it won&apos;t be shown again:
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 rounded bg-background px-3 py-2 font-mono text-sm text-foreground break-all">
+                  {showNewKey}
+                </code>
+                <CopyButton text={showNewKey} />
+              </div>
               <button
-                onClick={() => setRotateConfirm(true)}
-                className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted hover:bg-card-hover"
+                onClick={() => setShowNewKey(null)}
+                className="mt-2 text-xs text-muted hover:text-foreground transition-colors"
               >
-                Rotate Key
+                Dismiss
               </button>
-            ) : (
-              <span className="flex gap-2">
+            </div>
+          )}
+
+          {/* Create form */}
+          {showCreate && (
+            <div className="mb-4 rounded-lg border border-border bg-background p-4">
+              <label className="block text-xs text-muted mb-1.5">Key name</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={newKeyName}
+                  onChange={(e) => setNewKeyName(e.target.value)}
+                  placeholder="e.g. Production, Staging"
+                  className="flex-1 px-3 py-2 bg-card border border-border rounded-lg text-foreground placeholder:text-muted/50 focus:outline-none focus:border-accent transition-colors text-sm"
+                />
                 <button
-                  onClick={handleRotateKey}
-                  disabled={rotateLoading}
-                  className="rounded-lg bg-danger px-3 py-1.5 text-sm text-white hover:bg-danger/90 disabled:opacity-50"
+                  onClick={handleCreateKey}
+                  disabled={creating}
+                  className="px-4 py-2 bg-accent text-background font-semibold rounded-lg hover:bg-amber-400 transition-colors disabled:opacity-50 text-sm"
                 >
-                  {rotateLoading ? "Rotating…" : "Confirm Rotate"}
+                  {creating ? "..." : "Generate"}
                 </button>
                 <button
-                  onClick={() => setRotateConfirm(false)}
-                  className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted hover:bg-card-hover"
+                  onClick={() => { setShowCreate(false); setNewKeyName(""); }}
+                  className="px-3 py-2 text-sm text-muted hover:text-foreground transition-colors"
                 >
                   Cancel
                 </button>
-              </span>
-            )}
-          </div>
-          {rotateConfirm && (
-            <p className="mt-2 text-xs text-muted">
-              Your current key will be invalidated. Update your environment variables.
+              </div>
+            </div>
+          )}
+
+          {/* Keys list */}
+          {keys.length > 0 ? (
+            <div className="space-y-2">
+              {keys.map((k) => (
+                <div
+                  key={k.id}
+                  className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <Key className="w-4 h-4 text-muted" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{k.name}</p>
+                      <p className="text-xs text-muted font-mono">
+                        {k.keyPrefix}••••••••
+                        {k.lastUsedAt && (
+                          <> &middot; Last used {new Date(k.lastUsedAt).toLocaleDateString()}</>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteKey(k.id)}
+                    className="p-1.5 rounded-md text-muted hover:text-danger hover:bg-danger/10 transition-colors"
+                    title="Delete key"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted py-2">
+              No API keys yet. Generate one to use with the SDK or proxy.
             </p>
           )}
         </section>
 
-        <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="mb-4 text-sm font-medium text-muted">Quick Start</h2>
-          <div className="relative">
-            <pre className="overflow-x-auto rounded-lg bg-muted/20 p-4 text-xs font-mono text-foreground">
-              {SDK_CODE}
-            </pre>
-            <div className="absolute right-2 top-2">
-              <CopyButton text={SDK_CODE} />
-            </div>
-          </div>
-        </section>
-
+        {/* Data Export */}
         <section className="rounded-xl border border-border bg-card p-6">
           <h2 className="mb-4 text-sm font-medium text-muted">Data Export</h2>
           <div className="flex flex-wrap gap-3">
@@ -181,6 +266,19 @@ export default function SettingsPage() {
           </div>
         </section>
 
+        {/* Account */}
+        <section className="rounded-xl border border-border bg-card p-6">
+          <h2 className="mb-4 text-sm font-medium text-muted">Account</h2>
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-muted hover:text-foreground hover:bg-card-hover transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
+        </section>
+
+        {/* Danger Zone */}
         <section className="rounded-xl border-2 border-danger/50 bg-card p-6">
           <h2 className="mb-4 text-sm font-medium text-danger">Danger Zone</h2>
           <p className="mb-4 text-sm text-muted">

@@ -18,6 +18,7 @@ export const pageTree: PageTree.Root = {
     { type: "page", name: "Single Agent", url: "/docs/guides/single-agent" },
     { type: "page", name: "Multi-Agent Fleet", url: "/docs/guides/multi-agent-fleet" },
     { type: "page", name: "Enterprise Setup", url: "/docs/guides/enterprise" },
+    { type: "page", name: "Proxy Mode", url: "/docs/guides/proxy" },
     { type: "page", name: "Migration Guide", url: "/docs/guides/migration" },
     { type: "separator", name: "Dashboard" },
     { type: "page", name: "Dashboard Overview", url: "/docs/dashboard/overview" },

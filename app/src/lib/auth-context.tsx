@@ -14,7 +14,13 @@ interface AuthState {
 const AuthContext = createContext<AuthState | null>(null);
 
 function isPublicRoute(pathname: string) {
-  return pathname === "/" || pathname === "/login" || pathname.startsWith("/docs");
+  return (
+    pathname === "/" ||
+    pathname === "/login" ||
+    pathname === "/proxy" ||
+    pathname.startsWith("/docs") ||
+    pathname.startsWith("/auth/")
+  );
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -25,13 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const key = localStorage.getItem("sentinel_api_key");
-    if (!key) {
-      setIsLoading(false);
-      if (!isPublicRoute(pathname)) router.push("/login");
-      return;
-    }
-    const client = new SentinelAPI(key);
+    const client = new SentinelAPI();
+
     client
       .validate()
       .then((t) => {
@@ -40,14 +41,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       })
       .catch(() => {
-        localStorage.removeItem("sentinel_api_key");
         setIsLoading(false);
         if (!isPublicRoute(pathname)) router.push("/login");
       });
   }, [pathname, router]);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("sentinel_api_key");
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    } catch {
+      // best-effort
+    }
     setTeam(null);
     setApi(null);
     router.push("/login");

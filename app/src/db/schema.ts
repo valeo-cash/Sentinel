@@ -12,9 +12,51 @@ export const teams = sqliteTable("teams", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   plan: text("plan").notNull().default("free"),
-  apiKeyHash: text("api_key_hash").notNull(),
+  apiKeyHash: text("api_key_hash").notNull().default(""),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+});
+
+// auth_accounts table — links wallet/email identities to teams
+export const authAccounts = sqliteTable(
+  "auth_accounts",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    provider: text("provider").notNull(), // "wallet" | "email"
+    providerId: text("provider_id").notNull(), // wallet address or email
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [uniqueIndex("auth_provider_id_idx").on(t.provider, t.providerId)]
+);
+
+// api_keys table — SDK/proxy API keys generated from dashboard
+export const apiKeys = sqliteTable(
+  "api_keys",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    name: text("name").notNull(),
+    keyHash: text("key_hash").notNull(),
+    keyPrefix: text("key_prefix").notNull(), // first 8 chars for display
+    lastUsedAt: integer("last_used_at", { mode: "timestamp_ms" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("api_keys_team_idx").on(t.teamId)]
+);
+
+// magic_links table — email sign-in tokens
+export const magicLinks = sqliteTable("magic_links", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  used: integer("used", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
 // agents table

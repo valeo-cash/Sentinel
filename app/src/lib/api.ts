@@ -136,20 +136,25 @@ export interface AlertQuery {
 }
 
 class SentinelAPI {
-  private apiKey: string;
+  private apiKey: string | null;
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
+  constructor(apiKey?: string | null) {
+    this.apiKey = apiKey ?? null;
   }
 
   private async request<T>(path: string, options?: RequestInit): Promise<T> {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...((options?.headers as Record<string, string>) ?? {}),
+    };
+    if (this.apiKey) {
+      headers["Authorization"] = `Bearer ${this.apiKey}`;
+    }
+
     const res = await fetch(`/api${path}`, {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiKey}`,
-        ...options?.headers,
-      },
+      headers,
+      credentials: "include",
     });
     if (!res.ok) {
       const error = await res.json().catch(() => ({ error: "Request failed" }));
