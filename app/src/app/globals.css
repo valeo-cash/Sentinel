@@ -28,3 +28,29 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
+
+@keyframes flow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; color: #F59E0B; }
+}
+
+.flow-arrow {
+  animation: flow-pulse 2.5s ease-in-out infinite;
+}
+
+.flow-step:nth-child(1) .flow-box { animation-delay: 0s; }
+.flow-step:nth-child(2) .flow-box { animation-delay: 0.3s; }
+.flow-step:nth-child(3) .flow-box { animation-delay: 0.6s; }
+.flow-step:nth-child(4) .flow-box { animation-delay: 0.9s; }
+.flow-step:nth-child(5) .flow-box { animation-delay: 1.2s; }
+.flow-step:nth-child(6) .flow-box { animation-delay: 1.5s; }
+.flow-step:nth-child(7) .flow-box { animation-delay: 1.8s; }
+
+@keyframes box-glow {
+  0%, 100% { border-color: #1E1E2A; }
+  50% { border-color: #F59E0B40; }
+}
+
+.flow-box {
+  animation: box-glow 2.5s ease-in-out infinite;
+}

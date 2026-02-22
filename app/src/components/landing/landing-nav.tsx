@@ -2,6 +2,19 @@
 
 import { useEffect, useState, useRef, type ReactNode } from "react";
 import Link from "next/link";
+import {
+  BookOpen,
+  Github,
+  Package,
+  LayoutDashboard,
+} from "lucide-react";
+
+const iconLinks = [
+  { icon: BookOpen, label: "Docs", href: "/docs", external: false },
+  { icon: Github, label: "GitHub", href: "https://github.com/valeo-cash/Sentinel", external: true },
+  { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
+] as const;
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -17,38 +30,36 @@ export function LandingNav() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#201e1f]/95 backdrop-blur-md border-b border-[#3a3533]"
+          ? "bg-background/90 backdrop-blur-md border-b border-border"
           : "bg-transparent"
       }`}
     >
       <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link
-          href="/"
-          className="font-mono text-xs font-medium text-[#f5f0eb] tracking-[0.2em] uppercase"
-        >
+        <Link href="/" className="text-sm font-bold text-accent tracking-wide">
           SENTINEL
         </Link>
-        <div className="flex items-center gap-6 font-mono text-xs tracking-wide">
-          <Link
-            href="/docs"
-            className="text-[#a09a94] hover:text-[#f5f0eb] transition-colors"
-          >
-            Docs
-          </Link>
-          <a
-            href="https://github.com/valeo-cash/Sentinel"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#a09a94] hover:text-[#f5f0eb] transition-colors"
-          >
-            GitHub
-          </a>
-          <Link
-            href="/login"
-            className="text-[#F59E0B] hover:text-amber-400 transition-colors"
-          >
-            Dashboard &rarr;
-          </Link>
+        <div className="flex items-center gap-2">
+          {iconLinks.map(({ icon: Icon, label, href, external }) => {
+            const cls =
+              "group relative flex items-center justify-center w-9 h-9 rounded-lg border border-border hover:border-accent/50 hover:bg-card transition-all duration-200";
+            const inner = (
+              <>
+                <Icon className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[10px] bg-card border border-border text-muted opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {label}
+                </span>
+              </>
+            );
+            return external ? (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+                {inner}
+              </a>
+            ) : (
+              <Link key={label} href={href} className={cls}>
+                {inner}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>
