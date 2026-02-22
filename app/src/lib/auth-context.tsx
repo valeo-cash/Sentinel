@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { SentinelAPI, type Team } from "./api";
 
@@ -28,10 +28,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [team, setTeam] = useState<Team | null>(null);
   const [api, setApi] = useState<SentinelAPI | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authFailed, setAuthFailed] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const didValidate = useRef(false);
 
   useEffect(() => {
+    if (didValidate.current) return;
+    didValidate.current = true;
+
     const client = new SentinelAPI();
 
     client
@@ -42,10 +47,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       })
       .catch(() => {
+        setAuthFailed(true);
         setIsLoading(false);
-        if (!isPublicRoute(pathname)) router.push("/login");
       });
-  }, [pathname, router]);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (authFailed && !isPublicRoute(pathname)) {
+      router.push("/login");
+    }
+  }, [isLoading, authFailed, pathname, router]);
 
   const logout = useCallback(async () => {
     try {
@@ -55,6 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setTeam(null);
     setApi(null);
+    setAuthFailed(true);
     router.push("/login");
   }, [router]);
 
@@ -82,4 +95,8 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider on a protected page");
   return ctx;
+}
+
+export function useOptionalAuth() {
+  return useContext(AuthContext);
 }

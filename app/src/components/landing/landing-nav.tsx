@@ -11,18 +11,20 @@ import {
   Globe,
   Play,
 } from "lucide-react";
-
-const iconLinks = [
-  { icon: Globe, label: "Explorer", href: "/explorer", external: false },
-  { icon: Play, label: "Playground", href: "/playground", external: false },
-  { icon: BookOpen, label: "Docs", href: "/docs", external: false },
-  { icon: Github, label: "GitHub", href: "https://github.com/valeo-cash/Sentinel", external: true },
-  { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@x402sentinel/x402", external: true },
-  { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
-] as const;
+import { useOptionalAuth } from "@/lib/auth-context";
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
+  const auth = useOptionalAuth();
+
+  const iconLinks = [
+    { icon: Globe, label: "Explorer", href: "/explorer", external: false },
+    { icon: Play, label: "Playground", href: "/playground", external: false },
+    { icon: BookOpen, label: "Docs", href: "/docs", external: false },
+    { icon: Github, label: "GitHub", href: "https://github.com/valeo-cash/Sentinel", external: true },
+    { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@x402sentinel/x402", external: true },
+    { icon: LayoutDashboard, label: auth ? "Dashboard" : "Login", href: auth ? "/dashboard" : "/login", external: false },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
