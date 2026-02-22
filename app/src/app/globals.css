@@ -67,28 +67,24 @@ body {
   color: var(--color-foreground);
 }
 
-@keyframes flow-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; color: #F59E0B; }
+@keyframes flow-dot-travel {
+  0% { left: -4px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: calc(100% - 4px); opacity: 0; }
 }
 
-.flow-arrow {
-  animation: flow-pulse 2.5s ease-in-out infinite;
+.flow-dot {
+  animation: flow-dot-travel 2s ease-in-out infinite;
 }
 
-.flow-step:nth-child(1) .flow-box { animation-delay: 0s; }
-.flow-step:nth-child(2) .flow-box { animation-delay: 0.3s; }
-.flow-step:nth-child(3) .flow-box { animation-delay: 0.6s; }
-.flow-step:nth-child(4) .flow-box { animation-delay: 0.9s; }
-.flow-step:nth-child(5) .flow-box { animation-delay: 1.2s; }
-.flow-step:nth-child(6) .flow-box { animation-delay: 1.5s; }
-.flow-step:nth-child(7) .flow-box { animation-delay: 1.8s; }
-
-@keyframes box-glow {
-  0%, 100% { border-color: #1E1E2A; }
-  50% { border-color: #F59E0B40; }
+@keyframes flow-dot-travel-vertical {
+  0% { top: -4px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: calc(100% - 4px); opacity: 0; }
 }
 
-.flow-box {
-  animation: box-glow 2.5s ease-in-out infinite;
+.flow-dot-vertical {
+  animation: flow-dot-travel-vertical 1.5s ease-in-out infinite;
 }

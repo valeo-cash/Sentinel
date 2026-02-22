@@ -10,6 +10,7 @@ import {
   ArrowRightLeft,
 } from "lucide-react";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
+import { FlowDiagram } from "@/components/landing/flow-diagram";
 
 export default function LandingPage() {
   return (
@@ -189,34 +190,19 @@ export default function LandingPage() {
 
       {/* ── How It Works ─────────────────────────────────── */}
       <FadeIn>
-        <section className="py-16 md:py-20">
+        <section className="py-16 md:py-24">
           <div className="max-w-5xl mx-auto px-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 text-center">
-              How it works
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 text-center">
+              How it <span className="italic text-accent">works</span>
             </h2>
+            <p className="text-center text-sm text-muted mb-14 max-w-lg mx-auto">
+              Every tool call is logged. Agents query Sentinel to validate
+              endpoints before spending credits.
+            </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-1.5 md:gap-2 mb-14">
-              {[
-                "Your Agent",
-                "x402 Payment",
-                "Sentinel",
-                "Budget ✓",
-                "Payment Executes",
-                "Audit Logged",
-                "Dashboard",
-              ].map((step, i, arr) => (
-                <div key={step} className="flex items-center gap-1.5 md:gap-2 flow-step">
-                  <div className="flow-box border border-border rounded-lg px-3 py-2 md:px-4 md:py-2.5 text-xs md:text-sm text-foreground whitespace-nowrap bg-card/50">
-                    {step}
-                  </div>
-                  {i < arr.length - 1 && (
-                    <span className="flow-arrow text-muted text-sm md:text-base">&rarr;</span>
-                  )}
-                </div>
-              ))}
-            </div>
+            <FlowDiagram />
 
-            <div className="max-w-2xl mx-auto space-y-5">
+            <div className="max-w-2xl mx-auto mt-16 space-y-5">
               {[
                 "Your agent makes an x402 payment through the Sentinel wrapper.",
                 "Sentinel checks the payment against budget policies before it executes.",
@@ -225,10 +211,10 @@ export default function LandingPage() {
                 "Every payment appears in the dashboard. Export CSV for auditors.",
               ].map((text, i) => (
                 <div key={i} className="flex items-start gap-4">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full border border-border bg-card flex items-center justify-center text-xs text-muted font-mono">
+                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center text-xs text-accent font-semibold">
                     {i + 1}
                   </span>
-                  <p className="text-sm text-muted leading-relaxed pt-1">{text}</p>
+                  <p className="text-[15px] text-muted leading-relaxed pt-1">{text}</p>
                 </div>
               ))}
             </div>
