@@ -16,6 +16,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </span>
         ),
       }}
+      themeSwitch={{ enabled: false }}
       links={[
         { text: "Dashboard", url: "/dashboard" },
         {

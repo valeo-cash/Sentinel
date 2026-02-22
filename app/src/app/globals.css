@@ -21,6 +21,43 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
+:root, .dark {
+  --color-fd-background: #201e1f;
+  --color-fd-foreground: #f5f0eb;
+  --color-fd-muted: #2a2830;
+  --color-fd-muted-foreground: #a1a1aa;
+  --color-fd-popover: #1a1820;
+  --color-fd-popover-foreground: #f5f0eb;
+  --color-fd-card: #1a1820;
+  --color-fd-card-foreground: #f5f0eb;
+  --color-fd-border: #2a2a3a;
+  --color-fd-primary: #F59E0B;
+  --color-fd-primary-foreground: #201e1f;
+  --color-fd-secondary: #1a1820;
+  --color-fd-secondary-foreground: #f5f0eb;
+  --color-fd-accent: #2a2830;
+  --color-fd-accent-foreground: #f5f0eb;
+  --color-fd-ring: #F59E0B;
+}
+
+.dark #nd-sidebar {
+  --color-fd-muted: #1a1820;
+  --color-fd-secondary: #222028;
+  --color-fd-muted-foreground: #a1a1aa;
+}
+
+pre, pre code, [data-rehype-pretty-code-figure] pre,
+.prose pre, .prose code, figure pre {
+  background-color: #1a1a1f !important;
+  color: #f5f0eb !important;
+}
+
+code:not(pre code) {
+  background-color: #2a2830 !important;
+  color: #f5f0eb !important;
+  border-color: #2a2a3a !important;
+}
+
 html {
   scroll-behavior: smooth;
 }

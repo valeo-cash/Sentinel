@@ -17,7 +17,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${jetbrains.variable} ${dmSerif.variable} font-sans antialiased`}>
-        <RootProvider>
+        <RootProvider
+          theme={{
+            forcedTheme: "dark",
+            defaultTheme: "dark",
+            enableSystem: false,
+            attribute: "class",
+          }}
+        >
           <Providers>{children}</Providers>
         </RootProvider>
       </body>
