@@ -34,8 +34,10 @@ export async function GET(
     .where(and(eq(payments.agentId, id), eq(payments.teamId, auth.team.id)));
 
   return NextResponse.json({
-    ...agent,
-    payment_count: Number(stats?.payment_count ?? 0),
-    total_spend: Number(stats?.total_spend ?? 0),
+    data: {
+      ...agent,
+      payment_count: Number(stats?.payment_count ?? 0),
+      total_spend: Number(stats?.total_spend ?? 0),
+    },
   });
 }
