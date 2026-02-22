@@ -196,19 +196,19 @@ export default function LandingPage() {
               How it <span className="italic text-accent">works</span>
             </h2>
             <p className="text-center text-sm text-muted mb-14 max-w-lg mx-auto">
-              Every tool call is logged. Agents query Sentinel to validate
-              endpoints before spending credits.
+              Every payment tracked. Every budget enforced. Full audit
+              trail from agent to endpoint.
             </p>
 
             <FlowDiagram />
 
             <div className="max-w-2xl mx-auto mt-16 space-y-5">
               {[
-                "Your agent makes an x402 payment through the Sentinel wrapper.",
-                "Sentinel checks the payment against budget policies before it executes.",
-                "The x402 payment settles on-chain in USDC. Base and Solana supported.",
-                "Sentinel captures the receipt and logs a structured audit record.",
-                "Every payment appears in the dashboard. Export CSV for auditors.",
+                "Your agent calls fetch through the Sentinel wrapper. No code changes to your payment logic.",
+                "Sentinel checks the agent\u2019s budget policy before the payment executes. If the limit is exceeded, the call is blocked \u2014 no money leaves the wallet.",
+                "The x402 payment settles on-chain in USDC. Base and Solana supported. Sentinel never touches the funds.",
+                "Sentinel captures the payment receipt from the response headers and logs a structured audit record \u2014 agent, endpoint, amount, tx hash, timing.",
+                "Every payment appears in the dashboard. Filter by agent, endpoint, or time range. Export CSV for auditors and compliance reviews.",
               ].map((text, i) => (
                 <div key={i} className="flex items-start gap-4">
                   <span className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center text-xs text-accent font-semibold">
