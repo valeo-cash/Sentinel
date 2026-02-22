@@ -8,9 +8,9 @@ import { NextResponse } from "next/server";
 const COOKIE_NAME = "sentinel_session";
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
-function getSecret() {
+function getSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
-  if (!secret) throw new Error("JWT_SECRET environment variable is required");
+  if (!secret) throw new Error("JWT_SECRET env var is not set. Add it to .env and Vercel.");
   return new TextEncoder().encode(secret);
 }
 

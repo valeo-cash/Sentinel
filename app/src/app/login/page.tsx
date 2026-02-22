@@ -55,8 +55,8 @@ function LoginForm() {
         body: JSON.stringify({ email }),
       });
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to send magic link");
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error || "Failed to send magic link");
       }
       setEmailSent(true);
     } catch (err) {
@@ -97,8 +97,8 @@ function LoginForm() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Wallet authentication failed");
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error || "Wallet authentication failed");
       }
 
       router.push("/dashboard");
