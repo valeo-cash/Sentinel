@@ -79,6 +79,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/valeo-money/valeo-sentinel"
-  }
+    "url": "https://github.com/valeo-cash/Sentinel"
+  },
+  "homepage": "https://sentinel.valeocash.com"
 }
