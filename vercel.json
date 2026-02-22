@@ -1,6 +1,0 @@
-{
-  "buildCommand": "pnpm --filter @valeo/x402 build && pnpm --filter sentinel-app build",
-  "installCommand": "pnpm install",
-  "outputDirectory": "app/.next",
-  "framework": "nextjs"
-}
