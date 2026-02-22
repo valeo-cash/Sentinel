@@ -12,7 +12,7 @@ import {
   Play,
 } from "lucide-react";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
-import { HowItWorksTimeline } from "@/components/landing/how-it-works-timeline";
+import { HowItWorksTerminal } from "@/components/landing/how-it-works-terminal";
 
 export default function LandingPage() {
   return (
@@ -204,7 +204,7 @@ export default function LandingPage() {
               trail from agent to endpoint.
             </p>
 
-            <HowItWorksTimeline />
+            <HowItWorksTerminal />
           </div>
         </section>
       </FadeIn>
