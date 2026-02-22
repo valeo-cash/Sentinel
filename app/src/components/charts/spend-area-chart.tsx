@@ -69,8 +69,8 @@ export function SpendAreaChart({ data, loading, bucket }: SpendAreaChartProps) {
       <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="spendAreaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.3} />
-            <stop offset="100%" stopColor="#F59E0B" stopOpacity={0} />
+            <stop offset="0%" stopColor="#f3f0eb" stopOpacity={0.2} />
+            <stop offset="100%" stopColor="#f3f0eb" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
@@ -91,7 +91,7 @@ export function SpendAreaChart({ data, loading, bucket }: SpendAreaChartProps) {
         <Area
           type="monotone"
           dataKey="total_usd"
-          stroke="#F59E0B"
+          stroke="#f3f0eb"
           strokeWidth={2}
           fill="url(#spendAreaGradient)"
         />

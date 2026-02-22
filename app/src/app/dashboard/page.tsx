@@ -38,7 +38,7 @@ function getSeverityColor(severity: string): string {
     case "high":
       return "bg-orange-500";
     case "medium":
-      return "bg-amber-500";
+      return "bg-yellow-500";
     case "info":
     case "low":
       return "bg-blue-500";

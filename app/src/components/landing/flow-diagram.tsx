@@ -38,7 +38,7 @@ function TerminalCard() {
 function SentinelCard() {
   return (
     <div className="flow-card group">
-      <div className="w-[72px] h-[72px] md:w-[80px] md:h-[80px] rounded-2xl border border-accent/30 bg-card flex items-center justify-center shadow-xl shadow-black/30 shadow-[0_0_30px_rgba(245,158,11,0.08)] transition-transform duration-300 hover:scale-[1.05]">
+      <div className="w-[72px] h-[72px] md:w-[80px] md:h-[80px] rounded-2xl border border-accent/30 bg-card flex items-center justify-center shadow-xl shadow-black/30 shadow-[0_0_30px_rgba(243,240,235,0.06)] transition-transform duration-300 hover:scale-[1.05]">
         <Image
           src="/sentinel_logo.png"
           alt="Sentinel"

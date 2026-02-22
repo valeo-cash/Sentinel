@@ -1,4 +1,45 @@
+import Link from "next/link";
 import { DocPage } from "@/components/docs/doc-page";
+import { BookOpen, Code, Map, LayoutDashboard, ArrowRightLeft, FileCode } from "lucide-react";
+
+const quickLinks = [
+  {
+    icon: BookOpen,
+    title: "Quick Start",
+    description: "Install the SDK and wrap your first fetch in under 5 minutes.",
+    href: "/docs/quickstart",
+  },
+  {
+    icon: Code,
+    title: "SDK Reference",
+    description: "Budget policies, audit ledger, storage backends, error handling, and types.",
+    href: "/docs/sdk/wrap-with-sentinel",
+  },
+  {
+    icon: Map,
+    title: "Guides",
+    description: "Single agent setup, multi-agent fleets, enterprise deployment, proxy mode.",
+    href: "/docs/guides/single-agent",
+  },
+  {
+    icon: LayoutDashboard,
+    title: "Dashboard",
+    description: "Overview, payments, agents, and policy management from the web UI.",
+    href: "/docs/dashboard/overview",
+  },
+  {
+    icon: FileCode,
+    title: "API Reference",
+    description: "Authentication, events ingest, payments, analytics, and management endpoints.",
+    href: "/docs/api/authentication",
+  },
+  {
+    icon: ArrowRightLeft,
+    title: "Proxy Mode",
+    description: "Zero-code integration. Change one URL and every payment is tracked automatically.",
+    href: "/docs/guides/proxy",
+  },
+];
 
 export default function DocsPage() {
   return (
@@ -6,83 +47,53 @@ export default function DocsPage() {
       title="Sentinel Documentation"
       description="Enterprise audit & compliance for x402 payments"
     >
-      <div className="prose prose-invert max-w-none">
-        <p>
-          Sentinel provides enterprise audit and compliance for x402 payments.
-          AI agents spend real money autonomously via the x402 protocol — Sentinel
-          tells you where it went.
+      <div className="max-w-none">
+        <p className="text-[#d1d5db] text-base leading-relaxed mb-10">
+          Sentinel is the audit and compliance layer for x402 payments.
+          AI agents spend real money autonomously — Sentinel intercepts
+          every payment, enforces budget limits, and logs a complete
+          audit trail. One npm install. One line of code. Full visibility.
         </p>
 
-        <h2>Features</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+          {quickLinks.map(({ icon: Icon, title, description, href }) => (
+            <Link
+              key={title}
+              href={href}
+              className="group block rounded-xl border border-[#1E1E2A] bg-[#111116] p-5 transition-all duration-200 hover:border-[#f3f0eb]/30 hover:shadow-[0_0_20px_rgba(243,240,235,0.03)]"
+            >
+              <Icon className="w-5 h-5 text-[#71717A] group-hover:text-[#f3f0eb] transition-colors mb-3" />
+              <h3 className="text-sm font-semibold text-white mb-1.5">{title}</h3>
+              <p className="text-xs text-[#a1a1aa] leading-relaxed">{description}</p>
+            </Link>
+          ))}
+        </div>
 
-        <h3>SDK</h3>
-        <p>
-          Drop-in wrapper for any x402 fetch. Budget enforcement, audit logging,
-          spike detection — all configurable. Same <code>fetch</code> interface.
-          Zero breaking changes.
-        </p>
-
-        <h3>Dashboard</h3>
-        <p>
-          Query spend by agent, team, endpoint, and time range. Export to
-          CSV/JSON for compliance reviews. Alerts for violations and anomalies.
-        </p>
-
-        <h3>Policies</h3>
-        <p>
-          Per-call, hourly, daily, and lifetime spend limits. Endpoint
-          allowlists/blocklists. Human approval workflows above configurable
-          thresholds.
-        </p>
-
-        <h2>Before & After</h2>
-
-        <h3>Before (plain x402)</h3>
-        <pre>
-          <code>{`import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
-import { registerExactEvmScheme } from "@x402/evm/exact/client";
-
-const client = new x402Client();
-registerExactEvmScheme(client, { signer });
-const fetchWithPayment = wrapFetchWithPayment(fetch, client);
-
-const response = await fetchWithPayment("https://api.example.com/paid");`}</code>
-        </pre>
-
-        <h3>After (with Sentinel)</h3>
-        <pre>
-          <code>{`import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
-import { registerExactEvmScheme } from "@x402/evm/exact/client";
-import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
-
-const client = new x402Client();
-registerExactEvmScheme(client, { signer });
-const fetchWithPayment = wrapFetchWithPayment(fetch, client);
-
-const secureFetch = wrapWithSentinel(fetchWithPayment, {
-  agentId: "agent-weather-001",
-  budget: standardPolicy(),
-});
-
-const response = await secureFetch("https://api.example.com/paid");`}</code>
-        </pre>
-
-        <p>Same API. Budget enforcement + audit trail included.</p>
-
-        <h2>Get Started</h2>
-        <ul>
-          <li>
-            <a href="/docs/quickstart">Quick Start</a> — Install and wrap in 4
-            lines
-          </li>
-          <li>
-            <a href="/docs/how-it-works">How It Works</a> — Architecture overview
-          </li>
-          <li>
-            <a href="/docs/guides/single-agent">Single Agent Guide</a> —
-            Step-by-step first agent
-          </li>
-        </ul>
+        <div className="rounded-xl border border-[#1E1E2A] bg-[#111116] p-5">
+          <h3 className="text-sm font-semibold text-white mb-3">Before &amp; After</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-[#71717A] mb-2 font-medium">Plain x402</p>
+              <pre className="text-xs font-mono leading-relaxed text-[#a1a1aa] bg-[#0d0d12] rounded-lg p-3 border border-[#1E1E2A] overflow-x-auto">
+{`const response = await fetchWithPayment(
+  "https://api.example.com/paid"
+);`}
+              </pre>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-[#f3f0eb] mb-2 font-medium">With Sentinel</p>
+              <pre className="text-xs font-mono leading-relaxed text-[#d1d5db] bg-[#0d0d12] rounded-lg p-3 border border-[#1E1E2A] overflow-x-auto">
+{`const secureFetch = wrapWithSentinel(
+  fetchWithPayment, {
+    agentId: "researcher-01",
+    budget: standardPolicy(),
+  }
+);`}
+              </pre>
+            </div>
+          </div>
+          <p className="text-xs text-[#71717A] mt-3">Same API. Budget enforcement + audit trail included.</p>
+        </div>
       </div>
     </DocPage>
   );

@@ -38,9 +38,9 @@ export async function POST(req: NextRequest) {
         subject: "Sign in to Sentinel",
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 440px; margin: 0 auto; padding: 48px 24px; background: #0A0A0F; color: #FAFAFA;">
-            <h2 style="color: #F59E0B; font-size: 18px; letter-spacing: 0.05em; margin: 0 0 24px;">SENTINEL</h2>
+            <h2 style="color: #f3f0eb; font-size: 18px; letter-spacing: 0.05em; margin: 0 0 24px;">SENTINEL</h2>
             <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #A1A1AA;">Click the button below to sign in to your Sentinel dashboard:</p>
-            <a href="${link}" style="display: inline-block; background: #F59E0B; color: #0A0A0F; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+            <a href="${link}" style="display: inline-block; background: #f3f0eb; color: #0A0A0F; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
               Sign In to Sentinel
             </a>
             <p style="color: #52525B; font-size: 13px; margin: 28px 0 0; line-height: 1.5;">

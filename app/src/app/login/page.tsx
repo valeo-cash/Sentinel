@@ -173,7 +173,7 @@ function LoginForm() {
                 </p>
                 <button
                   onClick={() => setEmailSent(false)}
-                  className="mt-4 text-xs text-accent hover:text-amber-400 transition-colors"
+                  className="mt-4 text-xs text-accent hover:text-white transition-colors"
                 >
                   Use a different email
                 </button>
@@ -194,7 +194,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading || !email}
-                  className="w-full py-2.5 bg-accent text-background font-semibold rounded-lg hover:bg-amber-400 transition-colors disabled:opacity-50 text-sm"
+                  className="w-full py-2.5 bg-accent text-[#0A0A0F] font-semibold rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm"
                 >
                   {loading ? "Sending..." : "Send Magic Link"}
                 </button>
@@ -223,7 +223,7 @@ function LoginForm() {
                   href="https://phantom.app/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 text-xs text-accent hover:text-amber-400 transition-colors"
+                  className="flex items-center justify-center gap-1.5 text-xs text-accent hover:text-white transition-colors"
                 >
                   Install Phantom <ExternalLink className="w-3 h-3" />
                 </a>

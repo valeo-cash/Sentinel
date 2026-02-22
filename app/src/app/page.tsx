@@ -33,7 +33,7 @@ export default function LandingPage() {
               { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },
             ].map(({ icon: Icon, label, href, external }) => {
               const cls =
-                "group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.08)] transition-all duration-200";
+                "group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(243,240,235,0.06)] transition-all duration-200";
               const inner = (
                 <>
                   <Icon className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
@@ -57,7 +57,7 @@ export default function LandingPage() {
               href="https://github.com/valeo-cash/Sentinel"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(245,158,11,0.08)] transition-all duration-200"
+              className="group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(243,240,235,0.06)] transition-all duration-200"
             >
               <Github className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
               <span className="text-sm text-foreground">GitHub</span>
@@ -265,7 +265,7 @@ export default function LandingPage() {
                 <Link
                   key={title}
                   href={href}
-                  className="group block rounded-xl border border-border bg-card p-6 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(245,158,11,0.06)] transition-all duration-300"
+                  className="group block rounded-xl border border-border bg-card p-6 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(243,240,235,0.04)] transition-all duration-300"
                 >
                   <Icon className="w-5 h-5 text-muted group-hover:text-accent transition-colors mb-4" />
                   <h3 className="text-base font-semibold text-white mb-2">{title}</h3>
@@ -340,7 +340,7 @@ export default function LandingPage() {
             </p>
             <p className="text-xs text-muted">
               Acquired by Valeo &middot;{" "}
-              <a href="https://valeocash.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-amber-400 transition-colors">
+              <a href="https://valeocash.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-white transition-colors">
                 valeocash.com
               </a>
             </p>

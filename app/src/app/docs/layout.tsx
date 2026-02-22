@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         title: (
           <span className="flex items-center gap-2 font-bold">
             <Image src="/sentinel_logo.png" alt="Sentinel" width={22} height={22} />
-            <span className="text-amber-500">SENTINEL</span>{" "}
+            <span className="text-[#f3f0eb]">SENTINEL</span>{" "}
             <span className="text-xs text-zinc-500">Docs</span>
           </span>
         ),

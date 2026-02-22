@@ -196,7 +196,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleCreateKey}
                   disabled={creating}
-                  className="px-4 py-2 bg-accent text-background font-semibold rounded-lg hover:bg-amber-400 transition-colors disabled:opacity-50 text-sm"
+                  className="px-4 py-2 bg-accent text-background font-semibold rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm"
                 >
                   {creating ? "..." : "Generate"}
                 </button>
