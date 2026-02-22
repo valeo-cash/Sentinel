@@ -10,7 +10,8 @@
     "db:push": "drizzle-kit push",
     "db:seed": "tsx src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed-explorer": "tsx src/scripts/seed-explorer.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",

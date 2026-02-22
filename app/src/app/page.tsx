@@ -8,6 +8,7 @@ import {
   Shield,
   FileText,
   ArrowRightLeft,
+  Globe,
 } from "lucide-react";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
 import { FlowDiagram } from "@/components/landing/flow-diagram";
@@ -28,6 +29,7 @@ export default function LandingPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
             {[
+              { icon: Globe, label: "Explorer", href: "/explorer", external: false },
               { icon: BookOpen, label: "Docs", href: "/docs", external: false },
               { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
               { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },
@@ -317,6 +319,7 @@ export default function LandingPage() {
                 <Link href="/docs/sdk/wrap-with-sentinel" className="block text-sm text-muted hover:text-white transition-colors">SDK</Link>
                 <Link href="/login" className="block text-sm text-muted hover:text-white transition-colors">Dashboard</Link>
                 <Link href="/proxy" className="block text-sm text-muted hover:text-white transition-colors">Proxy</Link>
+                <Link href="/explorer" className="block text-sm text-muted hover:text-white transition-colors">Explorer</Link>
                 <Link href="/docs" className="block text-sm text-muted hover:text-white transition-colors">Docs</Link>
               </div>
             </div>

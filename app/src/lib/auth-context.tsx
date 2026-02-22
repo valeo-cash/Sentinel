@@ -18,6 +18,7 @@ function isPublicRoute(pathname: string) {
     pathname === "/" ||
     pathname === "/login" ||
     pathname === "/proxy" ||
+    pathname.startsWith("/explorer") ||
     pathname.startsWith("/docs") ||
     pathname.startsWith("/auth/")
   );

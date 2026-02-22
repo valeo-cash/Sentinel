@@ -8,9 +8,11 @@ import {
   Github,
   Package,
   LayoutDashboard,
+  Globe,
 } from "lucide-react";
 
 const iconLinks = [
+  { icon: Globe, label: "Explorer", href: "/explorer", external: false },
   { icon: BookOpen, label: "Docs", href: "/docs", external: false },
   { icon: Github, label: "GitHub", href: "https://github.com/valeo-cash/Sentinel", external: true },
   { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },
