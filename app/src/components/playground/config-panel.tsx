@@ -321,7 +321,7 @@ export function ConfigPanel({
         <button
           onClick={onSend}
           disabled={!canSend || sending}
-          className="w-full h-11 rounded-lg bg-accent text-[#0A0A0F] font-semibold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110"
+          className="w-full h-11 rounded-lg bg-accent text-[#191919] font-semibold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110"
         >
           {sending ? (
             <>

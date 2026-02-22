@@ -95,7 +95,7 @@ export default function ProxyInfoPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/login"
-            className="inline-block px-5 py-2.5 bg-accent text-[#0A0A0F] text-sm font-semibold rounded-lg hover:bg-white transition-colors"
+            className="inline-block px-5 py-2.5 bg-accent text-[#191919] text-sm font-semibold rounded-lg hover:bg-white transition-colors"
           >
             Get API Key
           </Link>

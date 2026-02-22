@@ -3,12 +3,12 @@
 @import "fumadocs-ui/css/neutral.css";
 
 @theme {
-  --color-background: #201e1f;
+  --color-background: #191919;
   --color-foreground: #FAFAFA;
-  --color-card: #111116;
-  --color-card-hover: #16161D;
-  --color-border: #1E1E2A;
-  --color-border-hover: #2A2A3A;
+  --color-card: #1f1f1f;
+  --color-card-hover: #262626;
+  --color-border: #2e2e2e;
+  --color-border-hover: #3a3a3a;
   --color-muted: #71717A;
   --color-accent: #f3f0eb;
   --color-accent-muted: #d4d0c8;
@@ -22,42 +22,42 @@
 }
 
 :root, .dark {
-  --color-fd-background: #201e1f;
+  --color-fd-background: #191919;
   --color-fd-foreground: #e5e7eb;
-  --color-fd-muted: #1a1a1f;
+  --color-fd-muted: #262626;
   --color-fd-muted-foreground: #a1a1aa;
-  --color-fd-popover: #111116;
+  --color-fd-popover: #1f1f1f;
   --color-fd-popover-foreground: #e5e7eb;
-  --color-fd-card: #111116;
+  --color-fd-card: #1f1f1f;
   --color-fd-card-foreground: #e5e7eb;
-  --color-fd-border: #1E1E2A;
+  --color-fd-border: #2e2e2e;
   --color-fd-primary: #f3f0eb;
-  --color-fd-primary-foreground: #0A0A0F;
-  --color-fd-secondary: #1a1a1f;
+  --color-fd-primary-foreground: #191919;
+  --color-fd-secondary: #262626;
   --color-fd-secondary-foreground: #e5e7eb;
-  --color-fd-accent: #1a1a1f;
+  --color-fd-accent: #262626;
   --color-fd-accent-foreground: #e5e7eb;
   --color-fd-ring: #f3f0eb;
-  --color-fd-input: #111116;
+  --color-fd-input: #1f1f1f;
 }
 
 .dark #nd-sidebar, #nd-sidebar {
-  --color-fd-muted: #111116;
-  --color-fd-secondary: #1a1a1f;
+  --color-fd-muted: #1f1f1f;
+  --color-fd-secondary: #262626;
   --color-fd-muted-foreground: #a1a1aa;
-  background-color: #0d0d12 !important;
-  border-right-color: #1E1E2A !important;
+  background-color: #1a1a1a !important;
+  border-right-color: #2e2e2e !important;
 }
 
 #nd-sidebar a[data-active="true"],
 #nd-sidebar [data-active="true"] {
   color: #f3f0eb !important;
-  background-color: #1a1a1f !important;
+  background-color: #262626 !important;
 }
 
 pre {
-  background-color: #111116 !important;
-  border: 1px solid #1E1E2A !important;
+  background-color: #1f1f1f !important;
+  border: 1px solid #2e2e2e !important;
   border-radius: 10px !important;
   padding: 20px !important;
   font-family: "JetBrains Mono", ui-monospace, monospace !important;
@@ -77,13 +77,13 @@ pre code {
 }
 
 code:not(pre code) {
-  background-color: #1a1a1f !important;
+  background-color: #262626 !important;
   color: #f3f0eb !important;
   padding: 2px 6px !important;
   border-radius: 4px !important;
   font-size: 0.9em !important;
   font-family: "JetBrains Mono", ui-monospace, monospace !important;
-  border: 1px solid #1E1E2A !important;
+  border: 1px solid #2e2e2e !important;
 }
 
 .code-copy-btn {
@@ -106,7 +106,7 @@ code:not(pre code) {
 
 .code-copy-btn:hover {
   color: #f3f0eb;
-  background-color: #1E1E2A;
+  background-color: #2e2e2e;
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
@@ -136,11 +136,11 @@ code:not(pre code) {
 }
 
 .prose hr {
-  border-color: #1E1E2A !important;
+  border-color: #2e2e2e !important;
 }
 
 .prose table th {
-  background-color: #111116 !important;
+  background-color: #1f1f1f !important;
   color: #f3f0eb !important;
   text-transform: uppercase !important;
   font-size: 0.75rem !important;
@@ -148,11 +148,11 @@ code:not(pre code) {
 }
 
 .prose table td {
-  border-color: #1E1E2A !important;
+  border-color: #2e2e2e !important;
 }
 
 .prose table tr:nth-child(even) {
-  background-color: #0d0d12 !important;
+  background-color: #1a1a1a !important;
 }
 
 html {

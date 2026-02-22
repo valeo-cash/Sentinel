@@ -194,7 +194,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading || !email}
-                  className="w-full py-2.5 bg-accent text-[#0A0A0F] font-semibold rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm"
+                  className="w-full py-2.5 bg-accent text-[#191919] font-semibold rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm"
                 >
                   {loading ? "Sending..." : "Send Magic Link"}
                 </button>

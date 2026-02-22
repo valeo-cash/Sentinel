@@ -265,6 +265,12 @@ export default function LandingPage() {
                   desc: "Structured records for every payment. Agent, endpoint, amount, tx hash, timing, context. Queryable. Exportable.",
                   href: "/docs/sdk/audit-ledger",
                 },
+                {
+                  icon: Globe,
+                  title: "Explorer",
+                  desc: "Public x402 payment explorer. Endpoint rankings, network stats, volume charts. Real transaction data, not synthetic tests.",
+                  href: "/explorer",
+                },
               ].map(({ icon: Icon, title, desc, href }, i) => (
                 <Link
                   key={title}

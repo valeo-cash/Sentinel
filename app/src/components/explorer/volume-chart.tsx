@@ -22,7 +22,7 @@ type Tab = "volume" | "transactions";
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#1a1a22] border border-border rounded-lg px-3 py-2 text-xs shadow-lg">
+    <div className="bg-[#262626] border border-border rounded-lg px-3 py-2 text-xs shadow-lg">
       <p className="text-muted mb-1">{label}</p>
       <p className="text-white font-mono font-semibold">
         {payload[0]!.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
@@ -67,13 +67,13 @@ export function VolumeChart({ data }: { data: ChartRow[] }) {
           <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#1E1E2A"
+              stroke="#2e2e2e"
               vertical={false}
             />
             <XAxis
               dataKey="date"
               tick={{ fill: "#71717A", fontSize: 11 }}
-              axisLine={{ stroke: "#1E1E2A" }}
+              axisLine={{ stroke: "#2e2e2e" }}
               tickLine={false}
             />
             <YAxis

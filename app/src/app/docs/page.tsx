@@ -60,7 +60,7 @@ export default function DocsPage() {
             <Link
               key={title}
               href={href}
-              className="group block rounded-xl border border-[#1E1E2A] bg-[#111116] p-5 transition-all duration-200 hover:border-[#f3f0eb]/30 hover:shadow-[0_0_20px_rgba(243,240,235,0.03)]"
+              className="group block rounded-xl border border-[#2e2e2e] bg-[#1f1f1f] p-5 transition-all duration-200 hover:border-[#f3f0eb]/30 hover:shadow-[0_0_20px_rgba(243,240,235,0.03)]"
             >
               <Icon className="w-5 h-5 text-[#71717A] group-hover:text-[#f3f0eb] transition-colors mb-3" />
               <h3 className="text-sm font-semibold text-white mb-1.5">{title}</h3>
@@ -69,12 +69,12 @@ export default function DocsPage() {
           ))}
         </div>
 
-        <div className="rounded-xl border border-[#1E1E2A] bg-[#111116] p-5">
+        <div className="rounded-xl border border-[#2e2e2e] bg-[#1f1f1f] p-5">
           <h3 className="text-sm font-semibold text-white mb-3">Before &amp; After</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-[10px] uppercase tracking-widest text-[#71717A] mb-2 font-medium">Plain x402</p>
-              <pre className="text-xs font-mono leading-relaxed text-[#a1a1aa] bg-[#0d0d12] rounded-lg p-3 border border-[#1E1E2A] overflow-x-auto">
+              <pre className="text-xs font-mono leading-relaxed text-[#a1a1aa] bg-[#1a1a1a] rounded-lg p-3 border border-[#2e2e2e] overflow-x-auto">
 {`const response = await fetchWithPayment(
   "https://api.example.com/paid"
 );`}
@@ -82,7 +82,7 @@ export default function DocsPage() {
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-[#f3f0eb] mb-2 font-medium">With Sentinel</p>
-              <pre className="text-xs font-mono leading-relaxed text-[#d1d5db] bg-[#0d0d12] rounded-lg p-3 border border-[#1E1E2A] overflow-x-auto">
+              <pre className="text-xs font-mono leading-relaxed text-[#d1d5db] bg-[#1a1a1a] rounded-lg p-3 border border-[#2e2e2e] overflow-x-auto">
 {`const secureFetch = wrapWithSentinel(
   fetchWithPayment, {
     agentId: "researcher-01",

@@ -67,7 +67,7 @@ type ChartTab = "latency" | "volume" | "successRate";
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#1a1a22] border border-border rounded-lg px-3 py-2 text-xs shadow-lg">
+    <div className="bg-[#262626] border border-border rounded-lg px-3 py-2 text-xs shadow-lg">
       <p className="text-muted mb-1">{label}</p>
       <p className="text-white font-mono font-semibold">
         {payload[0]!.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
@@ -252,24 +252,24 @@ export default function EndpointDetailPage({
             <ResponsiveContainer width="100%" height="100%">
               {chartTab === "volume" ? (
                 <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E1E2A" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fill: "#71717A", fontSize: 11 }} axisLine={{ stroke: "#1E1E2A" }} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2e2e2e" vertical={false} />
+                  <XAxis dataKey="date" tick={{ fill: "#71717A", fontSize: 11 }} axisLine={{ stroke: "#2e2e2e" }} tickLine={false} />
                   <YAxis tick={{ fill: "#71717A", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `$${v}`} />
                   <Tooltip content={<ChartTooltip />} />
                   <Bar dataKey="volume" fill="#f3f0eb" radius={[4, 4, 0, 0]} maxBarSize={24} />
                 </BarChart>
               ) : chartTab === "latency" ? (
                 <LineChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E1E2A" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fill: "#71717A", fontSize: 11 }} axisLine={{ stroke: "#1E1E2A" }} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2e2e2e" vertical={false} />
+                  <XAxis dataKey="date" tick={{ fill: "#71717A", fontSize: 11 }} axisLine={{ stroke: "#2e2e2e" }} tickLine={false} />
                   <YAxis tick={{ fill: "#71717A", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${v}ms`} />
                   <Tooltip content={<ChartTooltip />} />
                   <Line type="monotone" dataKey="avgLatency" stroke="#3B82F6" strokeWidth={2} dot={false} />
                 </LineChart>
               ) : (
                 <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E1E2A" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fill: "#71717A", fontSize: 11 }} axisLine={{ stroke: "#1E1E2A" }} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2e2e2e" vertical={false} />
+                  <XAxis dataKey="date" tick={{ fill: "#71717A", fontSize: 11 }} axisLine={{ stroke: "#2e2e2e" }} tickLine={false} />
                   <YAxis tick={{ fill: "#71717A", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${v}%`} domain={[0, 100]} />
                   <Tooltip content={<ChartTooltip />} />
                   <defs>

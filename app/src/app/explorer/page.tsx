@@ -164,7 +164,7 @@ export default function ExplorerPage() {
                 onClick={() => setNetworkFilter(nf.value)}
                 className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
                   networkFilter === nf.value
-                    ? "bg-accent text-[#0A0A0F] font-medium"
+                    ? "bg-accent text-[#191919] font-medium"
                     : "text-muted hover:text-white"
                 }`}
               >
@@ -179,7 +179,7 @@ export default function ExplorerPage() {
                 onClick={() => setTimeRange(tr.value)}
                 className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
                   timeRange === tr.value
-                    ? "bg-accent text-[#0A0A0F] font-medium"
+                    ? "bg-accent text-[#191919] font-medium"
                     : "text-muted hover:text-white"
                 }`}
               >
