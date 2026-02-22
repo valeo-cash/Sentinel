@@ -31,7 +31,8 @@ export const pageTree: PageTree.Root = {
     { type: "page", name: "Payments API", url: "/docs/api/payments" },
     { type: "page", name: "Analytics API", url: "/docs/api/analytics" },
     { type: "page", name: "Management API", url: "/docs/api/management" },
-    { type: "separator", name: "Resources" },
+    { type: "separator", name: "Tools" },
+    { type: "page", name: "Playground", url: "/playground" },
     { type: "page", name: "Explorer", url: "/explorer" },
   ],
 };

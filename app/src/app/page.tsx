@@ -9,6 +9,7 @@ import {
   FileText,
   ArrowRightLeft,
   Globe,
+  Play,
 } from "lucide-react";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
 import { FlowDiagram } from "@/components/landing/flow-diagram";
@@ -30,6 +31,7 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
             {[
               { icon: Globe, label: "Explorer", href: "/explorer", external: false },
+              { icon: Play, label: "Playground", href: "/playground", external: false },
               { icon: BookOpen, label: "Docs", href: "/docs", external: false },
               { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
               { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@valeo/x402", external: true },

@@ -12,6 +12,7 @@ import {
   Settings,
   BookOpen,
   LogOut,
+  Play,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
@@ -22,6 +23,7 @@ const navItems = [
   { icon: Bot, label: "Agents", href: "/dashboard/agents" },
   { icon: Bell, label: "Alerts", href: "/dashboard/alerts" },
   { icon: Shield, label: "Policies", href: "/dashboard/policies" },
+  { icon: Play, label: "Playground", href: "/playground" },
 ] as const;
 
 const bottomItems = [
