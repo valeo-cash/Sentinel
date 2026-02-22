@@ -1,0 +1,110 @@
+---
+title: AuditLogger
+description: Audit logging class and record management
+---
+
+# AuditLogger
+
+Central audit logger that writes payment records to a pluggable storage backend. Used internally by `wrapWithSentinel`; you can also use it directly for custom flows.
+
+## Constructor
+
+```ts
+constructor(config?: AuditConfig)
+```
+
+| Config Field | Type | Default | Description |
+|--------------|------|---------|-------------|
+| `enabled` | `boolean` | `true` | Whether logging is active |
+| `storage` | `StorageBackend` | `MemoryStorage` | Where records are written |
+| `enrichment` | `EnrichmentConfig` | — | Tag rules, static tags |
+| `redactFields` | `string[]` | — | Fields to redact from stored records |
+
+## Methods
+
+### log
+
+```ts
+log(record: Omit<AuditRecord, "id" | "created_at">): Promise<AuditRecord>
+```
+
+Log a completed payment record. `id` and `created_at` are auto-generated.
+
+### logBlocked
+
+```ts
+logBlocked(
+  context: PaymentContext,
+  violation: BudgetViolation,
+  config: { humanSponsor?: string; metadata?: Record<string, string> }
+): Promise<AuditRecord>
+```
+
+Log a blocked payment attempt (budget violation). Creates a record with `policy_evaluation: "blocked"`.
+
+### query
+
+```ts
+query(query: AuditQuery): Promise<AuditRecord[]>
+```
+
+Filter records by agent, team, endpoint, time range, status, tags.
+
+### summarize
+
+```ts
+summarize(query?: Partial<AuditQuery>): Promise<AuditSummary>
+```
+
+Aggregated stats: total spend, transaction count, by agent/endpoint/team.
+
+### exportCSV / exportJSON
+
+```ts
+exportCSV(query?: AuditQuery): Promise<string>
+exportJSON(query?: AuditQuery): Promise<string>
+```
+
+Export records for compliance reviews.
+
+### flush
+
+```ts
+flush(): Promise<void>
+```
+
+Flush pending writes to storage (for FileStorage, ApiStorage).
+
+### getStorage
+
+```ts
+getStorage(): StorageBackend
+```
+
+Get the underlying storage backend (for dashboard integration).
+
+## Example
+
+```ts
+import { AuditLogger, MemoryStorage } from "@valeo/x402";
+
+const logger = new AuditLogger({
+  storage: new MemoryStorage(10_000),
+  enrichment: {
+    staticTags: ["production"],
+    tagRules: [{ pattern: ".*openai.*", tags: ["llm"] }],
+  },
+});
+
+const records = await logger.query({
+  agentId: "agent-weather-001",
+  startTime: Date.now() - 86400000,
+  status: ["allowed", "flagged"],
+  limit: 100,
+});
+
+const summary = await logger.summarize({ team: "data-ops" });
+console.log(summary.total_spend, summary.total_transactions);
+
+const csv = await logger.exportCSV();
+```

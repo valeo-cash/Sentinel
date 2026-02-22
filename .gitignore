@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.next/
+data/
+drizzle/
+*.db
+.env
+.env.local
+.env.production
+.pnpm-store/
+.cursor/
+.DS_Store
+*.tsbuildinfo

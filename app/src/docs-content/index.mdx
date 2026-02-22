@@ -1,0 +1,80 @@
+---
+title: Sentinel
+description: Enterprise audit & compliance for x402 payments
+---
+
+# Sentinel
+
+**Enterprise audit & compliance for x402 payments.**
+
+Agents spend money. Sentinel tells you where it went.
+
+---
+
+## The Problem
+
+AI agents are spending real money autonomously via the [x402 protocol](https://github.com/coinbase/x402). But x402 provides no built-in audit trail, budget controls, or compliance tooling. Enterprise teams need visibility: *which agent* spent *how much* on *what endpoint* and *who approved it*.
+
+Sentinel fixes this with a single line of code.
+
+---
+
+## Features
+
+### SDK
+
+Drop-in wrapper for any x402 fetch. Budget enforcement, audit logging, spike detection — all configurable. Same `fetch` interface. Zero breaking changes.
+
+### Dashboard
+
+Query spend by agent, team, endpoint, and time range. Export to CSV/JSON for compliance reviews. Alerts for violations and anomalies.
+
+### Policies
+
+Per-call, hourly, daily, and lifetime spend limits. Endpoint allowlists/blocklists. Human approval workflows above configurable thresholds.
+
+---
+
+## Before & After
+
+### Before (plain x402)
+
+```ts
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+
+const client = new x402Client();
+registerExactEvmScheme(client, { signer });
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+const response = await fetchWithPayment("https://api.example.com/paid");
+```
+
+### After (with Sentinel)
+
+```ts
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+
+const client = new x402Client();
+registerExactEvmScheme(client, { signer });
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-weather-001",
+  budget: standardPolicy(),
+});
+
+const response = await secureFetch("https://api.example.com/paid");
+```
+
+Same API. Budget enforcement + audit trail included.
+
+---
+
+## Get Started
+
+- [Quickstart](/docs/getting-started/quickstart) — Install and wrap in 4 lines
+- [How It Works](/docs/getting-started/how-it-works) — Architecture overview
+- [Single Agent Guide](/docs/guides/single-agent) — Step-by-step first agent

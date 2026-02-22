@@ -1,0 +1,58 @@
+---
+title: Dashboard Overview
+description: Tour of the Sentinel dashboard and query capabilities
+---
+
+# Dashboard Overview
+
+The Sentinel Dashboard is a programmatic client for querying audit data. It runs **locally** against your configured storage backend — no remote API required.
+
+## Key Concepts
+
+- **Storage-first**: All data lives in your `StorageBackend` (Memory, File, or API)
+- **Query API**: `SentinelDashboard` and standalone functions query that storage
+- **No UI**: The SDK provides a programmatic API. Build your own UI or use the query functions in scripts
+
+## Getting Started
+
+```ts
+import { MemoryStorage } from "@valeo/x402";
+import { SentinelDashboard } from "@valeo/x402/dashboard";
+
+const storage = new MemoryStorage();
+const dashboard = new SentinelDashboard({ storage });
+```
+
+Use the same storage instance you pass to `wrapWithSentinel` so the dashboard sees all audit records.
+
+## Core Queries
+
+| Method | Description |
+|--------|-------------|
+| `getSpend(query)` | Aggregated spend by agent, endpoint, time range |
+| `getAgents()` | Summary for all agents (spend, count, last active) |
+| `getAlerts()` | Violations and anomalies as alerts |
+
+## Time Ranges
+
+All spend queries accept a `range`:
+
+- `"last_hour"` | `"last_day"` | `"last_week"` | `"last_month"`
+- `{ start: number, end: number }` — Unix timestamps in ms
+
+## Data Flow
+
+```
+wrapWithSentinel → AuditLogger → StorageBackend
+                                    ↓
+                            SentinelDashboard
+                                    ↓
+                            getSpend, getAgents, getAlerts
+```
+
+## Next Steps
+
+- [Payments](/docs/dashboard-docs/payments) — Audit trail and payment details
+- [Agents](/docs/dashboard-docs/agents) — Agent management
+- [Policies](/docs/dashboard-docs/policies) — Budget policy in the UI context
+- [Export](/docs/dashboard-docs/export) — CSV/JSON export

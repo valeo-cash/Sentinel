@@ -1,0 +1,87 @@
+---
+title: Budget Policies
+description: createBudgetPolicy and preset policies
+---
+
+# Budget Policies
+
+Budget policies define spending limits and constraints. Sentinel evaluates every payment against the policy before it settles.
+
+## createBudgetPolicy
+
+There is no `createBudgetPolicy` function. Use the preset factories or `customPolicy` to build policies.
+
+## Preset Policies
+
+```ts
+import {
+  conservativePolicy,
+  standardPolicy,
+  liberalPolicy,
+  unlimitedPolicy,
+  customPolicy,
+} from "@valeo/x402";
+```
+
+| Preset | Per Call | Per Hour | Per Day | Use Case |
+|--------|----------|----------|---------|----------|
+| `conservativePolicy()` | $0.10 | $5.00 | $50.00 | Low-risk, testing |
+| `standardPolicy()` | $1.00 | $25.00 | $200.00 | Typical production |
+| `liberalPolicy()` | $10.00 | $100.00 | $1,000.00 | High-throughput, trusted |
+| `unlimitedPolicy()` | — | — | — | Audit only, no limits |
+
+## customPolicy
+
+Override any defaults by merging with `standardPolicy`:
+
+```ts
+const policy = customPolicy({
+  maxPerCall: "5.00",
+  maxPerHour: "50.00",
+  maxPerDay: "500.00",
+  maxTotal: "10000.00",
+  spikeThreshold: 5.0,
+  allowedEndpoints: ["https://api.trusted.com/*"],
+  blockedEndpoints: ["https://*.competitors.com/*"],
+  requireApproval: {
+    above: "50.00",
+    handler: async (ctx) => await askSlackForApproval(ctx),
+  },
+});
+```
+
+## BudgetPolicy Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `maxPerCall` | `string` | Max USDC per single payment (e.g., `"1.00"`) |
+| `maxPerHour` | `string` | Hourly rolling cap |
+| `maxPerDay` | `string` | Daily rolling cap |
+| `maxTotal` | `string` | Lifetime total cap |
+| `spikeThreshold` | `number` | Flag if payment > N× rolling average (default 3.0) |
+| `allowedEndpoints` | `string[]` | URL patterns allowed (whitelist) |
+| `blockedEndpoints` | `string[]` | URL patterns blocked (blacklist) |
+| `requireApproval` | `object` | Human approval above threshold |
+
+<Callout type="info" title="Endpoint Patterns">
+Patterns use glob-style matching. `https://api.*.com/*` matches `https://api.weather.com/v1/current`.
+</Callout>
+
+## BudgetManager (Advanced)
+
+For direct control, use `BudgetManager`:
+
+```ts
+import { BudgetManager, standardPolicy } from "@valeo/x402";
+
+const manager = new BudgetManager(standardPolicy());
+const evaluation = manager.evaluate(paymentContext);
+
+if (!evaluation.allowed) {
+  console.log(evaluation.violation.type, evaluation.violation.limit);
+} else {
+  manager.record(amount, endpoint);
+}
+```
+
+`wrapWithSentinel` creates and uses a `BudgetManager` internally. You typically don't need to instantiate it directly.

@@ -1,0 +1,91 @@
+---
+title: Multi-Agent Fleet
+description: Team setup and shared budgets across agents
+---
+
+# Multi-Agent Fleet
+
+When you have multiple agents, you can share a single storage backend and optionally enforce team-level budgets.
+
+## Shared Storage
+
+Create one storage instance and pass it to all agents. All audit records go to the same place:
+
+```ts
+import { MemoryStorage, wrapWithSentinel, standardPolicy } from "@valeo/x402";
+
+const sharedStorage = new MemoryStorage(50_000);
+
+const agent1Fetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-weather-001",
+  team: "data-ops",
+  budget: standardPolicy(),
+  audit: { storage: sharedStorage },
+});
+
+const agent2Fetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-llm-002",
+  team: "data-ops",
+  budget: standardPolicy(),
+  audit: { storage: sharedStorage },
+});
+```
+
+## Team-Level Queries
+
+Use `SentinelDashboard` to query by team:
+
+```ts
+import { SentinelDashboard } from "@valeo/x402/dashboard";
+
+const dashboard = new SentinelDashboard({ storage: sharedStorage });
+
+const report = await dashboard.getSpend({
+  team: "data-ops",
+  range: "last_day",
+});
+
+const agents = await dashboard.getAgents();
+// Filter by team in your app logic
+```
+
+## Per-Agent vs Team Budgets
+
+Sentinel enforces budgets **per agent**. Each `wrapWithSentinel` call gets its own `BudgetManager`. There is no built-in shared team budget yet.
+
+**Workaround**: Use a custom `beforePayment` hook to check team-level spend:
+
+```ts
+import { spendByTeam } from "@valeo/x402/dashboard";
+
+const agentFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-1",
+  team: "data-ops",
+  budget: standardPolicy(),
+  audit: { storage: sharedStorage },
+  hooks: {
+    beforePayment: async (ctx) => {
+      const result = await spendByTeam(sharedStorage, "data-ops", "last_day");
+      if (parseFloat(result.spend) > 1000) {
+        return { proceed: false, reason: "Team daily limit exceeded" };
+      }
+      return { proceed: true };
+    },
+  },
+});
+```
+
+## Dashboard for Fleet
+
+One dashboard instance can serve all agents:
+
+```ts
+const dashboard = new SentinelDashboard({ storage: sharedStorage });
+
+const topSpenders = await dashboard.getAgents();
+const alerts = await dashboard.getAlerts();
+```
+
+<Callout type="info" title="Roadmap">
+Multi-agent budget coordination (shared team budgets) is on the roadmap. See [Roadmap](/docs/resources/roadmap).
+</Callout>

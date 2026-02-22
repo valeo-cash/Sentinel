@@ -1,0 +1,12 @@
+src/
+examples/
+.cursor/
+.github/
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+*.test.ts
+__tests__/
+.valeo/
+pnpm-lock.yaml
+node_modules/

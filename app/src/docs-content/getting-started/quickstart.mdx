@@ -1,0 +1,72 @@
+---
+title: Quickstart
+description: Install Sentinel and wrap your x402 fetch in 4 lines
+---
+
+# Quickstart
+
+## Install
+
+```bash
+npm install @valeo/x402
+# or
+pnpm add @valeo/x402
+```
+
+<Callout type="info" title="Peer Dependencies">
+Sentinel requires `@x402/core` and `@x402/fetch` as peer dependencies. Install them if you haven't already.
+</Callout>
+
+## Wrap Your Fetch
+
+Add 4 lines to your existing x402 setup:
+
+```ts
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+
+const client = new x402Client();
+registerExactEvmScheme(client, { signer });
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+// Wrap with Sentinel
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-weather-001",
+  budget: standardPolicy(),
+});
+
+// Use exactly like before
+const response = await secureFetch("https://api.example.com/weather");
+```
+
+## What Happens
+
+When a payment is made, Sentinel:
+
+1. **Evaluates** the payment against the budget policy (per-call, hourly, daily limits)
+2. **Blocks** the request if a limit would be exceeded
+3. **Logs** the payment to the audit trail (agent, amount, endpoint, tx hash)
+4. **Returns** the response — your app code is unchanged
+
+## Console Output
+
+With default in-memory storage, you won't see console output. To verify Sentinel is working, add a hook:
+
+```ts
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-weather-001",
+  budget: standardPolicy(),
+  hooks: {
+    afterPayment: async (record) => {
+      console.log(`Paid $${record.amount} to ${record.endpoint}`);
+    },
+  },
+});
+```
+
+## Next Steps
+
+- [Dashboard](/docs/dashboard-docs/overview) — Query spend and export audit data
+- [Budget Enforcement](/docs/sdk/budget-policies) — Configure limits and presets
+- [Storage Backends](/docs/sdk/storage-backends) — File or API storage for persistence

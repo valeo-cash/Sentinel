@@ -1,0 +1,13 @@
+services:
+  sentinel:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - sentinel-data:/data
+    environment:
+      - DATABASE_URL=file:/data/sentinel.db
+      - NODE_ENV=production
+
+volumes:
+  sentinel-data:

@@ -1,0 +1,109 @@
+---
+title: Error Handling
+description: Error types and handling patterns
+---
+
+# Error Handling
+
+Sentinel defines four error classes. Handle them appropriately in your agent code.
+
+## Error Types
+
+| Class | Code | When | Fatal? |
+|-------|------|------|--------|
+| `SentinelBudgetError` | `BUDGET_EXCEEDED` | Budget limit exceeded | Yes (blocks payment) |
+| `SentinelAuditError` | `AUDIT_ERROR` | Audit write failed | No (never blocks) |
+| `SentinelConfigError` | `CONFIG_ERROR` | Invalid config at init | Yes (at wrap time) |
+| `SentinelError` | varies | Base class | — |
+
+## SentinelBudgetError
+
+Thrown when a payment would violate the budget policy. The request fails before payment.
+
+```ts
+import { wrapWithSentinel, SentinelBudgetError } from "@valeo/x402";
+
+try {
+  await secureFetch("https://api.example.com/expensive");
+} catch (err) {
+  if (err instanceof SentinelBudgetError) {
+    console.log(err.message);
+    // "Budget exceeded: $2.50 spent of $5.00 hourly limit on agent-weather-001"
+    console.log(err.violation.type);   // "hourly" | "daily" | "per_call" | ...
+    console.log(err.violation.limit);  // "5.00"
+    console.log(err.violation.current); // "2.50"
+    console.log(err.violation.attempted); // "2.50"
+  }
+}
+```
+
+### Violation Types
+
+| `violation.type` | Meaning |
+|------------------|---------|
+| `per_call` | Single payment exceeds `maxPerCall` |
+| `hourly` | Hourly cap exceeded |
+| `daily` | Daily cap exceeded |
+| `total` | Lifetime cap exceeded |
+| `spike` | Payment exceeds spike threshold |
+| `blocked_endpoint` | Endpoint matches blocklist |
+| `approval_required` | Above approval threshold, handler denied |
+
+## SentinelAuditError
+
+Audit failures are **never fatal**. Sentinel catches them internally and does not block the request. If you use `AuditLogger` directly, catch and log:
+
+```ts
+import { AuditLogger, SentinelAuditError } from "@valeo/x402";
+
+try {
+  await logger.log(record);
+} catch (err) {
+  if (err instanceof SentinelAuditError) {
+    console.error("Audit failed:", err.message);
+    if (err.record) {
+      // Fallback: write to local file, send to backup system
+    }
+  }
+}
+```
+
+<Callout type="warn" title="Never Block on Audit">
+Audit failures should not block business logic. Log and alert, but allow the payment to complete.
+</Callout>
+
+## SentinelConfigError
+
+Thrown at `wrapWithSentinel` time when config is invalid:
+
+```ts
+import { wrapWithSentinel, validateConfig, SentinelConfigError } from "@valeo/x402";
+
+try {
+  validateConfig({ agentId: "", budget: { maxPerCall: "not-a-number" } });
+} catch (err) {
+  if (err instanceof SentinelConfigError) {
+    console.error("Invalid config:", err.message);
+  }
+}
+```
+
+## validateConfig
+
+Validate config before wrapping:
+
+```ts
+import { validateConfig } from "@valeo/x402";
+
+validateConfig({
+  agentId: "agent-1",
+  budget: {
+    maxPerCall: "1.00",
+    maxPerHour: "25.00",
+    spikeThreshold: 3.0,
+  },
+});
+// Throws SentinelConfigError if invalid
+```
+
+Validates: non-empty `agentId`, valid USDC amounts, `spikeThreshold` > 1, not both allowlist and blocklist.

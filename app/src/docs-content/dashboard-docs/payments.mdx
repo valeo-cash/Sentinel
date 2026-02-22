@@ -1,0 +1,89 @@
+---
+title: Payments & Audit Trail
+description: Audit trail features and payment record details
+---
+
+# Payments & Audit Trail
+
+Every payment produces an audit record. This page covers how to query and interpret them.
+
+## Record Structure
+
+Each `AuditRecord` includes:
+
+| Field | Description |
+|-------|-------------|
+| `id` | Deterministic hash ID |
+| `agent_id` | Agent that made the payment |
+| `team` | Team grouping |
+| `amount` | Human-readable USDC (e.g., `"0.50"`) |
+| `amount_raw` | Base units |
+| `endpoint` | Full URL called |
+| `method` | HTTP method |
+| `tx_hash` | On-chain transaction hash |
+| `payer_address` | Wallet that paid |
+| `payee_address` | Wallet that received |
+| `policy_evaluation` | `"allowed"` \| `"flagged"` \| `"blocked"` |
+| `created_at` | Unix timestamp (ms) |
+| `tags` | Enrichment tags |
+| `metadata` | Custom key/value |
+
+## Querying Payments
+
+Use `AuditLogger.query` or access storage directly:
+
+```ts
+import { AuditLogger } from "@valeo/x402";
+
+const logger = new AuditLogger({ storage });
+
+const records = await logger.query({
+  agentId: "agent-weather-001",
+  startTime: Date.now() - 86400000,
+  endTime: Date.now(),
+  status: ["allowed", "flagged"],
+  minAmount: "0.10",
+  limit: 100,
+  orderBy: "created_at",
+  order: "desc",
+});
+```
+
+## Spend Reports
+
+Use `SentinelDashboard.getSpend` for aggregated views:
+
+```ts
+const report = await dashboard.getSpend({
+  agentId: "agent-1",
+  range: "last_day",
+});
+
+console.log(report.totalSpend);   // "$123.45"
+console.log(report.count);        // 42
+console.log(report.byAgent);      // { "agent-1": { spend: "123.45", count: 42 } }
+console.log(report.byEndpoint);   // { "https://api.example.com/...": { spend: "50.00", count: 10 } }
+```
+
+## Violations & Anomalies
+
+Blocked payments and flagged anomalies appear in `getAlerts()`:
+
+```ts
+const alerts = await dashboard.getAlerts();
+
+for (const alert of alerts) {
+  console.log(alert.type);    // "violation" | "anomaly"
+  console.log(alert.message);
+  console.log(alert.record);
+}
+```
+
+Or use standalone functions:
+
+```ts
+import { violations, anomalies } from "@valeo/x402/dashboard";
+
+const blocked = await violations(storage, "last_day");
+const flagged = await anomalies(storage, "last_day");
+```

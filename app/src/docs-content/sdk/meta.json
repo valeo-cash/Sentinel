@@ -1,0 +1,12 @@
+{
+  "title": "SDK Reference",
+  "pages": [
+    "wrap-with-sentinel",
+    "budget-policies",
+    "audit-ledger",
+    "dashboard-client",
+    "storage-backends",
+    "error-handling",
+    "types"
+  ]
+}

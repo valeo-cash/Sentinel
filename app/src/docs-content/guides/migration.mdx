@@ -1,0 +1,79 @@
+---
+title: Migration from Raw x402
+description: Migrating from raw x402 to Sentinel
+---
+
+# Migration from Raw x402
+
+Migrating to Sentinel is a one-line change. Your existing x402 flow stays intact.
+
+## Before: Raw x402
+
+```ts
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+
+const client = new x402Client();
+registerExactEvmScheme(client, { signer });
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+// Used everywhere
+const response = await fetchWithPayment("https://api.example.com/paid");
+```
+
+## After: With Sentinel
+
+```ts
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+
+const client = new x402Client();
+registerExactEvmScheme(client, { signer });
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-001",
+  budget: standardPolicy(),
+});
+
+// Same API — replace fetchWithPayment with secureFetch
+const response = await secureFetch("https://api.example.com/paid");
+```
+
+## Migration Steps
+
+1. **Install** `@valeo/x402`
+2. **Wrap** your x402 fetch with `wrapWithSentinel`
+3. **Replace** all usages of the old fetch with the wrapped one
+4. **Add** try/catch for `SentinelBudgetError` where you want graceful handling
+5. **Optional**: Add storage, hooks, metadata
+
+## Zero Breaking Changes
+
+- Same `fetch` signature: `(input, init?) => Promise<Response>`
+- Same response format
+- Same 402 flow — Sentinel only intercepts; it doesn't change the protocol
+
+If you remove Sentinel, your code works identically with the raw x402 fetch.
+
+## Gradual Rollout
+
+You can migrate one agent at a time. Use different fetch instances:
+
+```ts
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+const legacyFetch = fetchWithPayment; // Unchanged
+const newFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-new",
+  budget: standardPolicy(),
+});
+
+// Route by feature flag or agent type
+const fetchToUse = useSentinel ? newFetch : legacyFetch;
+```
+
+<Callout type="tip" title="Audit-Only First">
+Start with `unlimitedPolicy()` to get audit logging without budget enforcement. Add limits once you've observed typical spend.
+</Callout>

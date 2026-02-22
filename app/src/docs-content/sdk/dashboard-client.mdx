@@ -1,0 +1,115 @@
+---
+title: SentinelDashboard
+description: Dashboard client for querying audit data
+---
+
+# SentinelDashboard
+
+Client for querying Sentinel audit data. Runs queries locally against the configured `StorageBackend`. No remote API required.
+
+## Import
+
+```ts
+import { SentinelDashboard } from "@valeo/x402/dashboard";
+```
+
+## Constructor
+
+```ts
+constructor(config: DashboardConfig)
+```
+
+| Config Field | Type | Description |
+|--------------|------|-------------|
+| `storage` | `StorageBackend` | Audit storage (Memory, File, or shared from AuditLogger) |
+| `apiKey` | `string` | Reserved for future remote API |
+| `baseUrl` | `string` | Reserved for future remote API |
+
+## Methods
+
+### getSpend
+
+```ts
+getSpend(query: SpendQuery): Promise<SpendReport>
+```
+
+Query spend data with flexible filters.
+
+| Query Field | Type | Description |
+|-------------|------|-------------|
+| `agentId` | `string` | Filter by agent |
+| `team` | `string` | Filter by team |
+| `endpoint` | `string` | Filter by endpoint pattern |
+| `range` | `TimeRange` | `"last_hour"` \| `"last_day"` \| `"last_week"` \| `"last_month"` \| `{ start, end }` |
+
+Returns: `{ totalSpend, count, byAgent, byEndpoint }`
+
+### getAgents
+
+```ts
+getAgents(): Promise<AgentSummary[]>
+```
+
+Summary for all known agents: `agentId`, `team`, `totalSpend`, `transactionCount`, `lastActive`.
+
+### getAlerts
+
+```ts
+getAlerts(): Promise<Alert[]>
+```
+
+All violations and anomalies as alerts. Each has `type`, `record`, `message`.
+
+### sync (stub)
+
+```ts
+sync(): Promise<{ synced: number }>
+```
+
+Reserved for future remote API sync. Currently returns `{ synced: 0 }`.
+
+### exportPDF (stub)
+
+```ts
+exportPDF(query: AuditQuery): Promise<Buffer>
+```
+
+Reserved for future remote API export. Currently throws.
+
+## Example
+
+```ts
+import { MemoryStorage } from "@valeo/x402";
+import { SentinelDashboard } from "@valeo/x402/dashboard";
+
+const storage = new MemoryStorage();
+const dashboard = new SentinelDashboard({ storage });
+
+const report = await dashboard.getSpend({
+  agentId: "bot-1",
+  range: "last_day",
+});
+console.log(report.totalSpend, report.count);
+
+const agents = await dashboard.getAgents();
+const alerts = await dashboard.getAlerts();
+```
+
+## Standalone Query Functions
+
+For direct storage access without the dashboard class:
+
+```ts
+import {
+  spendByAgent,
+  spendByTeam,
+  spendByEndpoint,
+  topSpenders,
+  violations,
+  anomalies,
+} from "@valeo/x402/dashboard";
+
+const result = await spendByAgent(storage, "agent-1", "last_week");
+const top = await topSpenders(storage, 10, "last_day");
+const blocked = await violations(storage, "last_day");
+```

@@ -1,0 +1,48 @@
+---
+title: Authentication
+description: API keys and bearer auth for Sentinel API
+---
+
+# Authentication
+
+The Sentinel remote API (api.valeo.money) uses API key authentication. The SDK's `ApiStorage` backend sends the key with each request.
+
+## API Keys
+
+Obtain an API key from [app.valeo.money](https://app.valeo.money) or your admin. Keys are prefixed with `val_`.
+
+## Usage in ApiStorage
+
+```ts
+import { ApiStorage } from "@valeo/x402";
+
+const storage = new ApiStorage({
+  apiKey: process.env.VALEO_API_KEY!,
+  baseUrl: "https://api.valeo.money",
+});
+```
+
+<Callout type="warn" title="Secure Storage">
+Never commit API keys. Use environment variables or a secrets manager.
+</Callout>
+
+## Bearer Auth
+
+The API expects the key in the `Authorization` header:
+
+```
+Authorization: Bearer val_xxxxxxxxxxxx
+```
+
+`ApiStorage` handles this internally. You only provide the key in config.
+
+## Key Rotation
+
+To rotate keys:
+
+1. Create a new key in the dashboard
+2. Update your config/env with the new key
+3. Deploy
+4. Revoke the old key
+
+There is no grace period — rotation is immediate.

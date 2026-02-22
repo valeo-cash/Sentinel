@@ -1,0 +1,107 @@
+---
+title: Single Agent Setup
+description: Step-by-step guide for your first Sentinel-wrapped agent
+---
+
+# Single Agent Setup
+
+This guide walks you through adding Sentinel to a single AI agent that makes x402 payments.
+
+## Prerequisites
+
+- Node.js 18+
+- x402 client setup (`@x402/fetch`, `@x402/evm` or equivalent)
+- An agent that uses `fetch` for paid API calls
+
+## Step 1: Install
+
+```bash
+npm install @valeo/x402
+```
+
+## Step 2: Wrap Your Fetch
+
+Locate where you create your x402-wrapped fetch. Add the Sentinel wrap:
+
+```ts
+import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+import { wrapWithSentinel, standardPolicy } from "@valeo/x402";
+
+const client = new x402Client();
+registerExactEvmScheme(client, { signer });
+const fetchWithPayment = wrapFetchWithPayment(fetch, client);
+
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "my-agent-001",
+  budget: standardPolicy(),
+});
+```
+
+## Step 3: Use secureFetch Everywhere
+
+Replace usages of `fetchWithPayment` with `secureFetch` in your agent code. The API is identical:
+
+```ts
+const response = await secureFetch("https://api.example.com/paid-endpoint");
+const data = await response.json();
+```
+
+## Step 4: Add Identity (Optional)
+
+For better audit trails, add team and sponsor:
+
+```ts
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "my-agent-001",
+  team: "engineering",
+  humanSponsor: "alice@company.com",
+  budget: standardPolicy(),
+});
+```
+
+## Step 5: Query Audit Data
+
+Use `AuditLogger` or `SentinelDashboard` to inspect spend:
+
+```ts
+import { AuditLogger } from "@valeo/x402";
+import { SentinelDashboard } from "@valeo/x402/dashboard";
+
+// Get storage from your wrap config (you'll need to pass it in)
+const logger = new AuditLogger({ storage });
+const summary = await logger.summarize();
+console.log("Total spend:", summary.total_spend);
+
+const dashboard = new SentinelDashboard({ storage });
+const report = await dashboard.getSpend({ range: "last_day" });
+```
+
+<Callout type="tip" title="Shared Storage">
+Create the storage instance once and pass it to both `wrapWithSentinel` and `SentinelDashboard` so they share the same data.
+</Callout>
+
+## Step 6: Handle Budget Errors
+
+Wrap paid calls in try/catch for `SentinelBudgetError`:
+
+```ts
+import { SentinelBudgetError } from "@valeo/x402";
+
+try {
+  const res = await secureFetch(url);
+  return await res.json();
+} catch (err) {
+  if (err instanceof SentinelBudgetError) {
+    console.error("Budget limit hit:", err.violation);
+    // Fallback: retry later, notify user, use cached data
+  }
+  throw err;
+}
+```
+
+## Next Steps
+
+- [Multi-Agent Fleet](/docs/guides/multi-agent-fleet) — Shared budgets across agents
+- [Enterprise](/docs/guides/enterprise) — File storage, remote API
+- [Migration](/docs/guides/migration) — From raw x402 to Sentinel

@@ -1,0 +1,67 @@
+---
+title: Export
+description: CSV and JSON export for compliance
+---
+
+# Export
+
+Export audit records for compliance reviews, reporting, or external analysis.
+
+## CSV Export
+
+```ts
+import { AuditLogger } from "@valeo/x402";
+
+const logger = new AuditLogger({ storage });
+
+const csv = await logger.exportCSV({
+  startTime: startOfMonth,
+  endTime: endOfMonth,
+  agentId: "agent-1",
+  status: ["allowed", "flagged", "blocked"],
+});
+
+// Write to file, S3, etc.
+await fs.writeFile("audit-2024-02.csv", csv);
+```
+
+CSV includes all record fields: `id`, `agent_id`, `team`, `amount`, `endpoint`, `tx_hash`, `policy_evaluation`, `created_at`, etc.
+
+## JSON Export
+
+```ts
+const json = await logger.exportJSON({
+  startTime: startOfMonth,
+  endTime: endOfMonth,
+  limit: 1000,
+});
+
+const records = JSON.parse(json);
+```
+
+For pretty-printed JSON, use the internal `toJSON` with a second argument (if exposed) or format manually.
+
+## Query Filters
+
+Both `exportCSV` and `exportJSON` accept `AuditQuery`:
+
+| Filter | Description |
+|--------|-------------|
+| `agentId` | Filter by agent |
+| `team` | Filter by team |
+| `endpoint` | Filter by endpoint pattern |
+| `startTime` / `endTime` | Time range |
+| `status` | `["allowed", "flagged", "blocked"]` |
+| `tags` | Filter by tags |
+| `limit` | Max records |
+| `offset` | Pagination offset |
+
+## Compliance Workflows
+
+1. **Scheduled export**: Cron job exports last 24h to S3/GCS
+2. **On-demand**: Admin triggers export for a date range
+3. **Retention**: File storage + periodic archival to cold storage
+
+<Callout type="info" title="PDF Export">
+`SentinelDashboard.exportPDF` is a stub for future api.valeo.money integration. Use CSV/JSON for now.
+</Callout>

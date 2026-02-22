@@ -1,0 +1,75 @@
+---
+title: Agent Management
+description: Querying and managing agents in the dashboard
+---
+
+# Agent Management
+
+Sentinel tracks agents implicitly through audit records. There is no separate agent registry — agents are discovered from the `agent_id` field in records.
+
+## getAgents
+
+Get a summary for all known agents:
+
+```ts
+const agents = await dashboard.getAgents();
+
+for (const agent of agents) {
+  console.log(agent.agentId);
+  console.log(agent.team);
+  console.log(agent.totalSpend);
+  console.log(agent.transactionCount);
+  console.log(agent.lastActive);
+}
+```
+
+## AgentSummary
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `agentId` | `string` | Unique agent identifier |
+| `team` | `string \| null` | Team from config |
+| `totalSpend` | `string` | Total USDC spent (all time) |
+| `transactionCount` | `number` | Number of payments |
+| `lastActive` | `number` | Unix timestamp of last payment |
+
+## Top Spenders
+
+Get the top N spending agents in a time range:
+
+```ts
+import { topSpenders } from "@valeo/x402/dashboard";
+
+const top = await topSpenders(storage, 10, "last_day");
+
+for (const entry of top) {
+  console.log(entry.agentId, entry.spend, entry.count);
+}
+```
+
+## Spend by Agent
+
+Query spend for a specific agent:
+
+```ts
+import { spendByAgent } from "@valeo/x402/dashboard";
+
+const result = await spendByAgent(storage, "agent-weather-001", "last_week");
+console.log(result.spend, result.count);
+console.log(result.records); // Full AuditRecord[]
+```
+
+## Agent Identity
+
+Agent identity is set at wrap time in `SentinelConfig`:
+
+```ts
+wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-weather-001",
+  team: "data-ops",
+  humanSponsor: "alice@company.com",
+  // ...
+});
+```
+
+There is no API to create or update agents — they appear as records are written.

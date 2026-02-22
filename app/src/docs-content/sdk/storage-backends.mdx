@@ -1,0 +1,91 @@
+---
+title: Storage Backends
+description: Memory, File, and API storage backends
+---
+
+# Storage Backends
+
+Sentinel uses pluggable storage backends for audit records. All implement the `StorageBackend` interface.
+
+## MemoryStorage
+
+In-memory storage with configurable capacity and FIFO eviction. Default when no storage is specified.
+
+```ts
+import { MemoryStorage } from "@valeo/x402";
+
+const storage = new MemoryStorage(10_000); // max 10k records, FIFO eviction
+```
+
+| Constructor Arg | Type | Default | Description |
+|-----------------|------|---------|-------------|
+| `maxRecords` | `number` | `10_000` | Max records before eviction |
+
+**Use case**: Development, single-process agents, ephemeral data.
+
+## FileStorage
+
+JSONL file-based storage. Append-only, one record per line. Buffered writes with configurable flush.
+
+```ts
+import { FileStorage } from "@valeo/x402";
+
+const storage = new FileStorage(".valeo/audit.jsonl", 10);
+```
+
+| Constructor Arg | Type | Default | Description |
+|-----------------|------|---------|-------------|
+| `filePath` | `string` | `".valeo/audit.jsonl"` | Path to JSONL file |
+| `flushThreshold` | `number` | `10` | Flush after N buffered records |
+
+**Methods**: `flush()`, `destroy()` — call `destroy()` on shutdown to stop the auto-flush timer.
+
+<Callout type="info" title="Persistence">
+FileStorage creates the directory if it doesn't exist. Safe for multi-process append (each process appends; query reads full file).
+</Callout>
+
+## ApiStorage
+
+Remote API storage. Batches records and POSTs to api.valeo.money. Falls back to in-memory if unreachable.
+
+```ts
+import { ApiStorage } from "@valeo/x402";
+
+const storage = new ApiStorage({
+  apiKey: "val_...",
+  baseUrl: "https://api.valeo.money",
+  batchSize: 50,
+  flushIntervalMs: 5000,
+});
+```
+
+| Config Field | Type | Default | Description |
+|--------------|------|---------|-------------|
+| `apiKey` | `string` | — | API key for authentication |
+| `baseUrl` | `string` | `"https://api.valeo.money"` | API base URL |
+| `batchSize` | `number` | `50` | Records per batch |
+| `flushIntervalMs` | `number` | `5000` | Max ms before flush |
+
+**Methods**: `flush()`, `destroy()` — call on shutdown.
+
+## StorageBackend Interface
+
+All backends implement:
+
+```ts
+interface StorageBackend {
+  write(record: AuditRecord): Promise<void>;
+  query(query: AuditQuery): Promise<AuditRecord[]>;
+  summarize(query: Partial<AuditQuery>): Promise<AuditSummary>;
+  count(query: Partial<AuditQuery>): Promise<number>;
+  getById(id: string): Promise<AuditRecord | null>;
+}
+```
+
+## Choosing a Backend
+
+| Backend | Persistence | Multi-process | Remote | Use Case |
+|---------|-------------|---------------|--------|----------|
+| Memory | No | No | No | Dev, testing |
+| File | Yes | Append-only | No | Single node, compliance export |
+| API | Yes | Yes | Yes | Fleet, centralized audit |

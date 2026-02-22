@@ -1,0 +1,79 @@
+---
+title: wrapWithSentinel
+description: Full API reference for the Sentinel fetch wrapper
+---
+
+# wrapWithSentinel
+
+Wraps an x402-enabled fetch function with Sentinel budget enforcement and audit logging.
+
+## Signature
+
+```ts
+function wrapWithSentinel(
+  fetchWithPayment: typeof fetch,
+  config: SentinelConfig
+): typeof fetch
+```
+
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|------|--------------|
+| `fetchWithPayment` | `typeof fetch` | The x402-wrapped fetch (from `wrapFetchWithPayment`) |
+| `config` | `SentinelConfig` | Agent identity, budget policy, audit settings, hooks |
+
+## Returns
+
+A drop-in replacement fetch function with the same signature as `fetch`. Use it exactly like your original x402 fetch.
+
+## SentinelConfig
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `agentId` | `string` | Yes | Unique identifier for this agent |
+| `team` | `string` | No | Team or department grouping |
+| `humanSponsor` | `string` | No | Human accountable for this agent's spend |
+| `budget` | `BudgetPolicy` | No | Spending limits (omit for audit-only) |
+| `audit` | `AuditConfig` | No | Audit storage and enrichment (default: in-memory) |
+| `hooks` | `SentinelHooks` | No | Lifecycle callbacks |
+| `metadata` | `Record<string, string>` | No | Custom key/value on every record |
+
+## Example
+
+```ts
+import { wrapWithSentinel, standardPolicy, MemoryStorage } from "@valeo/x402";
+
+const secureFetch = wrapWithSentinel(fetchWithPayment, {
+  agentId: "agent-weather-001",
+  team: "data-ops",
+  humanSponsor: "alice@company.com",
+  budget: standardPolicy(),
+  audit: {
+    enabled: true,
+    storage: new MemoryStorage(10_000),
+    enrichment: {
+      staticTags: ["production"],
+      tagRules: [{ pattern: ".*openai.*", tags: ["llm"] }],
+    },
+  },
+  hooks: {
+    afterPayment: async (record) => console.log(`Paid $${record.amount}`),
+    onBudgetExceeded: async (v) => console.error("Limit hit:", v),
+  },
+  metadata: { environment: "production" },
+});
+
+const res = await secureFetch("https://api.example.com/paid");
+```
+
+## Behavior
+
+- **Before payment**: Evaluates context against budget policy. Throws `SentinelBudgetError` if violated.
+- **After payment**: Logs record to audit storage. Runs `afterPayment` hook.
+- **On anomaly**: Runs `onAnomaly` hook (e.g., spike detection). Does not block by default.
+- **Audit failures**: Never block the request. `SentinelAuditError` is caught and logged internally.
+
+<Callout type="warn" title="Config Validation">
+Invalid config (e.g., empty `agentId`, invalid USDC amounts) throws `SentinelConfigError` at wrap time. Use `validateConfig(config)` to check before wrapping.
+</Callout>

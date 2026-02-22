@@ -1,0 +1,26 @@
+---
+title: Changelog
+description: v0.1.0 release and version history
+---
+
+# Changelog
+
+## v0.1.0 (Initial Release)
+
+### Features
+
+- **wrapWithSentinel** — Drop-in wrapper for x402 fetch with budget enforcement and audit logging
+- **Budget policies** — Presets: conservative, standard, liberal, unlimited; customPolicy for overrides
+- **BudgetManager** — Per-call, hourly, daily, lifetime limits; spike detection; endpoint allowlist/blocklist
+- **AuditLogger** — Log, query, summarize, exportCSV, exportJSON
+- **Storage backends** — MemoryStorage, FileStorage, ApiStorage
+- **SentinelDashboard** — getSpend, getAgents, getAlerts; standalone: spendByAgent, spendByTeam, topSpenders, violations, anomalies
+- **Hooks** — beforePayment, afterPayment, onBudgetExceeded, onAnomaly
+- **Error types** — SentinelBudgetError, SentinelAuditError, SentinelConfigError
+- **Enrichment** — Tag rules, static tags, redaction
+
+### Package
+
+- `@valeo/x402` — Main SDK
+- `@valeo/x402/dashboard` — Dashboard client and query functions
+- Peer deps: `@x402/core`, `@x402/fetch` (optional for dev)
