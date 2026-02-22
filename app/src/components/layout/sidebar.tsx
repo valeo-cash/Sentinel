@@ -10,8 +10,10 @@ import {
   Shield,
   Settings,
   BookOpen,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
@@ -33,6 +35,7 @@ interface SidebarProps {
 
 export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   return (
     <>
@@ -110,6 +113,16 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
             })}
           </div>
         </nav>
+
+        <div className="shrink-0 border-t border-border p-2">
+          <button
+            onClick={logout}
+            className="flex h-11 w-full items-center gap-3 rounded-md border-l-[3px] border-transparent px-3 text-muted transition-colors hover:bg-card-hover hover:text-foreground"
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            <span className="hidden lg:inline">Sign Out</span>
+          </button>
+        </div>
       </aside>
     </>
   );
