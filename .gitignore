@@ -11,3 +11,4 @@ drizzle/
 .cursor/
 .DS_Store
 *.tsbuildinfo
+.vercel

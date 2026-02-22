@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { RootProvider } from "fumadocs-ui/provider";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
@@ -13,9 +14,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${jetbrains.variable} font-sans antialiased`}>
-        <Providers>{children}</Providers>
+        <RootProvider>
+          <Providers>{children}</Providers>
+        </RootProvider>
       </body>
     </html>
   );

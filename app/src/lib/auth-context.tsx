@@ -13,6 +13,10 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
+function isPublicRoute(pathname: string) {
+  return pathname === "/" || pathname === "/login" || pathname.startsWith("/docs");
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [team, setTeam] = useState<Team | null>(null);
   const [api, setApi] = useState<SentinelAPI | null>(null);
@@ -24,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const key = localStorage.getItem("sentinel_api_key");
     if (!key) {
       setIsLoading(false);
-      if (pathname !== "/login") router.push("/login");
+      if (!isPublicRoute(pathname)) router.push("/login");
       return;
     }
     const client = new SentinelAPI(key);
@@ -38,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .catch(() => {
         localStorage.removeItem("sentinel_api_key");
         setIsLoading(false);
-        router.push("/login");
+        if (!isPublicRoute(pathname)) router.push("/login");
       });
   }, [pathname, router]);
 
@@ -54,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { api, team, isLoading, logout };
   }, [api, team, isLoading, logout]);
 
-  if (isLoading) {
+  if (isLoading && !isPublicRoute(pathname)) {
     return (
       <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center">
         <div className="animate-pulse text-[#71717A]">Loading...</div>
@@ -62,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!value && pathname !== "/login") {
+  if (!value && !isPublicRoute(pathname)) {
     return null;
   }
 
