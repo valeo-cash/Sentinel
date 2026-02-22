@@ -1,9 +1,16 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProxyInfoPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-6 py-20 md:py-28">
+        <div className="flex items-center gap-2.5 mb-6">
+          <Link href="/">
+            <Image src="/sentinel_logo.png" alt="Sentinel" width={28} height={28} />
+          </Link>
+          <span className="text-sm font-bold text-accent tracking-wide">SENTINEL</span>
+        </div>
         <p className="text-xs text-accent font-semibold tracking-wide uppercase mb-3">
           Sentinel Proxy
         </p>

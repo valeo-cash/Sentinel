@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -56,11 +57,13 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         )}
       >
         <div className="flex h-14 shrink-0 items-center justify-center border-b border-border px-2 lg:justify-start lg:px-4">
-          <div className="flex flex-col items-center lg:items-start">
-            <span className="text-sm font-semibold text-accent lg:hidden">S</span>
-            <span className="hidden text-sm font-semibold text-accent lg:inline">SENTINEL</span>
-            <span className="hidden text-xs text-muted lg:inline">by Valeo</span>
-          </div>
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/sentinel_logo.png" alt="Sentinel" width={24} height={24} className="shrink-0" />
+            <div className="hidden flex-col lg:flex">
+              <span className="text-sm font-semibold text-accent">SENTINEL</span>
+              <span className="text-xs text-muted">by Valeo</span>
+            </div>
+          </Link>
         </div>
 
         <nav className="flex-1 overflow-y-auto p-2">

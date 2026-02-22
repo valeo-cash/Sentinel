@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Wallet, ArrowLeft, ExternalLink } from "lucide-react";
 
 type Tab = "email" | "wallet";
@@ -117,7 +118,10 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="rounded-xl border border-border bg-card p-8">
-          <h1 className="text-xl font-bold text-accent tracking-wide mb-0.5">SENTINEL</h1>
+          <div className="flex items-center gap-2.5 mb-1">
+            <Image src="/sentinel_logo.png" alt="Sentinel" width={32} height={32} />
+            <h1 className="text-xl font-bold text-accent tracking-wide">SENTINEL</h1>
+          </div>
           <p className="text-sm text-muted mb-6">Sign in to access the agent dashboard.</p>
 
           {/* Tab Toggle */}

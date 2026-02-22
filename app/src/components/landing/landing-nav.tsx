@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   BookOpen,
   Github,
@@ -35,8 +36,9 @@ export function LandingNav() {
       }`}
     >
       <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="text-sm font-bold text-accent tracking-wide">
-          SENTINEL
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/sentinel_logo.png" alt="Sentinel" width={28} height={28} />
+          <span className="text-sm font-bold text-accent tracking-wide">SENTINEL</span>
         </Link>
         <div className="flex items-center gap-2">
           {iconLinks.map(({ icon: Icon, label, href, external }) => {
