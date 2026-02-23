@@ -58,37 +58,10 @@ function getCoinbaseWallet(): EthereumProvider | null {
   return eth.isCoinbaseWallet ? eth : null;
 }
 
-// --- Wallet SVG icons ---
+// --- Wallet icons (served from /public) ---
 
-function PhantomIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 128 128" fill="currentColor" className="opacity-90">
-      <path d="M110.6 46.3H107V37.6C107 22 94.4 9.4 78.8 9.4H37.6C22 9.4 9.4 22 9.4 37.6V90.4C9.4 106 22 118.6 37.6 118.6H90.4C106 118.6 118.6 106 118.6 90.4V54.3C118.6 49.9 115 46.3 110.6 46.3ZM98 80.4C94.2 80.4 91 77.2 91 73.4C91 69.6 94.2 66.4 98 66.4C101.8 66.4 105 69.6 105 73.4C105 77.2 101.8 80.4 98 80.4ZM98 46.3H37.6C30.2 46.3 24.2 40.3 24.2 32.9C24.2 25.5 30.2 19.5 37.6 19.5H78.8C89.3 19.5 97.8 28 97.8 38.5V46.3H98Z"/>
-    </svg>
-  );
-}
-
-function MetaMaskIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 35 33" fill="none" className="opacity-90">
-      <path d="M32.96 1l-13.14 9.72 2.45-5.73L32.96 1z" fill="#E8831D" stroke="#E8831D" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M2.66 1l13.02 9.81L13.35 4.99 2.66 1zm25.57 22.53l-3.5 5.34 7.49 2.06 2.14-7.28-6.13-.12zm-24.33.12l2.13 7.28 7.47-2.06-3.48-5.34-6.12.12z" fill="#E8831D" stroke="#E8831D" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M13.25 14.51l-2.08 3.14 7.4.34-.26-7.96-5.06 4.48zm9.12 0l-5.16-4.58-.17 8.06 7.4-.34-2.07-3.14zm-9.05 13.12l4.44-2.16-3.83-2.99-.61 5.15zm8.91-2.16l4.48 2.16-.65-5.15-3.83 2.99z" fill="#E8831D" stroke="#E8831D" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M26.71 27.63l-4.48-2.16.36 2.93-.04 1.23 4.16-1.99zm-18.8 0l4.16 2 -.04-1.24.36-2.93-4.48 2.16z" fill="#D5BFB2" stroke="#D5BFB2" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12.15 21.23l-3.67-1.08 2.6-1.19 1.07 2.27zm11.32 0l1.07-2.27 2.6 1.19-3.67 1.08z" fill="#233447" stroke="#233447" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M7.91 27.63l.65-5.34-4.13.12 3.48 5.22zm19.15-5.34l.65 5.34 3.48-5.22-4.13-.12zm4.56-4.62l-7.4.34.69 3.82 1.07-2.27 2.6 1.19 3.04-3.08zM8.48 21.23l2.6-1.19 1.07 2.27.69-3.82-7.4-.34 3.04 3.08z" fill="#CC6228" stroke="#CC6228" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M5.44 17.67l3.16 6.17-.1-3.08-3.06-3.09zm20.74 3.09l-.11 3.08 3.16-6.17-3.05 3.09zm-13.34-2.75l-.69 3.82.87 4.48.2-5.9-.38-2.4zm5.94 0l-.37 2.39.17 5.91.87-4.48-.67-3.82z" fill="#E8831D" stroke="#E8831D" strokeWidth=".25" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function CoinbaseIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 28 28" fill="none" className="opacity-90">
-      <rect width="28" height="28" rx="14" fill="#0052FF"/>
-      <path d="M14 6a8 8 0 100 16 8 8 0 000-16zm-2.4 10.4a3.4 3.4 0 010-4.8l1.13 1.13a1.8 1.8 0 000 2.54L11.6 16.4zm4.8 0l-1.13-1.13a1.8 1.8 0 000-2.54L16.4 11.6a3.4 3.4 0 010 4.8z" fill="white"/>
-    </svg>
-  );
+function WalletIcon({ src, alt }: { src: string; alt: string }) {
+  return <img src={src} alt={alt} width={20} height={20} className="rounded-sm" />;
 }
 
 // --- Components ---
@@ -426,7 +399,7 @@ function LoginForm() {
                 disabled={isWalletLoading}
                 className="w-full py-2.5 bg-[#AB9FF2] text-white font-semibold rounded-lg hover:bg-[#9B8FE2] transition-colors disabled:opacity-50 flex items-center justify-center gap-2.5 text-sm"
               >
-                <PhantomIcon />
+                <WalletIcon src="/phantom-logo.svg" alt="Phantom" />
                 {loadingWallet === "phantom" ? "Connecting..." : "Phantom"}
                 {!hasPhantom && <span className="text-white/60 text-xs ml-1">(install)</span>}
               </button>
@@ -441,7 +414,7 @@ function LoginForm() {
                 disabled={isWalletLoading}
                 className="w-full py-2.5 bg-[#E8831D] text-white font-semibold rounded-lg hover:bg-[#D5751A] transition-colors disabled:opacity-50 flex items-center justify-center gap-2.5 text-sm"
               >
-                <MetaMaskIcon />
+                <WalletIcon src="/metamask-logo.png" alt="MetaMask" />
                 {loadingWallet === "metamask" ? "Connecting..." : "MetaMask"}
                 {!hasMetaMask && <span className="text-white/60 text-xs ml-1">(install)</span>}
               </button>
@@ -456,7 +429,7 @@ function LoginForm() {
                 disabled={isWalletLoading}
                 className="w-full py-2.5 bg-[#0052FF] text-white font-semibold rounded-lg hover:bg-[#0047E0] transition-colors disabled:opacity-50 flex items-center justify-center gap-2.5 text-sm"
               >
-                <CoinbaseIcon />
+                <WalletIcon src="/coinbase-logo.svg" alt="Coinbase Wallet" />
                 {loadingWallet === "coinbase" ? "Connecting..." : "Coinbase Wallet"}
                 {!hasCoinbase && <span className="text-white/60 text-xs ml-1">(install)</span>}
               </button>
