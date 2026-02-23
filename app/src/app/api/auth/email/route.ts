@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { nanoid } from "nanoid";
-import { randomBytes } from "node:crypto";
+import { randomInt } from "node:crypto";
 import { db } from "@/db/client";
-import { magicLinks } from "@/db/schema";
+import { emailCodes } from "@/db/schema";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,21 +13,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    const token = randomBytes(32).toString("hex");
+    const code = String(randomInt(100000, 999999));
     const now = new Date();
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    await db.insert(magicLinks).values({
-      id: `ml_${nanoid()}`,
+    await db.insert(emailCodes).values({
+      id: `ec_${nanoid()}`,
       email: email.toLowerCase().trim(),
-      token,
+      code,
       expiresAt,
       used: false,
       createdAt: now,
     });
-
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sentinel.valeocash.com";
-    const link = `${appUrl}/auth/verify?token=${token}`;
 
     const resendKey = process.env.RESEND_API_KEY;
     if (!resendKey) {
@@ -35,20 +32,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Email service not configured" }, { status: 500 });
     }
 
+    const spaced = code.split("").join(" \u2009");
+
     const resend = new Resend(resendKey);
     const { data, error } = await resend.emails.send({
       from: "Sentinel <noreply@sentinel.valeocash.com>",
       to: email.toLowerCase().trim(),
-      subject: "Sign in to Sentinel",
+      subject: "Your Sentinel verification code",
       html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 440px; margin: 0 auto; padding: 48px 24px; background: #191919; color: #FAFAFA;">
-          <h2 style="color: #f3f0eb; font-size: 18px; letter-spacing: 0.05em; margin: 0 0 24px;">SENTINEL</h2>
-          <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #A1A1AA;">Click the button below to sign in to your Sentinel dashboard:</p>
-          <a href="${link}" style="display: inline-block; background: #f3f0eb; color: #191919; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-            Sign In to Sentinel
-          </a>
-          <p style="color: #52525B; font-size: 13px; margin: 28px 0 0; line-height: 1.5;">
-            This link expires in 15 minutes.<br/>If you didn't request this, ignore this email.
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 440px; margin: 0 auto; padding: 48px 24px; background: #191919; color: #FAFAFA; text-align: center;">
+          <h2 style="color: #f3f0eb; font-size: 18px; letter-spacing: 0.05em; margin: 0 0 28px;">SENTINEL</h2>
+          <p style="margin: 0 0 8px; font-size: 14px; color: #A1A1AA;">Your verification code is:</p>
+          <div style="background: #111111; border: 1px solid #2e2e2e; border-radius: 12px; padding: 24px 16px; margin: 16px 0 28px;">
+            <span style="font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace; font-size: 36px; font-weight: 700; letter-spacing: 0.25em; color: #f3f0eb;">${spaced}</span>
+          </div>
+          <p style="color: #52525B; font-size: 13px; margin: 0; line-height: 1.5;">
+            This code expires in 10 minutes.<br/>If you didn't request this, ignore this email.
           </p>
         </div>
       `,
@@ -56,13 +55,13 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Resend error:", error);
-      return NextResponse.json({ ok: false, error: "Failed to send magic link. Please try again." }, { status: 500 });
+      return NextResponse.json({ ok: false, error: "Failed to send verification code. Please try again." }, { status: 500 });
     }
 
-    console.log("Email sent:", data);
-    return NextResponse.json({ ok: true, message: "Magic link sent" });
+    console.log("Verification code email sent:", data);
+    return NextResponse.json({ ok: true, message: "Verification code sent" });
   } catch (err) {
     console.error("Email auth error:", err);
-    return NextResponse.json({ error: "Failed to send magic link. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to send verification code. Please try again." }, { status: 500 });
   }
 }

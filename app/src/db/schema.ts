@@ -49,11 +49,21 @@ export const apiKeys = sqliteTable(
   (t) => [index("api_keys_team_idx").on(t.teamId)]
 );
 
-// magic_links table — email sign-in tokens
+// magic_links table — email sign-in tokens (legacy, kept for migration compat)
 export const magicLinks = sqliteTable("magic_links", {
   id: text("id").primaryKey(),
   email: text("email").notNull(),
   token: text("token").notNull().unique(),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  used: integer("used", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+});
+
+// email_codes table — 6-digit verification codes for email sign-in
+export const emailCodes = sqliteTable("email_codes", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull(),
+  code: text("code").notNull(),
   expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
   used: integer("used", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),

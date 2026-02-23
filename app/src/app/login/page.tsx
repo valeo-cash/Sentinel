@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useRef, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -34,19 +34,89 @@ export default function LoginPage() {
   );
 }
 
+function CodeInput({ onComplete, disabled }: { onComplete: (code: string) => void; disabled: boolean }) {
+  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = useCallback((index: number, value: string) => {
+    if (!/^\d?$/.test(value)) return;
+    const next = [...digits];
+    next[index] = value;
+    setDigits(next);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    if (next.every((d) => d.length === 1)) {
+      onComplete(next.join(""));
+    }
+  }, [digits, onComplete]);
+
+  const handleKeyDown = useCallback((index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  }, [digits]);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!pasted) return;
+    const next = [...digits];
+    for (let i = 0; i < pasted.length; i++) next[i] = pasted[i]!;
+    setDigits(next);
+    const focusIdx = Math.min(pasted.length, 5);
+    inputRefs.current[focusIdx]?.focus();
+    if (next.every((d) => d.length === 1)) {
+      onComplete(next.join(""));
+    }
+  }, [digits, onComplete]);
+
+  return (
+    <div className="flex justify-center gap-2 sm:gap-3" onPaste={handlePaste}>
+      {digits.map((d, i) => (
+        <input
+          key={i}
+          ref={(el) => { inputRefs.current[i] = el; }}
+          type="text"
+          inputMode="numeric"
+          maxLength={1}
+          value={d}
+          onChange={(e) => handleChange(i, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(i, e)}
+          disabled={disabled}
+          className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-mono font-bold bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-accent transition-colors disabled:opacity-50"
+        />
+      ))}
+    </div>
+  );
+}
+
 function LoginForm() {
   const [tab, setTab] = useState<Tab>("email");
   const [email, setEmail] = useState("");
-  const [emailSent, setEmailSent] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const tokenError = searchParams.get("error");
 
-  async function handleEmailSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
+  async function sendCode() {
     setLoading(true);
     setError("");
     try {
@@ -57,13 +127,40 @@ function LoginForm() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error || "Failed to send magic link");
+        throw new Error((data as { error?: string }).error || "Failed to send code");
       }
-      setEmailSent(true);
+      setCodeSent(true);
+      setResendCooldown(60);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleEmailSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    await sendCode();
+  }
+
+  async function handleCodeComplete(code: string) {
+    setVerifying(true);
+    setError("");
+    try {
+      const res = await fetch("/api/auth/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, code }),
+      });
+      const data = await res.json().catch(() => ({})) as { ok?: boolean; error?: string; redirect?: string };
+      if (!res.ok) {
+        throw new Error(data.error || "Invalid code");
+      }
+      router.push(data.redirect || "/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed");
+      setVerifying(false);
     }
   }
 
@@ -151,31 +248,43 @@ function LoginForm() {
 
           {/* Error Messages */}
           {tokenError === "invalid_token" && (
-            <p className="text-sm text-danger mb-4">Magic link is invalid or expired. Please try again.</p>
-          )}
-          {tokenError === "missing_token" && (
-            <p className="text-sm text-danger mb-4">Missing verification token.</p>
+            <p className="text-sm text-danger mb-4">Code is invalid or expired. Please try again.</p>
           )}
           {error && <p className="text-sm text-danger mb-4">{error}</p>}
 
           {/* Email Tab */}
           {tab === "email" && (
-            emailSent ? (
-              <div className="text-center py-4">
-                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+            codeSent ? (
+              <div className="text-center py-4 space-y-5">
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
                   <Mail className="w-6 h-6 text-accent" />
                 </div>
-                <p className="text-sm text-foreground font-medium mb-1">Check your inbox</p>
-                <p className="text-xs text-muted">
-                  We sent a sign-in link to <span className="text-foreground">{email}</span>.
-                  <br />The link expires in 15 minutes.
-                </p>
-                <button
-                  onClick={() => setEmailSent(false)}
-                  className="mt-4 text-xs text-accent hover:text-white transition-colors"
-                >
-                  Use a different email
-                </button>
+                <div>
+                  <p className="text-sm text-foreground font-medium mb-1">Enter verification code</p>
+                  <p className="text-xs text-muted">
+                    We sent a 6-digit code to <span className="text-foreground">{email}</span>
+                  </p>
+                </div>
+                <CodeInput onComplete={handleCodeComplete} disabled={verifying} />
+                {verifying && (
+                  <p className="text-xs text-muted animate-pulse">Verifying...</p>
+                )}
+                <div className="flex items-center justify-center gap-3 pt-1">
+                  <button
+                    onClick={() => { setCodeSent(false); setError(""); }}
+                    className="text-xs text-muted hover:text-foreground transition-colors"
+                  >
+                    Change email
+                  </button>
+                  <span className="text-border">|</span>
+                  <button
+                    onClick={sendCode}
+                    disabled={resendCooldown > 0 || loading}
+                    className="text-xs text-accent hover:text-white transition-colors disabled:text-muted disabled:cursor-not-allowed"
+                  >
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleEmailSubmit} className="space-y-4">
@@ -195,7 +304,7 @@ function LoginForm() {
                   disabled={loading || !email}
                   className="w-full py-2.5 bg-accent text-[#191919] font-semibold rounded-lg hover:bg-white transition-colors disabled:opacity-50 text-sm"
                 >
-                  {loading ? "Sending..." : "Send Magic Link"}
+                  {loading ? "Sending..." : "Send Verification Code"}
                 </button>
               </form>
             )
