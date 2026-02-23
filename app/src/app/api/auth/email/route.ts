@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     const resend = new Resend(resendKey);
     const { data, error } = await resend.emails.send({
-      from: "Sentinel <onboarding@resend.dev>",
+      from: "Sentinel <noreply@sentinel.valeocash.com>",
       to: email.toLowerCase().trim(),
       subject: "Sign in to Sentinel",
       html: `
@@ -56,14 +56,13 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Resend error:", error);
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      return NextResponse.json({ ok: false, error: "Failed to send magic link. Please try again." }, { status: 500 });
     }
 
     console.log("Email sent:", data);
     return NextResponse.json({ ok: true, message: "Magic link sent" });
   } catch (err) {
     console.error("Email auth error:", err);
-    const message = err instanceof Error ? err.message : "Internal server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to send magic link. Please try again." }, { status: 500 });
   }
 }
