@@ -130,84 +130,141 @@ export default function SettingsPage() {
         // generate PDF even if data fetch fails — empty report
       }
 
-      const jspdfModule = await import("jspdf");
-      const jsPDF = jspdfModule.jsPDF;
+      const { jsPDF } = await import("jspdf");
       const { default: autoTable } = await import("jspdf-autotable");
-      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
 
-      // Header bar
-      doc.setFillColor(25, 25, 25);
-      doc.rect(0, 0, pageW, 22, "F");
+      // --- HEADER ---
+      doc.setFillColor(18, 18, 18);
+      doc.rect(0, 0, pageW, 40, "F");
+
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(14);
+      doc.setFontSize(24);
       doc.setTextColor(243, 240, 235);
-      doc.text("Sentinel — Payment Audit Report", 14, 14);
-      doc.setFontSize(9);
+      doc.text("S", 16, 18);
+
+      doc.setDrawColor(243, 240, 235);
+      doc.setLineWidth(1.5);
+      doc.line(14, 21, 24, 21);
+      doc.line(14, 25, 24, 25);
+
+      doc.setFontSize(16);
+      doc.text("SENTINEL", 30, 20);
       doc.setFont("helvetica", "normal");
-      doc.text(
-        `${team.name}  |  ${from ?? "All time"} → ${to ?? "Now"}  |  Generated ${new Date().toISOString().slice(0, 10)}`,
-        pageW - 14,
-        14,
-        { align: "right" },
-      );
-
-      // Summary stats
-      const totalSpent = stats.total_spent_usd ?? 0;
-      const paymentCount = stats.total_payments ?? rows.length;
-      const activeAgents = stats.active_agents ?? 0;
-      const topEndpoint = rows.length > 0 ? mostCommon(rows.map((r) => r.endpointDomain)) : "—";
-
-      doc.setFontSize(10);
-      doc.setTextColor(60, 60, 60);
-      doc.text("SUMMARY", 14, 32);
       doc.setFontSize(9);
-      doc.setTextColor(80, 80, 80);
-      const statsLine = [
-        `Total Spent: $${Number(totalSpent).toFixed(2)}`,
-        `Payments: ${paymentCount}`,
-        `Active Agents: ${activeAgents}`,
-        `Top Endpoint: ${topEndpoint}`,
-      ].join("    |    ");
-      doc.text(statsLine, 14, 38);
+      doc.setTextColor(160, 160, 160);
+      doc.text("Payment Audit Report", 30, 26);
 
-      // Payments table
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      const dateStr = `Generated ${new Date().toLocaleDateString("en-US", {
+        year: "numeric", month: "long", day: "numeric",
+      })}`;
+      doc.text(dateStr, pageW - 16, 20, { align: "right" });
+      doc.text(team?.name || "\u2014", pageW - 16, 26, { align: "right" });
+
+      // --- SUMMARY CARDS ---
+      const topEndpoint = rows.length > 0 ? mostCommon(rows.map((r) => r.endpointDomain)) : "\u2014";
+      const y = 50;
+      const cardW = (pageW - 48) / 4;
+      const cards = [
+        { label: "TOTAL SPENT", value: `$${Number(stats.total_spent_usd ?? 0).toFixed(2)}` },
+        { label: "PAYMENTS", value: String(stats.total_payments ?? rows.length) },
+        { label: "ACTIVE AGENTS", value: String(stats.active_agents ?? 0) },
+        { label: "TOP ENDPOINT", value: topEndpoint },
+      ];
+
+      cards.forEach((card, i) => {
+        const x = 16 + i * (cardW + 5.3);
+        doc.setFillColor(248, 248, 248);
+        doc.roundedRect(x, y, cardW, 22, 2, 2, "F");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.5);
+        doc.setTextColor(140, 140, 140);
+        doc.text(card.label, x + 4, y + 7);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(30, 30, 30);
+        const val = card.value.length > 18 ? card.value.slice(0, 18) + "\u2026" : card.value;
+        doc.text(val, x + 4, y + 17);
+      });
+
+      // --- DIVIDER ---
+      doc.setDrawColor(230, 230, 230);
+      doc.setLineWidth(0.3);
+      doc.line(16, y + 28, pageW - 16, y + 28);
+
+      // --- PAYMENTS TABLE ---
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(30, 30, 30);
+      doc.text("Payment Records", 16, y + 36);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(140, 140, 140);
+      doc.text(`${rows.length} transactions`, 56, y + 36);
+
       const tableBody = rows.map((p) => [
-        p.timestamp?.slice(0, 19).replace("T", " ") ?? "",
+        p.timestamp?.slice(0, 16).replace("T", " ") ?? "",
         (p.agent as { externalId?: string } | null)?.externalId ?? p.agentId ?? "",
         p.endpointDomain ?? "",
-        p.amountUsd != null ? `$${p.amountUsd.toFixed(4)}` : "$0.00",
+        p.amountUsd != null ? `$${Number(p.amountUsd).toFixed(4)}` : "$0.00",
         p.network ?? "",
         p.status ?? "",
-        p.txHash ? `${p.txHash.slice(0, 10)}...` : "—",
+        p.txHash ? `${p.txHash.slice(0, 8)}\u2026` : "\u2014",
       ]);
 
       autoTable(doc, {
-        startY: 44,
-        head: [["Timestamp", "Agent", "Endpoint", "Amount", "Network", "Status", "TX Hash"]],
-        body: tableBody,
-        styles: { fontSize: 7.5, cellPadding: 2, textColor: [50, 50, 50] },
-        headStyles: { fillColor: [31, 31, 31], textColor: [243, 240, 235], fontStyle: "bold", fontSize: 7.5 },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        columnStyles: {
-          0: { cellWidth: 38 },
-          3: { fontStyle: "bold", halign: "right" as const },
-          6: { cellWidth: 28 },
+        startY: y + 40,
+        head: [["Time", "Agent", "Endpoint", "Amount", "Network", "Status", "TX"]],
+        body: tableBody.length > 0
+          ? tableBody
+          : [["\u2014", "\u2014", "No payments found", "\u2014", "\u2014", "\u2014", "\u2014"]],
+        styles: {
+          fontSize: 7,
+          cellPadding: 3,
+          textColor: [60, 60, 60],
+          lineColor: [230, 230, 230],
+          lineWidth: 0.2,
         },
-        margin: { left: 14, right: 14 },
+        headStyles: {
+          fillColor: [30, 30, 30],
+          textColor: [243, 240, 235],
+          fontStyle: "bold",
+          fontSize: 7,
+        },
+        alternateRowStyles: { fillColor: [250, 250, 250] },
+        columnStyles: {
+          0: { cellWidth: 30 },
+          3: { fontStyle: "bold", halign: "right" as const },
+          6: { cellWidth: 20, fontStyle: "normal", font: "courier" },
+        },
+        margin: { left: 16, right: 16 },
         didDrawPage: () => {
+          doc.setFillColor(248, 248, 248);
+          doc.rect(0, pageH - 14, pageW, 14, "F");
+          doc.setDrawColor(230, 230, 230);
+          doc.line(0, pageH - 14, pageW, pageH - 14);
+          doc.setFont("helvetica", "normal");
           doc.setFontSize(7);
           doc.setTextColor(160, 160, 160);
           doc.text(
-            "Generated by Sentinel · sentinel.valeocash.com",
-            pageW / 2,
-            doc.internal.pageSize.getHeight() - 8,
+            "Generated by Sentinel \u00B7 sentinel.valeocash.com",
+            pageW / 2, pageH - 6,
             { align: "center" },
+          );
+          doc.text(
+            `Page ${doc.getCurrentPageInfo().pageNumber}`,
+            pageW - 16, pageH - 6,
+            { align: "right" },
           );
         },
       });
 
-      doc.save(`sentinel-audit-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+      doc.save(`sentinel-audit-report-${new Date().toISOString().split("T")[0]}.pdf`);
     } catch (err) {
       console.error("PDF export failed:", err);
       alert("PDF export failed. Check the browser console for details.");
