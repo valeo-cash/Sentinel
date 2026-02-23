@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import type { Payment, AnalyticsSummary } from "@/lib/api";
 import { CopyButton } from "@/components/shared/copy-button";
 import { useSummary } from "@/lib/hooks/use-analytics";
 import { useTimeRange } from "@/lib/hooks/use-time-range";
@@ -111,18 +112,27 @@ export default function SettingsPage() {
     URL.revokeObjectURL(url);
   }, [summary]);
 
-  const handleExportPDF = useCallback(async () => {
-    try {
-      const [paymentsRes, summaryRes] = await Promise.all([
-        api.getPayments({ from, to, limit: 500 }),
-        api.getSummary(from, to),
-      ]);
-      const rows = paymentsRes.data ?? [];
-      const stats = summaryRes ?? {};
+  const [pdfLoading, setPdfLoading] = useState(false);
 
-      const { jsPDF } = await import("jspdf");
-      const autoTableModule = await import("jspdf-autotable");
-      const autoTable = autoTableModule.default;
+  const handleExportPDF = useCallback(async () => {
+    setPdfLoading(true);
+    try {
+      let rows: Payment[] = [];
+      let stats: Partial<AnalyticsSummary> = {};
+      try {
+        const [paymentsRes, summaryRes] = await Promise.all([
+          api.getPayments({ from, to, limit: 500 }),
+          api.getSummary(from, to),
+        ]);
+        rows = paymentsRes.data ?? [];
+        stats = summaryRes ?? {};
+      } catch {
+        // generate PDF even if data fetch fails — empty report
+      }
+
+      const jspdfModule = await import("jspdf");
+      const jsPDF = jspdfModule.jsPDF;
+      const { default: autoTable } = await import("jspdf-autotable");
       const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
 
@@ -200,6 +210,9 @@ export default function SettingsPage() {
       doc.save(`sentinel-audit-report-${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch (err) {
       console.error("PDF export failed:", err);
+      alert("PDF export failed. Check the browser console for details.");
+    } finally {
+      setPdfLoading(false);
     }
   }, [api, team, from, to]);
 
@@ -365,9 +378,10 @@ export default function SettingsPage() {
             </button>
             <button
               onClick={handleExportPDF}
-              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-card-hover"
+              disabled={pdfLoading}
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-card-hover disabled:opacity-50"
             >
-              Export Report (PDF)
+              {pdfLoading ? "Generating..." : "Export Report (PDF)"}
             </button>
           </div>
         </section>
