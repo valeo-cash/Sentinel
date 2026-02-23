@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     const jwt = await createSessionToken(teamId, { email: normalizedEmail });
-    const response = NextResponse.json({ ok: true, redirect: "/dashboard" });
+    const response = NextResponse.json({ ok: true, redirect: "/explorer" });
     return setSessionCookie(response, jwt);
   } catch (err) {
     console.error("Verify code error:", err);

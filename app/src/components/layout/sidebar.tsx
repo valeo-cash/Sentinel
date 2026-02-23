@@ -13,11 +13,13 @@ import {
   BookOpen,
   LogOut,
   Play,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 
 const navItems = [
+  { icon: Globe, label: "Explorer", href: "/explorer" },
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
   { icon: Receipt, label: "Payments", href: "/dashboard/payments" },
   { icon: Bot, label: "Agents", href: "/dashboard/agents" },
