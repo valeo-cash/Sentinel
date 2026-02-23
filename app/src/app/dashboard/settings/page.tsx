@@ -121,7 +121,8 @@ export default function SettingsPage() {
       const stats = summaryRes ?? {};
 
       const { jsPDF } = await import("jspdf");
-      await import("jspdf-autotable");
+      const autoTableModule = await import("jspdf-autotable");
+      const autoTable = autoTableModule.default;
       const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
 
@@ -171,8 +172,7 @@ export default function SettingsPage() {
         p.txHash ? `${p.txHash.slice(0, 10)}...` : "—",
       ]);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (doc as any).autoTable({
+      autoTable(doc, {
         startY: 44,
         head: [["Timestamp", "Agent", "Endpoint", "Amount", "Network", "Status", "TX Hash"]],
         body: tableBody,
@@ -181,7 +181,7 @@ export default function SettingsPage() {
         alternateRowStyles: { fillColor: [245, 245, 245] },
         columnStyles: {
           0: { cellWidth: 38 },
-          3: { fontStyle: "bold", halign: "right" },
+          3: { fontStyle: "bold", halign: "right" as const },
           6: { cellWidth: 28 },
         },
         margin: { left: 14, right: 14 },
