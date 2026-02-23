@@ -1,8 +1,26 @@
-# Valeo Sentinel
+<p align="center">
+  <img src="https://sentinel.valeocash.com/sentinel_logo.png" width="80" />
+</p>
 
-**Enterprise audit & compliance for x402 payments. One line to add. Zero config to start.**
+<p align="center">
+  <strong>@x402sentinel/x402</strong><br/>
+  Enterprise audit & compliance layer for x402 AI agent payments.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@x402sentinel/x402">
+    <img src="https://img.shields.io/npm/v/@x402sentinel/x402?color=red" alt="npm" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
+  </a>
+  <img src="https://img.shields.io/badge/x402-compatible-blue" alt="x402 compatible" />
+  <img src="https://img.shields.io/badge/tests-89%20passing-brightgreen" alt="89 tests passing" />
+</p>
 
 ---
+
+**One line to add. Zero config to start.**
 
 ## The Problem
 
@@ -385,4 +403,4 @@ Login with demo API key: `sk_sentinel_demo_000`
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE)
