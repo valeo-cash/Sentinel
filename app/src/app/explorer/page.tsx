@@ -156,13 +156,13 @@ export default function ExplorerPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex gap-1 bg-card border border-border rounded-lg p-0.5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex gap-1 bg-card border border-border rounded-lg p-0.5 overflow-x-auto">
             {NETWORK_FILTERS.map((nf) => (
               <button
                 key={nf.value}
                 onClick={() => setNetworkFilter(nf.value)}
-                className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-xs rounded-md transition-colors whitespace-nowrap shrink-0 ${
                   networkFilter === nf.value
                     ? "bg-accent text-[#191919] font-medium"
                     : "text-muted hover:text-white"
@@ -172,7 +172,7 @@ export default function ExplorerPage() {
               </button>
             ))}
           </div>
-          <div className="flex gap-1 bg-card border border-border rounded-lg p-0.5 ml-auto">
+          <div className="flex gap-1 bg-card border border-border rounded-lg p-0.5 sm:ml-auto">
             {TIME_RANGES.map((tr) => (
               <button
                 key={tr.value}

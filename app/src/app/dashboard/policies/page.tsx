@@ -282,7 +282,7 @@ export default function PoliciesPage() {
 
       {dialogOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-xl">
+          <div className="w-full max-w-md max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-card p-6 shadow-xl mx-4 sm:mx-auto">
             <h2 className="mb-4 text-lg font-semibold">
               {editingPolicy ? "Edit Policy" : "Create Policy"}
             </h2>
@@ -331,7 +331,7 @@ export default function PoliciesPage() {
                   </select>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1 block text-sm text-muted">Per-Call ($)</label>
                   <input

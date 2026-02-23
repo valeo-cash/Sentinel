@@ -170,7 +170,7 @@ export function HowItWorksTerminal() {
   return (
     <div className="flex flex-col md:flex-row gap-10 md:gap-0 items-start">
       {/* Left: Steps */}
-      <div className="w-full md:w-[45%] md:pr-10 flex flex-row md:flex-col gap-4 md:gap-8 overflow-x-auto md:overflow-visible py-2 md:py-4">
+      <div className="w-full md:w-[45%] md:pr-10 flex flex-row md:flex-col gap-4 md:gap-8 overflow-x-auto snap-x md:overflow-visible py-2 md:py-4">
         {STEPS.map((step) => {
           const isActive = activeStep === step.num;
           return (
@@ -226,7 +226,7 @@ export function HowItWorksTerminal() {
           {/* Terminal body */}
           <div
             ref={scrollRef}
-            className={`p-5 min-h-[400px] max-h-[480px] overflow-y-auto font-mono text-[13px] leading-[1.7] transition-opacity duration-500 ${
+            className={`p-4 sm:p-5 min-h-[300px] md:min-h-[400px] max-h-[380px] md:max-h-[480px] overflow-y-auto font-mono text-[11px] sm:text-[13px] leading-[1.7] transition-opacity duration-500 ${
               fading ? "opacity-0" : "opacity-100"
             }`}
           >

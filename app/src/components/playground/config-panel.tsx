@@ -195,7 +195,7 @@ export function ConfigPanel({
               <option key={key} value={key}>{preset.label}</option>
             ))}
           </select>
-          <div className="grid grid-cols-3 gap-2 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
             {[
               { label: "Per Call", key: "perCall" as const, value: limits.perCall },
               { label: "Per Hour", key: "perHour" as const, value: limits.perHour },

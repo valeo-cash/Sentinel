@@ -10,11 +10,14 @@ import {
   LayoutDashboard,
   Globe,
   Play,
+  Menu,
+  X,
 } from "lucide-react";
 import { useOptionalAuth } from "@/lib/auth-context";
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const auth = useOptionalAuth();
 
   const iconLinks = [
@@ -36,17 +39,19 @@ export function LandingNav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        scrolled || menuOpen
           ? "bg-background/90 backdrop-blur-md border-b border-border"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Image src="/sentinel_logo.png" alt="Sentinel" width={28} height={28} />
           <span className="text-sm font-bold text-accent tracking-wide">SENTINEL</span>
         </Link>
-        <div className="flex items-center gap-2">
+
+        {/* Desktop icons */}
+        <div className="hidden md:flex items-center gap-2">
           {iconLinks.map(({ icon: Icon, label, href, external }) => {
             const cls =
               "group relative flex items-center justify-center w-9 h-9 rounded-lg border border-border hover:border-accent/50 hover:bg-card transition-all duration-200";
@@ -69,7 +74,38 @@ export function LandingNav() {
             );
           })}
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex md:hidden h-10 w-10 items-center justify-center rounded-lg border border-border text-muted hover:text-accent"
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {/* Mobile dropdown */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md px-4 pb-4 pt-2 space-y-1">
+          {iconLinks.map(({ icon: Icon, label, href, external }) => {
+            const cls =
+              "flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-muted hover:text-accent hover:bg-card transition-colors";
+            return external ? (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={cls} onClick={() => setMenuOpen(false)}>
+                <Icon className="w-4 h-4" />
+                {label}
+              </a>
+            ) : (
+              <Link key={label} href={href} className={cls} onClick={() => setMenuOpen(false)}>
+                <Icon className="w-4 h-4" />
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </nav>
   );
 }

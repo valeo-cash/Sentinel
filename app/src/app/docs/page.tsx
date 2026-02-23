@@ -73,7 +73,7 @@ export default function DocsPage() {
           <h3 className="text-sm font-semibold text-white mb-3">Before &amp; After</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-[#71717A] mb-2 font-medium">Plain x402</p>
+              <p className="text-xs uppercase tracking-widest text-[#71717A] mb-2 font-medium">Plain x402</p>
               <pre className="text-xs font-mono leading-relaxed text-[#a1a1aa] bg-[#1a1a1a] rounded-lg p-3 border border-[#2e2e2e] overflow-x-auto">
 {`const response = await fetchWithPayment(
   "https://api.example.com/paid"
@@ -81,7 +81,7 @@ export default function DocsPage() {
               </pre>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-[#f3f0eb] mb-2 font-medium">With Sentinel</p>
+              <p className="text-xs uppercase tracking-widest text-[#f3f0eb] mb-2 font-medium">With Sentinel</p>
               <pre className="text-xs font-mono leading-relaxed text-[#d1d5db] bg-[#1a1a1a] rounded-lg p-3 border border-[#2e2e2e] overflow-x-auto">
 {`const secureFetch = wrapWithSentinel(
   fetchWithPayment, {

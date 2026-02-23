@@ -51,7 +51,7 @@ export function TopBar({ onMobileMenuToggle }: TopBarProps) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <h1 className="text-lg font-semibold">{pageTitle}</h1>
+        <h1 className="text-lg font-semibold min-w-0 truncate">{pageTitle}</h1>
       </div>
 
       <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export function TopBar({ onMobileMenuToggle }: TopBarProps) {
           <option value="90d">Last 90d</option>
         </select>
 
-        <div className="rounded-full bg-accent/20 px-3 py-1.5">
+        <div className="hidden sm:flex rounded-full bg-accent/20 px-3 py-1.5">
           <span className="font-mono text-sm font-medium text-accent">
             ${totalSpend.toFixed(2)}
           </span>

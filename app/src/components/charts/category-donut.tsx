@@ -37,7 +37,7 @@ function CustomTooltip(props: {
 export function CategoryDonut({ data, loading }: CategoryDonutProps) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-[280px] h-[280px] rounded-full border border-border bg-card animate-pulse">
+      <div className="flex items-center justify-center w-full max-w-[280px] aspect-square rounded-full border border-border bg-card animate-pulse">
         <div className="w-[200px] h-[200px] rounded-full bg-border" />
       </div>
     );
@@ -45,7 +45,7 @@ export function CategoryDonut({ data, loading }: CategoryDonutProps) {
 
   if (!data.length) {
     return (
-      <div className="relative flex items-center justify-center w-[280px] h-[280px]">
+      <div className="relative flex items-center justify-center w-full max-w-[280px] aspect-square">
         <svg viewBox="0 0 200 200" className="w-full h-full">
           <circle
             cx="100"
@@ -66,7 +66,7 @@ export function CategoryDonut({ data, loading }: CategoryDonutProps) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="relative w-[280px] h-[280px]">
+      <div className="relative w-full max-w-[280px] aspect-square">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

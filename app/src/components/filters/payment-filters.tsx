@@ -79,7 +79,7 @@ export function PaymentFilters({
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search URL, agent, task..."
           className={cn(
-            "h-9 w-[280px] rounded-md border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted",
+            "h-9 w-full sm:w-[280px] rounded-md border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted",
             "focus:outline-none focus:ring-2 focus:ring-accent/50"
           )}
         />

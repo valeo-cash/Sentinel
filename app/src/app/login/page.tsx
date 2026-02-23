@@ -117,7 +117,7 @@ function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        <div className="rounded-xl border border-border bg-card p-8">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
           <div className="flex justify-center mb-4">
             <Image src="/sentinel_logo.png" alt="Sentinel" width={48} height={48} />
           </div>

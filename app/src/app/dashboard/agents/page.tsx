@@ -72,7 +72,7 @@ export default function AgentsPage() {
               href={`/dashboard/agents/${agent.id}`}
               className="rounded-xl border border-border bg-card p-5 transition-colors hover:bg-card-hover hover:border-border-hover"
             >
-              <div className="font-mono text-lg text-foreground">
+              <div className="font-mono text-lg text-foreground min-w-0 truncate">
                 {agent.externalId}
               </div>
               <div className="mt-1 text-sm text-muted">

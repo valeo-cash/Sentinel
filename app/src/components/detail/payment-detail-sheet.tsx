@@ -72,7 +72,7 @@ export function PaymentDetailSheet({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 z-50 h-full w-[480px] border-l border-border bg-card shadow-xl"
+            className="fixed right-0 top-0 z-50 h-full w-full sm:w-[480px] border-l border-border bg-card shadow-xl"
           >
             <div className="flex h-full flex-col overflow-y-auto">
               {payment ? (

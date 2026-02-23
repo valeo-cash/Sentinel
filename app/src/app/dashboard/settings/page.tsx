@@ -283,7 +283,7 @@ export default function SettingsPage() {
           {showCreate && (
             <div className="mb-4 rounded-lg border border-border bg-background p-4">
               <label className="block text-xs text-muted mb-1.5">Key name</label>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <input
                   type="text"
                   value={newKeyName}
@@ -291,6 +291,7 @@ export default function SettingsPage() {
                   placeholder="e.g. Production, Staging"
                   className="flex-1 px-3 py-2 bg-card border border-border rounded-lg text-foreground placeholder:text-muted/50 focus:outline-none focus:border-accent transition-colors text-sm"
                 />
+                <div className="flex gap-2">
                 <button
                   onClick={handleCreateKey}
                   disabled={creating}
@@ -304,6 +305,7 @@ export default function SettingsPage() {
                 >
                   Cancel
                 </button>
+                </div>
               </div>
             </div>
           )}
