@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState, useRef, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Wallet, ArrowLeft, ExternalLink } from "lucide-react";
@@ -150,7 +150,6 @@ function LoginForm() {
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const tokenError = searchParams.get("error");
@@ -202,7 +201,7 @@ function LoginForm() {
       if (!res.ok) {
         throw new Error(data.error || "Invalid code");
       }
-      router.push(data.redirect || "/dashboard/explorer");
+      window.location.href = data.redirect || "/dashboard/explorer";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
       setVerifying(false);
@@ -219,7 +218,7 @@ function LoginForm() {
       const data = await res.json().catch(() => ({}));
       throw new Error((data as { error?: string }).error || "Wallet authentication failed");
     }
-    router.push("/dashboard/explorer");
+    window.location.href = "/dashboard/explorer";
   }
 
   function buildSignMessage(address: string): string {
