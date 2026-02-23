@@ -157,7 +157,7 @@ function LoginForm() {
       if (!res.ok) {
         throw new Error(data.error || "Invalid code");
       }
-      router.push(data.redirect || "/explorer");
+      router.push(data.redirect || "/dashboard/explorer");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
       setVerifying(false);
@@ -199,7 +199,7 @@ function LoginForm() {
         throw new Error((data as { error?: string }).error || "Wallet authentication failed");
       }
 
-      router.push("/explorer");
+      router.push("/dashboard/explorer");
     } catch (err) {
       if (err instanceof Error && err.message.includes("User rejected")) {
         setError("Signature request was cancelled");

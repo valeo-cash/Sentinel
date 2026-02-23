@@ -51,6 +51,7 @@ export function EndpointsTable({
   onSort,
   onLoadMore,
   hasMore,
+  basePath = "/explorer",
 }: {
   endpoints: Endpoint[];
   sortKey: SortKey;
@@ -58,6 +59,7 @@ export function EndpointsTable({
   onSort: (key: SortKey) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
+  basePath?: string;
 }) {
   const router = useRouter();
 
@@ -119,7 +121,7 @@ export function EndpointsTable({
                 key={ep.endpointDomain}
                 className="border-b border-border/50 hover:bg-card-hover cursor-pointer transition-colors"
                 onClick={() =>
-                  router.push(`/explorer/endpoint/${encodeURIComponent(ep.endpointDomain)}`)
+                  router.push(`${basePath}/endpoint/${encodeURIComponent(ep.endpointDomain)}`)
                 }
               >
                 <td className="px-3 py-3 text-muted font-mono text-xs">{i + 1}</td>
