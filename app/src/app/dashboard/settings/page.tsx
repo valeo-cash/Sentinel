@@ -141,22 +141,32 @@ export default function SettingsPage() {
       doc.setFillColor(18, 18, 18);
       doc.rect(0, 0, pageW, 40, "F");
 
+      // Load Sentinel logo
+      try {
+        const logoRes = await fetch("/sentinel_logo.png");
+        const logoBlob = await logoRes.blob();
+        const logoDataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(logoBlob);
+        });
+        doc.addImage(logoDataUrl, "PNG", 14, 10, 20, 20);
+      } catch {
+        // fallback: just text if logo fails to load
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(20);
+        doc.setTextColor(243, 240, 235);
+        doc.text("S", 20, 22);
+      }
+
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(24);
-      doc.setTextColor(243, 240, 235);
-      doc.text("S", 16, 18);
-
-      doc.setDrawColor(243, 240, 235);
-      doc.setLineWidth(1.5);
-      doc.line(14, 21, 24, 21);
-      doc.line(14, 25, 24, 25);
-
       doc.setFontSize(16);
-      doc.text("SENTINEL", 30, 20);
+      doc.setTextColor(243, 240, 235);
+      doc.text("SENTINEL", 38, 20);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(160, 160, 160);
-      doc.text("Payment Audit Report", 30, 26);
+      doc.text("Payment Audit Report", 38, 26);
 
       doc.setFontSize(8);
       doc.setTextColor(120, 120, 120);
