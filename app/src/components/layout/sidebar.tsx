@@ -39,6 +39,13 @@ const bottomItems = [
   { icon: BookOpen, label: "Docs", href: "/docs" },
 ] as const;
 
+function isActive(href: string, pathname: string): boolean {
+  if (href === "/dashboard") return pathname === "/dashboard";
+  if (href === "/dashboard/alerts") return pathname === "/dashboard/alerts";
+  if (href === "/dashboard/settings") return pathname.startsWith("/dashboard/settings") && !pathname.startsWith("/dashboard/settings/reports");
+  return pathname.startsWith(href);
+}
+
 interface SidebarProps {
   mobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -79,14 +86,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto p-2">
           <div className="space-y-0.5">
             {navItems.map(({ icon: Icon, label, href }) => {
-              const isActive =
-                href === "/dashboard"
-                  ? pathname === "/dashboard"
-                  : href === "/dashboard/alerts"
-                    ? pathname === "/dashboard/alerts"
-                    : href === "/dashboard/settings"
-                      ? pathname === "/dashboard/settings"
-                      : pathname.startsWith(href);
+              const active = isActive(href, pathname);
               return (
                 <Link
                   key={href}
@@ -94,7 +94,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                   className={cn(
                     "flex h-11 items-center gap-3 rounded-md border-l-[3px] px-3 transition-colors",
                     "hover:bg-card-hover",
-                    isActive
+                    active
                       ? "border-accent bg-accent/10 text-accent"
                       : "border-transparent"
                   )}
@@ -110,7 +110,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
 
           <div className="space-y-0.5">
             {bottomItems.map(({ icon: Icon, label, href }) => {
-              const isActive = pathname.startsWith(href);
+              const active = isActive(href, pathname);
               return (
                 <Link
                   key={href}
@@ -118,7 +118,7 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
                   className={cn(
                     "flex h-11 items-center gap-3 rounded-md border-l-[3px] px-3 transition-colors",
                     "hover:bg-card-hover",
-                    isActive
+                    active
                       ? "border-accent bg-accent/10 text-accent"
                       : "border-transparent"
                   )}
