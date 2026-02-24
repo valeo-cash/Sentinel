@@ -8,7 +8,7 @@ import {
   Receipt,
   Bot,
   Bell,
-  BellRing,
+  Plug,
   Shield,
   Settings,
   BookOpen,
@@ -28,8 +28,8 @@ const navItems = [
   { icon: Receipt, label: "Payments", href: "/dashboard/payments" },
   { icon: Bot, label: "Agents", href: "/dashboard/agents" },
   { icon: Bell, label: "Alerts", href: "/dashboard/alerts" },
-  { icon: BellRing, label: "Alert Settings", href: "/dashboard/alerts/settings" },
   { icon: Shield, label: "Policies", href: "/dashboard/policies" },
+  { icon: Plug, label: "Integrations", href: "/dashboard/integrations" },
   { icon: Play, label: "Playground", href: "/playground" },
 ] as const;
 
@@ -41,8 +41,7 @@ const bottomItems = [
 
 function isActive(href: string, pathname: string): boolean {
   if (href === "/dashboard") return pathname === "/dashboard";
-  if (href === "/dashboard/alerts") return pathname === "/dashboard/alerts";
-  if (href === "/dashboard/settings") return pathname.startsWith("/dashboard/settings") && !pathname.startsWith("/dashboard/settings/reports");
+  if (href === "/dashboard/settings") return pathname === "/dashboard/settings";
   return pathname.startsWith(href);
 }
 
