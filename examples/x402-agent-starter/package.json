@@ -1,0 +1,10 @@
+{
+  "name": "x402-agent-starter",
+  "version": "1.0.0",
+  "description": "The simplest x402 agent with full audit trails. Clone, run, done.",
+  "scripts": { "start": "tsx index.ts" },
+  "dependencies": {
+    "@x402sentinel/x402": "latest",
+    "tsx": "latest"
+  }
+}

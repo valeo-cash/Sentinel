@@ -1,0 +1,13 @@
+{
+  "name": "x402-enterprise-compliance",
+  "version": "1.0.0",
+  "description": "Production-ready x402 compliance setup with audit trails, scheduled reports, alerts, and SOC 2 evidence.",
+  "scripts": {
+    "start": "tsx index.ts",
+    "report": "tsx generate-report.ts"
+  },
+  "dependencies": {
+    "@x402sentinel/x402": "latest",
+    "tsx": "latest"
+  }
+}

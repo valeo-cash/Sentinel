@@ -1,0 +1,10 @@
+{
+  "name": "x402-fleet-manager",
+  "version": "1.0.0",
+  "description": "Manage a fleet of 5 AI agents with per-agent budgets, Slack alerts, and audit trails.",
+  "scripts": { "start": "tsx index.ts" },
+  "dependencies": {
+    "@x402sentinel/x402": "latest",
+    "tsx": "latest"
+  }
+}

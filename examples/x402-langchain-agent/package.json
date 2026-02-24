@@ -1,0 +1,13 @@
+{
+  "name": "x402-langchain-agent",
+  "version": "1.0.0",
+  "description": "LangChain research agent with x402 payments tracked by Sentinel",
+  "scripts": { "start": "tsx index.ts" },
+  "dependencies": {
+    "@x402sentinel/langchain": "latest",
+    "@x402sentinel/x402": "latest",
+    "langchain": "latest",
+    "@langchain/openai": "latest",
+    "tsx": "latest"
+  }
+}

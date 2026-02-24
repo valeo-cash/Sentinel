@@ -1,0 +1,17 @@
+{
+  "name": "x402-nextjs-saas",
+  "version": "1.0.0",
+  "description": "Next.js SaaS template with x402 payments tracked by Sentinel",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@x402sentinel/next": "latest",
+    "@x402sentinel/x402": "latest",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
