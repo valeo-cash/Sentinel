@@ -112,7 +112,7 @@ export default function CustomDashboardPage() {
   }, []);
 
   const handleLayoutChange = useCallback(
-    (layout: Array<{ i: string; x: number; y: number; w: number; h: number }>) => {
+    (layout: readonly { i: string; x: number; y: number; w: number; h: number }[]) => {
       setWidgets((prev) =>
         prev.map((w) => {
           const l = layout.find((item) => item.i === w.i);
