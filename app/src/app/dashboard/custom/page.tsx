@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { WIDGET_REGISTRY, getWidgetComponent } from "@/components/widgets";
 import type { WidgetLayout } from "@/lib/api";
 import { Plus, Save, RotateCcw, X, LayoutGrid } from "lucide-react";
-import GridLayout from "react-grid-layout";
+import { WidthProvider, type Layout } from "react-grid-layout";
+import RGL from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+
+const ReactGridLayout = WidthProvider(RGL);
 
 const PRESETS: Record<string, { name: string; widgets: WidgetLayout[] }> = {
   cfo: {
@@ -50,19 +53,6 @@ export default function CustomDashboardPage() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(1200);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
-      }
-    });
-    ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, [loading]);
 
   useEffect(() => {
     api
@@ -113,7 +103,7 @@ export default function CustomDashboardPage() {
   }, []);
 
   const handleLayoutChange = useCallback(
-    (layout: readonly { i: string; x: number; y: number; w: number; h: number }[]) => {
+    (layout: Layout[]) => {
       setWidgets((prev) =>
         prev.map((w) => {
           const l = layout.find((item) => item.i === w.i);
@@ -179,7 +169,7 @@ export default function CustomDashboardPage() {
   }
 
   return (
-    <div className="p-4 md:p-6" ref={containerRef}>
+    <div className="p-4 md:p-6">
       {/* Top bar */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
         <input
@@ -245,12 +235,11 @@ export default function CustomDashboardPage() {
       )}
 
       {/* Grid layout */}
-      <GridLayout
+      <ReactGridLayout
         cols={12}
         rowHeight={40}
-        width={containerWidth}
         layout={widgets.map((w) => ({ i: w.i, x: w.x, y: w.y, w: w.w, h: w.h }))}
-        onLayoutChange={handleLayoutChange}
+        onLayoutChange={(layout: Layout[]) => handleLayoutChange(layout)}
         draggableHandle=".widget-drag-handle"
         compactType="vertical"
         isResizable
@@ -264,7 +253,7 @@ export default function CustomDashboardPage() {
             </div>
           );
         })}
-      </GridLayout>
+      </ReactGridLayout>
     </div>
   );
 }
