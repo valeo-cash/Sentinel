@@ -108,6 +108,18 @@ const result = await generateText({
 
 ---
 
+## Examples
+
+| Repo | Description | Difficulty |
+|------|-------------|------------|
+| [x402-agent-starter](https://github.com/valeo-cash/x402-agent-starter) | Simplest x402 agent — 25 lines | Beginner |
+| [x402-fleet-manager](https://github.com/valeo-cash/x402-fleet-manager) | 5 agents with budget controls | Intermediate |
+| [x402-enterprise-compliance](https://github.com/valeo-cash/x402-enterprise-compliance) | Production compliance + SOC 2 | Advanced |
+| [x402-nextjs-saas](https://github.com/valeo-cash/x402-nextjs-saas) | Next.js SaaS with x402 payments | Intermediate |
+| [x402-langchain-agent](https://github.com/valeo-cash/x402-langchain-agent) | LangChain research agent | Intermediate |
+
+---
+
 ## The Problem
 
 AI agents are spending real money autonomously. The [x402 protocol](https://github.com/coinbase/x402) enables internet-native payments, but provides no built-in audit trail, budget controls, or compliance tooling.
