@@ -110,6 +110,27 @@ export interface CustomDashboard {
   updatedAt: string;
 }
 
+export interface Receipt {
+  id: string;
+  teamId: string;
+  paymentId: string | null;
+  agentId: string;
+  endpoint: string;
+  method: string;
+  amount: string;
+  currency: string;
+  network: string;
+  txHash: string | null;
+  requestHash: string;
+  responseHash: string;
+  responseStatus: number | null;
+  responseSize: number | null;
+  sentinelSignature: string;
+  verified: boolean;
+  expiresAt: string | null;
+  createdAt: string;
+}
+
 export interface WidgetLayout {
   i: string;
   x: number;
@@ -415,6 +436,45 @@ class SentinelAPI {
 
   async deleteCustomDashboard(id: string): Promise<void> {
     await this.request(`/v1/custom-dashboards/${id}`, { method: "DELETE" });
+  }
+
+  // Receipts
+  async getReceipts(params?: {
+    agentId?: string;
+    endpoint?: string;
+    from?: string;
+    to?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ data: Receipt[]; total: number }> {
+    const sp = new URLSearchParams();
+    if (params?.agentId) sp.set("agentId", params.agentId);
+    if (params?.endpoint) sp.set("endpoint", params.endpoint);
+    if (params?.from) sp.set("from", params.from);
+    if (params?.to) sp.set("to", params.to);
+    if (params?.limit) sp.set("limit", String(params.limit));
+    if (params?.offset) sp.set("offset", String(params.offset));
+    const qs = sp.toString();
+    return this.request(`/v1/receipts${qs ? `?${qs}` : ""}`);
+  }
+
+  async getReceipt(id: string): Promise<{ data: Receipt }> {
+    return this.request(`/v1/receipts/${id}`);
+  }
+
+  async verifyReceipt(id: string): Promise<{ valid: boolean; receipt: Omit<Receipt, "teamId"> }> {
+    return this.request(`/v1/receipts/${id}/verify`);
+  }
+
+  async lookupReceipts(params: { responseHash?: string; endpoint?: string }): Promise<{ data: Receipt[] }> {
+    const sp = new URLSearchParams();
+    if (params.responseHash) sp.set("responseHash", params.responseHash);
+    if (params.endpoint) sp.set("endpoint", params.endpoint);
+    return this.request(`/v1/receipts/lookup?${sp.toString()}`);
+  }
+
+  async shareReceipt(id: string): Promise<{ url: string }> {
+    return this.request(`/v1/receipts/${id}/share`, { method: "POST" });
   }
 }
 

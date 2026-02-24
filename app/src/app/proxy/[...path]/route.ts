@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { nanoid } from "nanoid";
 import { db } from "@/db/client";
-import { teams, agents, payments, apiKeys } from "@/db/schema";
+import { teams, agents, payments, apiKeys, receipts } from "@/db/schema";
 import { and, eq, gte, sql } from "drizzle-orm";
+import { generateReceipt } from "@/lib/receipts/generate";
 
 const USDC_DECIMALS = 1_000_000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -234,15 +235,16 @@ async function handleProxy(
     }
   });
 
+  const hasBody = req.method !== "GET" && req.method !== "HEAD";
+  const reqBody = hasBody ? await req.arrayBuffer() : undefined;
+
   let response: Response;
   try {
-    const hasBody = req.method !== "GET" && req.method !== "HEAD";
-    const body = hasBody ? await req.arrayBuffer() : undefined;
 
     response = await fetch(targetUrl.toString(), {
       method: req.method,
       headers: forwardHeaders,
-      body: body ? Buffer.from(body) : undefined,
+      body: reqBody ? Buffer.from(reqBody) : undefined,
       signal: AbortSignal.timeout(PROXY_TIMEOUT_MS),
     });
   } catch (err) {
@@ -324,6 +326,33 @@ async function handleProxy(
 
   const hourlySpend = await getHourlySpend(team.id, agentInternalId);
 
+  const responseBody = await response.arrayBuffer();
+
+  // Generate receipt asynchronously (fire-and-forget)
+  let receiptId: string | null = null;
+  if (paymentStatus === "paid") {
+    try {
+      const receipt = generateReceipt({
+        teamId: team.id,
+        paymentId: recordId,
+        agentId: agentExternalId,
+        endpoint: target.url,
+        method: req.method,
+        amount,
+        currency: asset || "USDC",
+        network: network || "unknown",
+        txHash,
+        requestBody: reqBody ? Buffer.from(reqBody).toString() : "",
+        responseBody: Buffer.from(responseBody),
+        responseStatus: response.status,
+      });
+      await db.insert(receipts).values(receipt);
+      receiptId = receipt.id;
+    } catch (err) {
+      console.error("[proxy] Receipt generation failed:", err);
+    }
+  }
+
   const responseHeaders = new Headers();
   response.headers.forEach((value, key) => {
     if (key.toLowerCase() !== "transfer-encoding") {
@@ -332,11 +361,11 @@ async function handleProxy(
   });
 
   responseHeaders.set("x-sentinel-record", recordId);
+  if (receiptId) responseHeaders.set("x-sentinel-receipt", receiptId);
   responseHeaders.set("x-sentinel-agent", agentExternalId);
   responseHeaders.set("x-sentinel-budget-spent", `$${hourlySpend.toFixed(2)}/hr`);
   Object.entries(CORS_HEADERS).forEach(([k, v]) => responseHeaders.set(k, v));
 
-  const responseBody = await response.arrayBuffer();
   return new NextResponse(responseBody, {
     status: response.status,
     statusText: response.statusText,

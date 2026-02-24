@@ -1,8 +1,9 @@
 import { db } from "@/db/client";
-import { agents, payments } from "@/db/schema";
+import { agents, payments, receipts } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { generateAlerts } from "./alerts";
+import { generateReceipt } from "@/lib/receipts/generate";
 import type { ValidatedEvent } from "./validation";
 
 const USDC_DECIMALS = 1_000_000;
@@ -131,6 +132,27 @@ export async function processEvents(
         agentId
       );
       alertsCreated += count;
+
+      // Generate receipt (fire-and-forget)
+      if (status === "paid") {
+        const receipt = generateReceipt({
+          teamId,
+          paymentId,
+          agentId: event.agent_id,
+          endpoint: event.endpoint,
+          method: event.method,
+          amount: event.amount,
+          currency: event.asset || "USDC",
+          network: event.network || "unknown",
+          txHash: event.tx_hash,
+          requestBody: JSON.stringify({ endpoint: event.endpoint, method: event.method }),
+          responseBody: JSON.stringify(event.metadata ?? {}),
+          responseStatus: event.status_code,
+        });
+        db.insert(receipts).values(receipt).catch((err) =>
+          console.error("[ingest] Receipt generation failed:", err)
+        );
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Unknown error during ingest";

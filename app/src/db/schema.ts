@@ -229,3 +229,37 @@ export const customDashboards = sqliteTable(
   },
   (t) => [index("custom_dashboards_team_idx").on(t.teamId)]
 );
+
+// receipts table — cryptographic proof for x402 payments
+export const receipts = sqliteTable(
+  "receipts",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    paymentId: text("payment_id").references(() => payments.id),
+    agentId: text("agent_id").notNull(),
+    endpoint: text("endpoint").notNull(),
+    method: text("method").notNull().default("GET"),
+    amount: text("amount").notNull(),
+    currency: text("currency").notNull().default("USDC"),
+    network: text("network").notNull(),
+    txHash: text("tx_hash"),
+    requestHash: text("request_hash").notNull(),
+    responseHash: text("response_hash").notNull(),
+    responseStatus: integer("response_status"),
+    responseSize: integer("response_size"),
+    sentinelSignature: text("sentinel_signature").notNull(),
+    verified: integer("verified", { mode: "boolean" }).notNull().default(true),
+    expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    index("receipts_team_idx").on(t.teamId),
+    index("receipts_agent_idx").on(t.agentId),
+    index("receipts_endpoint_idx").on(t.endpoint),
+    index("receipts_tx_hash_idx").on(t.txHash),
+    index("receipts_response_hash_idx").on(t.responseHash),
+  ]
+);

@@ -3,8 +3,9 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 import { authenticateRequest } from "@/server/auth";
 import { db } from "@/db/client";
-import { agents, payments } from "@/db/schema";
+import { agents, payments, receipts } from "@/db/schema";
 import { and, eq, gte, sql } from "drizzle-orm";
+import { generateReceipt } from "@/lib/receipts/generate";
 
 const PROXY_TIMEOUT_MS = 30_000;
 const USDC_DECIMALS = 1_000_000;
@@ -232,6 +233,27 @@ export async function POST(request: NextRequest) {
         timestamp: now.toISOString(),
         createdAt: now,
       });
+
+      // Generate receipt
+      try {
+        const receipt = generateReceipt({
+          teamId,
+          paymentId: recordId,
+          agentId: agentId,
+          endpoint,
+          method,
+          amount,
+          currency: pr.asset || "USDC",
+          network: pr.network || network,
+          txHash: pr.txHash,
+          requestBody: JSON.stringify({ endpoint, method }),
+          responseBody: responseBody || "",
+          responseStatus: response.status,
+        });
+        await db.insert(receipts).values(receipt);
+      } catch (err) {
+        console.error("[playground] Receipt generation failed:", err);
+      }
 
       const updatedHourlySpend = await getHourlySpend(teamId, agentInternalId);
 
