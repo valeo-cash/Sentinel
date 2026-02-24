@@ -1,6 +1,6 @@
 {
   "name": "@x402sentinel/x402",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Enterprise audit, compliance, and budget enforcement for x402 payments",
   "type": "module",
   "main": "./dist/index.cjs",

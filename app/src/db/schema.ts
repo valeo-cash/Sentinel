@@ -13,6 +13,7 @@ export const teams = sqliteTable("teams", {
   name: text("name").notNull(),
   plan: text("plan").notNull().default("free"),
   apiKeyHash: text("api_key_hash").notNull().default(""),
+  claimToken: text("claim_token"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
 });

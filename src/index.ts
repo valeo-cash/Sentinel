@@ -1,3 +1,7 @@
+// Zero-config entry point
+export { sentinel } from "./sentinel";
+export type { SentinelOptions } from "./sentinel";
+
 // Main wrapper
 export { wrapWithSentinel } from "./wrapper/index";
 

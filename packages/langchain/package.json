@@ -1,0 +1,30 @@
+{
+  "name": "@x402sentinel/langchain",
+  "version": "0.1.0",
+  "description": "Sentinel tool for LangChain — audit x402 payments in agent chains",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "@x402sentinel/x402": ">=0.1.0",
+    "langchain": ">=0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "keywords": ["x402", "sentinel", "langchain", "tool", "audit", "compliance", "payments", "ai-agents"],
+  "author": "Valeo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valeo-cash/Sentinel",
+    "directory": "packages/langchain"
+  },
+  "homepage": "https://sentinel.valeocash.com",
+  "bugs": {
+    "url": "https://github.com/valeo-cash/Sentinel/issues"
+  }
+}

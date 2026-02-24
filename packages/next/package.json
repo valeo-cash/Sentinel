@@ -1,0 +1,30 @@
+{
+  "name": "@x402sentinel/next",
+  "version": "0.1.0",
+  "description": "Sentinel for Next.js — audit x402 payments in API routes and server actions",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "@x402sentinel/x402": ">=0.1.0",
+    "next": ">=13.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "keywords": ["x402", "sentinel", "nextjs", "next", "audit", "compliance", "payments", "ai-agents"],
+  "author": "Valeo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valeo-cash/Sentinel",
+    "directory": "packages/next"
+  },
+  "homepage": "https://sentinel.valeocash.com",
+  "bugs": {
+    "url": "https://github.com/valeo-cash/Sentinel/issues"
+  }
+}
