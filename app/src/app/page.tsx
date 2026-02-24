@@ -28,6 +28,10 @@ export default function LandingPage() {
             {" "}for x402 payments.
           </h1>
 
+          <p className="text-sm text-muted mb-8 tracking-wide">
+            Enterprise-ready: Slack/Discord/PagerDuty alerts &middot; Scheduled reports &middot; Custom dashboards &middot; Budget enforcement &middot; PDF exports
+          </p>
+
           <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
             {[
               { icon: Globe, label: "Explorer", href: "/explorer", external: false },
