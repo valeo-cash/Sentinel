@@ -72,6 +72,53 @@ export interface Policy {
   updatedAt: string;
 }
 
+export interface AlertChannel {
+  id: string;
+  teamId: string;
+  channel: string;
+  config: Record<string, unknown>;
+  severities: string[];
+  digestMode: boolean;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ScheduledReport {
+  id: string;
+  teamId: string;
+  reportType: string;
+  frequency: string;
+  dayOfWeek: number | null;
+  dayOfMonth: number | null;
+  timeUtc: string;
+  timezone: string;
+  recipients: string[];
+  agentFilter: string | null;
+  enabled: boolean;
+  lastSentAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomDashboard {
+  id: string;
+  teamId: string;
+  name: string;
+  layout: WidgetLayout[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WidgetLayout {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  type: string;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   next_cursor: string | null;
@@ -310,6 +357,64 @@ class SentinelAPI {
 
   async rotateKey(): Promise<{ apiKey: string }> {
     return this.request("/v1/team/rotate-key", { method: "POST" });
+  }
+
+  // Alert Channels
+  async getAlertChannels(): Promise<AlertChannel[]> {
+    const res = await this.request<{ data: AlertChannel[] }>("/v1/alert-channels");
+    return res.data;
+  }
+
+  async createAlertChannel(data: Omit<AlertChannel, "id" | "teamId" | "createdAt" | "updatedAt">): Promise<AlertChannel> {
+    return this.request("/v1/alert-channels", { method: "POST", body: JSON.stringify(data) });
+  }
+
+  async updateAlertChannel(id: string, data: Partial<AlertChannel>): Promise<AlertChannel> {
+    return this.request(`/v1/alert-channels/${id}`, { method: "PUT", body: JSON.stringify(data) });
+  }
+
+  async deleteAlertChannel(id: string): Promise<void> {
+    await this.request(`/v1/alert-channels/${id}`, { method: "DELETE" });
+  }
+
+  async testAlertChannel(id: string): Promise<{ ok: boolean; message?: string; error?: string }> {
+    return this.request(`/v1/alert-channels/${id}/test`, { method: "POST" });
+  }
+
+  // Scheduled Reports
+  async getScheduledReports(): Promise<ScheduledReport[]> {
+    const res = await this.request<{ data: ScheduledReport[] }>("/v1/scheduled-reports");
+    return res.data;
+  }
+
+  async createScheduledReport(data: Omit<ScheduledReport, "id" | "teamId" | "lastSentAt" | "createdAt" | "updatedAt">): Promise<ScheduledReport> {
+    return this.request("/v1/scheduled-reports", { method: "POST", body: JSON.stringify(data) });
+  }
+
+  async updateScheduledReport(id: string, data: Partial<ScheduledReport>): Promise<ScheduledReport> {
+    return this.request(`/v1/scheduled-reports/${id}`, { method: "PUT", body: JSON.stringify(data) });
+  }
+
+  async deleteScheduledReport(id: string): Promise<void> {
+    await this.request(`/v1/scheduled-reports/${id}`, { method: "DELETE" });
+  }
+
+  // Custom Dashboards
+  async getCustomDashboards(): Promise<CustomDashboard[]> {
+    const res = await this.request<{ data: CustomDashboard[] }>("/v1/custom-dashboards");
+    return res.data;
+  }
+
+  async createCustomDashboard(data: { name?: string; layout?: unknown[] }): Promise<CustomDashboard> {
+    return this.request("/v1/custom-dashboards", { method: "POST", body: JSON.stringify(data) });
+  }
+
+  async updateCustomDashboard(id: string, data: { name?: string; layout?: unknown[] }): Promise<CustomDashboard> {
+    return this.request(`/v1/custom-dashboards/${id}`, { method: "PUT", body: JSON.stringify(data) });
+  }
+
+  async deleteCustomDashboard(id: string): Promise<void> {
+    await this.request(`/v1/custom-dashboards/${id}`, { method: "DELETE" });
   }
 }
 

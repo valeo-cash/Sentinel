@@ -1,6 +1,7 @@
 import { db } from "@/db/client";
 import { alerts } from "@/db/schema";
 import { nanoid } from "nanoid";
+import { sendAlert, type AlertPayload } from "@/lib/alerts/send";
 
 export type PaymentForAlerts = {
   id: string;
@@ -118,6 +119,21 @@ export async function generateAlerts(
       createdAt: a.createdAt,
     }))
   );
+
+  for (const a of newAlerts) {
+    const payload: AlertPayload = {
+      severity: a.severity as AlertPayload["severity"],
+      title: a.type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+      message: a.message,
+      agent: agentId,
+      amount: payment.amountUsd ?? 0,
+      timestamp: a.createdAt.toISOString(),
+      dashboard: "https://sentinel.valeocash.com/dashboard",
+    };
+    sendAlert(teamId, payload).catch((err) =>
+      console.error("[generateAlerts] sendAlert failed:", err)
+    );
+  }
 
   return newAlerts.length;
 }

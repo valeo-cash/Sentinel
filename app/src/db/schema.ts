@@ -170,3 +170,62 @@ export const alerts = sqliteTable(
     index("alerts_severity_idx").on(t.severity),
   ]
 );
+
+// alert_channels table — integration channels for alert delivery
+export const alertChannels = sqliteTable(
+  "alert_channels",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    channel: text("channel").notNull(),
+    config: text("config", { mode: "json" }).notNull(),
+    severities: text("severities", { mode: "json" }).notNull(),
+    digestMode: integer("digest_mode", { mode: "boolean" }).notNull().default(false),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("alert_channels_team_idx").on(t.teamId)]
+);
+
+// scheduled_reports table — recurring report delivery
+export const scheduledReports = sqliteTable(
+  "scheduled_reports",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    reportType: text("report_type").notNull(),
+    frequency: text("frequency").notNull(),
+    dayOfWeek: integer("day_of_week"),
+    dayOfMonth: integer("day_of_month"),
+    timeUtc: text("time_utc").notNull().default("09:00"),
+    timezone: text("timezone").notNull().default("UTC"),
+    recipients: text("recipients", { mode: "json" }).notNull(),
+    agentFilter: text("agent_filter"),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    lastSentAt: integer("last_sent_at", { mode: "timestamp_ms" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("scheduled_reports_team_idx").on(t.teamId)]
+);
+
+// custom_dashboards table — user-created widget layouts
+export const customDashboards = sqliteTable(
+  "custom_dashboards",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    name: text("name").notNull().default("My Dashboard"),
+    layout: text("layout", { mode: "json" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("custom_dashboards_team_idx").on(t.teamId)]
+);

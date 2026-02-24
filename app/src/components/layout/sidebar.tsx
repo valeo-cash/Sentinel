@@ -8,12 +8,15 @@ import {
   Receipt,
   Bot,
   Bell,
+  BellRing,
   Shield,
   Settings,
   BookOpen,
   LogOut,
   Play,
   Globe,
+  Columns3,
+  CalendarClock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
@@ -21,14 +24,17 @@ import { useAuth } from "@/lib/auth-context";
 const navItems = [
   { icon: Globe, label: "Explorer", href: "/dashboard/explorer" },
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
+  { icon: Columns3, label: "Custom Dashboard", href: "/dashboard/custom" },
   { icon: Receipt, label: "Payments", href: "/dashboard/payments" },
   { icon: Bot, label: "Agents", href: "/dashboard/agents" },
   { icon: Bell, label: "Alerts", href: "/dashboard/alerts" },
+  { icon: BellRing, label: "Alert Settings", href: "/dashboard/alerts/settings" },
   { icon: Shield, label: "Policies", href: "/dashboard/policies" },
   { icon: Play, label: "Playground", href: "/playground" },
 ] as const;
 
 const bottomItems = [
+  { icon: CalendarClock, label: "Scheduled Reports", href: "/dashboard/settings/reports" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
   { icon: BookOpen, label: "Docs", href: "/docs" },
 ] as const;
@@ -76,7 +82,11 @@ export function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
               const isActive =
                 href === "/dashboard"
                   ? pathname === "/dashboard"
-                  : pathname.startsWith(href);
+                  : href === "/dashboard/alerts"
+                    ? pathname === "/dashboard/alerts"
+                    : href === "/dashboard/settings"
+                      ? pathname === "/dashboard/settings"
+                      : pathname.startsWith(href);
               return (
                 <Link
                   key={href}
