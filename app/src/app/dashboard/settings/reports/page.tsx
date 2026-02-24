@@ -59,15 +59,27 @@ function getReportTypeLabel(value: string): string {
   return REPORT_TYPES.find((r) => r.value === value)?.label ?? value;
 }
 
-const emptyForm = {
-  reportType: "pdf_audit",
-  frequency: "daily" as const,
-  dayOfWeek: 1 as number | null,
-  dayOfMonth: 1 as number | null,
+interface ReportForm {
+  reportType: string;
+  frequency: "daily" | "weekly" | "monthly";
+  dayOfWeek: number | null;
+  dayOfMonth: number | null;
+  timeUtc: string;
+  timezone: string;
+  recipients: string[];
+  agentFilter: string | null;
+  enabled: boolean;
+}
+
+const emptyForm: ReportForm = {
+  reportType: "pdf",
+  frequency: "daily",
+  dayOfWeek: 1,
+  dayOfMonth: 1,
   timeUtc: "09:00",
   timezone: "UTC",
-  recipients: [] as string[],
-  agentFilter: null as string | null,
+  recipients: [],
+  agentFilter: null,
   enabled: true,
 };
 
