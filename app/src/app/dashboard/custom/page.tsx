@@ -5,8 +5,9 @@ import { useAuth } from "@/lib/auth-context";
 import { WIDGET_REGISTRY, getWidgetComponent } from "@/components/widgets";
 import type { WidgetLayout } from "@/lib/api";
 import { Plus, Save, RotateCcw, X, LayoutGrid } from "lucide-react";
-import { GridLayout } from "react-grid-layout";
+import GridLayout from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
 const PRESETS: Record<string, { name: string; widgets: WidgetLayout[] }> = {
   cfo: {
