@@ -1,18 +1,10 @@
 import Link from "next/link";
-import {
-  BookOpen,
-  LayoutDashboard,
-  Package,
-  Github,
-  ArrowRight,
-  Shield,
-  FileText,
-  ArrowRightLeft,
-  Globe,
-  Play,
-} from "lucide-react";
 import { LandingNav, FadeIn } from "@/components/landing/landing-nav";
-import { HowItWorksTerminal } from "@/components/landing/how-it-works-terminal";
+import { PaymentRain } from "@/components/landing/payment-rain";
+import { LiveStats } from "@/components/landing/live-stats";
+import { BeforeAfter } from "@/components/landing/before-after";
+import { ProductTabs } from "@/components/landing/product-tabs";
+import { NpmCopyBlock } from "@/components/landing/npm-copy-block";
 
 export default function LandingPage() {
   return (
@@ -28,69 +20,40 @@ export default function LandingPage() {
             {" "}for x402 payments.
           </h1>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-            {[
-              { icon: Globe, label: "Explorer", href: "/explorer", external: false },
-              { icon: Play, label: "Playground", href: "/playground", external: false },
-              { icon: BookOpen, label: "Docs", href: "/docs", external: false },
-              { icon: LayoutDashboard, label: "Dashboard", href: "/login", external: false },
-              { icon: Package, label: "npm", href: "https://www.npmjs.com/package/@x402sentinel/x402", external: true },
-            ].map(({ icon: Icon, label, href, external }) => {
-              const cls =
-                "group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(243,240,235,0.06)] transition-all duration-200";
-              const inner = (
-                <>
-                  <Icon className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
-                  <span className="text-sm text-foreground">{label}</span>
-                </>
-              );
-              return external ? (
-                <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={cls}>
-                  {inner}
-                </a>
-              ) : (
-                <Link key={label} href={href} className={cls}>
-                  {inner}
-                </Link>
-              );
-            })}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+            <Link
+              href="/explorer"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-accent transition-colors"
+            >
+              Open Explorer
+            </Link>
+            <NpmCopyBlock />
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="https://github.com/valeo-cash/Sentinel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-border bg-card hover:border-accent/50 hover:shadow-[0_0_20px_rgba(243,240,235,0.06)] transition-all duration-200"
-            >
-              <Github className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
-              <span className="text-sm text-foreground">GitHub</span>
-            </a>
-            <Link
-              href="/docs/quickstart"
-              className="group flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-accent/40 bg-accent/10 hover:bg-accent/20 hover:border-accent/60 transition-all duration-200"
-            >
-              <ArrowRight className="w-4 h-4 text-accent" />
-              <span className="text-sm text-accent font-medium">Get Started</span>
-            </Link>
-          </div>
+          <LiveStats />
         </div>
       </section>
 
       {/* ── Terminal ──────────────────────────────────────── */}
       <FadeIn>
-        <section className="py-8 md:py-12">
-          <div className="max-w-3xl mx-auto px-6">
-            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xl shadow-black/40">
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-card-hover">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-                  <div className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
-                  <div className="w-3 h-3 rounded-full bg-[#28C840]" />
-                </div>
-                <span className="ml-2 text-xs text-muted font-mono">sentinel@valeo</span>
-              </div>
-              <pre className="p-5 md:p-6 text-[13px] font-mono leading-relaxed overflow-x-auto">
+        <section className="py-24 md:py-32">
+          <div className="max-w-4xl mx-auto px-6">
+            <BeforeAfter />
+          </div>
+        </section>
+      </FadeIn>
+
+      {/* ── Section 3: One Line of Code ───────────────── */}
+      <FadeIn>
+        <section className="py-24 md:py-32">
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted mb-4">Integration</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-10">
+              One line. Every payment tracked.
+            </h2>
+
+            <div className="rounded-lg border border-border bg-card p-5 md:p-6 mb-6 text-left">
+              <pre className="text-[13px] md:text-sm font-mono leading-relaxed overflow-x-auto">
                 <code>
                   <span className="text-muted">$</span>{" "}
                   <span className="text-success">npm install</span>{" "}
