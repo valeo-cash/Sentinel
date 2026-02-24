@@ -1,0 +1,44 @@
+---
+title: Management API
+description: Agents, policies, and teams management
+---
+
+# Management API
+
+Management endpoints for agents, policies, and teams. Planned for api.valeo.money.
+
+## Agents
+
+```
+GET  /v1/agents          — List agents
+GET  /v1/agents/:id      — Get agent summary
+```
+
+Agent summaries include: `agentId`, `team`, `totalSpend`, `transactionCount`, `lastActive`.
+
+## Policies
+
+```
+GET  /v1/policies        — List budget policies
+GET  /v1/policies/:id   — Get policy
+POST /v1/policies        — Create policy (if supported)
+```
+
+Policies are currently configured in code via `wrapWithSentinel`. A future API may allow remote policy management.
+
+## Teams
+
+```
+GET  /v1/teams           — List teams
+GET  /v1/teams/:id       — Get team spend summary
+```
+
+## Current Status
+
+The Management API is planned. Today:
+
+- **Agents** — Discovered from audit records; no separate registry
+- **Policies** — Configured in code only
+- **Teams** — Derived from `team` field in records
+
+When the remote API is available, the SDK will support optional sync and remote queries. Local-first operation will remain the default.

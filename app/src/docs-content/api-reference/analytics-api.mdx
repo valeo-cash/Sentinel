@@ -1,0 +1,60 @@
+---
+title: Analytics API
+description: Analytics and spend aggregation endpoints
+---
+
+# Analytics API
+
+Aggregated spend and analytics endpoints. Planned for api.valeo.money integration.
+
+## Spend Report
+
+```
+GET /v1/analytics/spend
+```
+
+**Query Parameters:**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `agentId` | string | Filter by agent |
+| `team` | string | Filter by team |
+| `range` | string | `last_hour`, `last_day`, `last_week`, `last_month` |
+| `start` | number | Custom range start (Unix ms) |
+| `end` | number | Custom range end (Unix ms) |
+
+**Response (planned):**
+
+```json
+{
+  "totalSpend": "123.45",
+  "count": 42,
+  "byAgent": {
+    "agent-1": { "spend": "80.00", "count": 25 }
+  },
+  "byEndpoint": {
+    "https://api.example.com/paid": { "spend": "50.00", "count": 10 }
+  }
+}
+```
+
+## Top Spenders
+
+```
+GET /v1/analytics/top-spenders
+```
+
+**Query Parameters:** `limit`, `range` (or `start`/`end`)
+
+## Violations & Anomalies
+
+```
+GET /v1/analytics/violations
+GET /v1/analytics/anomalies
+```
+
+**Query Parameters:** `range` or `start`/`end`
+
+## Current Status
+
+Analytics is currently provided by the SDK's `SentinelDashboard` and standalone query functions (`spendByAgent`, `topSpenders`, etc.) running against local storage. Remote analytics endpoints will be documented when the API is live.

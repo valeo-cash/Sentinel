@@ -1,0 +1,15 @@
+{
+  "title": "Sentinel",
+  "pages": [
+    "index",
+    "---",
+    "getting-started",
+    "sdk",
+    "guides",
+    "---",
+    "dashboard-docs",
+    "api-reference",
+    "---",
+    "resources"
+  ]
+}

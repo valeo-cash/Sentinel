@@ -1,0 +1,10 @@
+{
+  "title": "API Reference",
+  "pages": [
+    "authentication",
+    "events",
+    "payments-api",
+    "analytics-api",
+    "management-api"
+  ]
+}
