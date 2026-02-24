@@ -5,12 +5,6 @@ import { useAuth } from "@/lib/auth-context";
 import { WIDGET_REGISTRY, getWidgetComponent } from "@/components/widgets";
 import type { WidgetLayout } from "@/lib/api";
 import { Plus, Save, RotateCcw, X, LayoutGrid } from "lucide-react";
-import { WidthProvider, type Layout } from "react-grid-layout";
-import RGL from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-
-const ReactGridLayout = WidthProvider(RGL);
 
 const PRESETS: Record<string, { name: string; widgets: WidgetLayout[] }> = {
   cfo: {
@@ -101,18 +95,6 @@ export default function CustomDashboardPage() {
   const removeWidget = useCallback((id: string) => {
     setWidgets((prev) => prev.filter((w) => w.i !== id));
   }, []);
-
-  const handleLayoutChange = useCallback(
-    (layout: Layout[]) => {
-      setWidgets((prev) =>
-        prev.map((w) => {
-          const l = layout.find((item) => item.i === w.i);
-          return l ? { ...w, x: l.x, y: l.y, w: l.w, h: l.h } : w;
-        })
-      );
-    },
-    []
-  );
 
   const loadPreset = useCallback((key: string) => {
     const preset = PRESETS[key];
@@ -234,26 +216,23 @@ export default function CustomDashboardPage() {
         </div>
       )}
 
-      {/* Grid layout */}
-      <ReactGridLayout
-        cols={12}
-        rowHeight={40}
-        layout={widgets.map((w) => ({ i: w.i, x: w.x, y: w.y, w: w.w, h: w.h }))}
-        onLayoutChange={(layout: Layout[]) => handleLayoutChange(layout)}
-        draggableHandle=".widget-drag-handle"
-        compactType="vertical"
-        isResizable
-        isDraggable
-      >
+      {/* Widget grid */}
+      <div className="grid grid-cols-12 gap-4" style={{ gridAutoRows: "40px" }}>
         {widgets.map((w) => {
           const Component = getWidgetComponent(w.type);
           return (
-            <div key={w.i} className="widget-drag-handle cursor-grab active:cursor-grabbing">
+            <div
+              key={w.i}
+              style={{
+                gridColumn: `span ${Math.min(w.w, 12)}`,
+                gridRow: `span ${w.h}`,
+              }}
+            >
               {Component ? <Component onRemove={() => removeWidget(w.i)} /> : null}
             </div>
           );
         })}
-      </ReactGridLayout>
+      </div>
     </div>
   );
 }
