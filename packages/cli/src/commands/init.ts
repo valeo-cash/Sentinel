@@ -89,7 +89,7 @@ export async function initCommand() {
   } else {
     console.log(
       chalk.dim(
-        "\nNo problem — Sentinel works without one.\nGet one later at sentinel.valeocash.com/dashboard/settings\n"
+        "\nNo problem — Sentinel works without one.\nGet one later at https://sentinel.valeocash.com/dashboard/settings\n"
       )
     );
   }
@@ -173,8 +173,8 @@ export async function initCommand() {
       chalk.bold("Next steps:\n") +
       `  1. Import sentinelFetch from ${exampleFile || configName}\n` +
       "  2. Use it instead of fetch for x402 calls\n" +
-      `  3. View your data: ${chalk.cyan(`sentinel.valeocash.com/agent/${answers.agentId}`)}\n` +
-      `  4. Claim your dashboard: ${chalk.cyan("sentinel.valeocash.com/login")}\n\n` +
+      `  3. View your data:\n     ${chalk.cyan(`https://sentinel.valeocash.com/agent/${answers.agentId}`)}\n` +
+      `  4. Claim your dashboard:\n     ${chalk.cyan("https://sentinel.valeocash.com/login")}\n\n` +
       chalk.dim('Run "npx create-sentinel doctor" to verify your setup.\n')
   );
 }

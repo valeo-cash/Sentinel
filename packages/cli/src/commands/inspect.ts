@@ -152,7 +152,7 @@ ${pad("Signature", chalk.dim(`hmac:${truncateHash(receipt.sentinelSignature)}`))
 ${empty}
 ${pad("Timestamp", formatDate(receipt.createdAt))}
 ${empty}
-${pad("Verify:", chalk.cyan("sentinel.valeocash.com/receipt/"))}
+${pad("Verify:", chalk.cyan("https://sentinel.valeocash.com/receipt/"))}
 ${pad("", chalk.cyan(receipt.id))}
 ${bot}
 `);

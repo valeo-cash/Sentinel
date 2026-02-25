@@ -38,7 +38,7 @@ export async function statusCommand() {
       spinner.fail("Invalid API key");
       console.log(
         chalk.dim(
-          "\nGet a new one at sentinel.valeocash.com/dashboard/settings\n"
+          "\nGet a new one at https://sentinel.valeocash.com/dashboard/settings\n"
         )
       );
       return;
@@ -71,7 +71,7 @@ export async function statusCommand() {
     }
 
     console.log(
-      `   Dashboard: ${chalk.cyan("sentinel.valeocash.com/dashboard")}\n`
+      `   Dashboard: ${chalk.cyan("https://sentinel.valeocash.com/dashboard")}\n`
     );
   } catch {
     spinner.fail("Failed to reach Sentinel API");
@@ -115,7 +115,7 @@ function printAnonymousMessage() {
   console.log(
     `\n${chalk.yellow("⚠")} Running in anonymous mode.\n\n` +
       "   To see your stats, add an API key:\n" +
-      `   1. Go to ${chalk.cyan("sentinel.valeocash.com/dashboard/settings")}\n` +
+      `   1. Go to ${chalk.cyan("https://sentinel.valeocash.com/dashboard/settings")}\n` +
       "   2. Create an API key\n" +
       "   3. Add to .env: SENTINEL_API_KEY=your-key\n" +
       "   4. Run: npx create-sentinel status\n"

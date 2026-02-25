@@ -54,7 +54,7 @@ export async function doctorCommand() {
     console.log(
       "Your Sentinel setup is ready. Run your app and make\n" +
         "an x402 payment — it will show up at:\n" +
-        chalk.cyan("sentinel.valeocash.com/dashboard\n")
+        chalk.cyan("https://sentinel.valeocash.com/dashboard\n")
     );
   }
 }
@@ -170,7 +170,7 @@ async function checkApiKeyValid(apiKey: string | null): Promise<CheckResult> {
     return {
       pass: false,
       message:
-        "API key invalid — get a new one at sentinel.valeocash.com/dashboard/settings",
+        "API key invalid — get a new one at https://sentinel.valeocash.com/dashboard/settings",
     };
   } catch {
     return {
