@@ -118,6 +118,6 @@ function printAnonymousMessage() {
       `   1. Go to ${chalk.cyan("sentinel.valeocash.com/dashboard/settings")}\n` +
       "   2. Create an API key\n" +
       "   3. Add to .env: SENTINEL_API_KEY=your-key\n" +
-      "   4. Run: npx sentinel status\n"
+      "   4. Run: npx create-sentinel status\n"
   );
 }

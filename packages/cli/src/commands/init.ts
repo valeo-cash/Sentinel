@@ -175,7 +175,7 @@ export async function initCommand() {
       "  2. Use it instead of fetch for x402 calls\n" +
       `  3. View your data: ${chalk.cyan(`sentinel.valeocash.com/agent/${answers.agentId}`)}\n` +
       `  4. Claim your dashboard: ${chalk.cyan("sentinel.valeocash.com/login")}\n\n` +
-      chalk.dim('Run "npx sentinel doctor" to verify your setup.\n')
+      chalk.dim('Run "npx create-sentinel doctor" to verify your setup.\n')
   );
 }
 
