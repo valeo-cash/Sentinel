@@ -1,10 +1,11 @@
 {
   "name": "@x402sentinel/test",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Test any x402 payment endpoint",
   "bin": {
-    "sentinel-test": "dist/index.js"
+    "sentinel-test": "dist/index.js",
+    "x402-test": "dist/index.js"
   },
   "files": ["dist"],
   "scripts": {

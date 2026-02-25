@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name("sentinel-test")
   .description("Test any x402 payment endpoint")
-  .version("0.1.0")
+  .version("0.1.1")
   .argument("<url>", "URL of the x402 endpoint to test")
   .option("--network <network>", "Expected network (base, solana, etc)")
   .option("--verbose", "Show full response details")
