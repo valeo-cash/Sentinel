@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name("sentinel")
   .description("Sentinel CLI — x402 payment audit trails")
-  .version("0.1.2");
+  .version("0.1.3");
 
 program
   .command("init")

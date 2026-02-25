@@ -173,7 +173,8 @@ export async function initCommand() {
       chalk.bold("Next steps:\n") +
       `  1. Import sentinelFetch from ${exampleFile || configName}\n` +
       "  2. Use it instead of fetch for x402 calls\n" +
-      `  3. View your data: ${chalk.cyan("sentinel.valeocash.com")}\n\n` +
+      `  3. View your data: ${chalk.cyan(`sentinel.valeocash.com/agent/${answers.agentId}`)}\n` +
+      `  4. Claim your dashboard: ${chalk.cyan("sentinel.valeocash.com/login")}\n\n` +
       chalk.dim('Run "npx sentinel doctor" to verify your setup.\n')
   );
 }
