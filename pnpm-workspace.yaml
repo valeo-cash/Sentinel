@@ -2,3 +2,4 @@ packages:
   - "app"
   - "packages/cli"
   - "packages/sentinel-test"
+  - "packages/sentinel-router"

@@ -231,6 +231,90 @@ export const customDashboards = sqliteTable(
   (t) => [index("custom_dashboards_team_idx").on(t.teamId)]
 );
 
+// payment_routes table — route definitions for multi-provider x402 routes
+export const paymentRoutes = sqliteTable(
+  "payment_routes",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    name: text("name").notNull(),
+    description: text("description"),
+    maxBudgetUsd: text("max_budget_usd").notNull(),
+    strategy: text("strategy").notNull().default("parallel"),
+    mode: text("mode").notNull().default("multiTx"),
+    timeout: integer("timeout"),
+    metadata: text("metadata", { mode: "json" }),
+    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    executionCount: integer("execution_count").notNull().default(0),
+    lastExecutedAt: integer("last_executed_at", { mode: "timestamp_ms" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    index("payment_routes_team_idx").on(t.teamId),
+    uniqueIndex("payment_routes_team_name_idx").on(t.teamId, t.name),
+  ]
+);
+
+// route_endpoints table — endpoints within a payment route
+export const routeEndpoints = sqliteTable(
+  "route_endpoints",
+  {
+    id: text("id").primaryKey(),
+    routeId: text("route_id")
+      .notNull()
+      .references(() => paymentRoutes.id),
+    label: text("label").notNull(),
+    url: text("url").notNull(),
+    method: text("method").notNull().default("GET"),
+    weight: real("weight"),
+    maxUsd: real("max_usd"),
+    required: integer("required", { mode: "boolean" }).notNull().default(true),
+    headers: text("headers", { mode: "json" }),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("route_endpoints_route_idx").on(t.routeId)]
+);
+
+// route_executions table — execution history for payment routes
+export const routeExecutions = sqliteTable(
+  "route_executions",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id),
+    routeId: text("route_id").references(() => paymentRoutes.id),
+    routeName: text("route_name").notNull(),
+    agentId: text("agent_id"),
+    success: integer("success", { mode: "boolean" }).notNull(),
+    strategy: text("strategy").notNull(),
+    mode: text("mode").notNull().default("multiTx"),
+    totalSpent: text("total_spent"),
+    totalSpentUsd: real("total_spent_usd"),
+    maxBudgetUsd: real("max_budget_usd"),
+    endpointCount: integer("endpoint_count").notNull(),
+    successCount: integer("success_count").notNull(),
+    failedCount: integer("failed_count").notNull(),
+    totalTimeMs: integer("total_time_ms"),
+    receipt: text("receipt", { mode: "json" }),
+    receiptHash: text("receipt_hash"),
+    sentinelSig: text("sentinel_sig"),
+    routeSnapshot: text("route_snapshot", { mode: "json" }),
+    discoverySnapshot: text("discovery_snapshot", { mode: "json" }),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    index("route_executions_team_idx").on(t.teamId),
+    index("route_executions_route_idx").on(t.routeId),
+    index("route_executions_created_idx").on(t.createdAt),
+    index("route_executions_receipt_hash_idx").on(t.receiptHash),
+  ]
+);
+
 // receipts table — cryptographic proof for x402 payments
 export const receipts = sqliteTable(
   "receipts",

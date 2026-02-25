@@ -487,6 +487,47 @@ Login with demo API key: `sk_sentinel_demo_000`
 
 ---
 
+## Payment Router
+
+A new primitive for x402 payments. AI agents can purchase multi-provider routes — one intent, one receipt.
+```bash
+npm install @x402sentinel/router
+```
+```typescript
+import { PaymentRouter } from "@x402sentinel/router";
+
+const router = new PaymentRouter({
+  paymentFetch: x402Fetch,
+  agentId: "research-agent-01",
+  apiKey: "sk_...",
+});
+
+const result = await router.execute({
+  name: "research-pipeline",
+  maxBudgetUsd: "$0.05",
+  strategy: "parallel",
+  endpoints: [
+    { label: "weather",   url: "https://weather.x402.dev/data",  maxUsd: 0.02 },
+    { label: "market",    url: "https://market.x402.dev/prices", maxUsd: 0.02 },
+    { label: "sentiment", url: "https://news.x402.dev/score",    maxUsd: 0.01 },
+  ],
+});
+
+console.log(result.receipt.receiptHash);  // Unified SHA-256
+console.log(result.receipt.sentinelSig);  // Server HMAC
+```
+
+**Features:**
+- Budget caps (not splits) — pays actual x402 prices, validates against per-endpoint and total caps
+- Three strategies: parallel, sequential, best-effort
+- Cryptographic unified receipts with public verification endpoint
+- Pre-flight cost discovery
+- Dashboard route builder at `/dashboard/routes`
+
+See [packages/sentinel-router](./packages/sentinel-router) for full documentation.
+
+---
+
 ## License
 
 MIT — see [LICENSE](./LICENSE)

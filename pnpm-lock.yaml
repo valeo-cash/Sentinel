@@ -267,6 +267,19 @@ importers:
         specifier: ^5.4.0
         version: 5.9.3
 
+  packages/sentinel-router:
+    dependencies:
+      '@x402sentinel/x402':
+        specifier: '>=0.2.0'
+        version: 0.2.0(@x402/core@2.4.0)(@x402/fetch@2.4.0(typescript@5.9.3))
+    devDependencies:
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
   packages/sentinel-test:
     dependencies:
       chalk:
@@ -2232,6 +2245,17 @@ packages:
 
   '@x402/fetch@2.4.0':
     resolution: {integrity: sha512-OOMaPAT85qcKnKWRvB4zZlC/CUod0YogCpbLmi555Puxeh7u69mA30MWkNsyzMfhKS1y+GHiG9eZZbpYFmLMTg==}
+
+  '@x402sentinel/x402@0.2.0':
+    resolution: {integrity: sha512-UQzudWEa/Zt94fzhlZOljFoxoiuLba72EftE7YlE9J6M31tsJX2KkMLj9Qm01RfDkAIWWIjBI1IbPGAji9WIbQ==}
+    peerDependencies:
+      '@x402/core': '>=0.1.0'
+      '@x402/fetch': '>=0.1.0'
+    peerDependenciesMeta:
+      '@x402/core':
+        optional: true
+      '@x402/fetch':
+        optional: true
 
   abitype@1.2.3:
     resolution: {integrity: sha512-Ofer5QUnuUdTFsBRwARMoWKOH1ND5ehwYhJ3OJ/BQO+StkwQjHw0XyVh4vDttzHB7QOFhPHa/o413PJ82gU/Tg==}
@@ -6134,6 +6158,11 @@ snapshots:
       - bufferutil
       - typescript
       - utf-8-validate
+
+  '@x402sentinel/x402@0.2.0(@x402/core@2.4.0)(@x402/fetch@2.4.0(typescript@5.9.3))':
+    optionalDependencies:
+      '@x402/core': 2.4.0
+      '@x402/fetch': 2.4.0(typescript@5.9.3)
 
   abitype@1.2.3(typescript@5.9.3)(zod@3.25.76):
     optionalDependencies:
