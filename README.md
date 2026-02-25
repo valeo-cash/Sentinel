@@ -120,6 +120,23 @@ const result = await generateText({
 
 ---
 
+## Test Any x402 Endpoint
+
+```bash
+npx @x402sentinel/test https://api.example.com/endpoint
+```
+
+Tests any x402 payment endpoint and scores it 0-10:
+- Endpoint reachability
+- HTTP 402 response validation
+- Payment schema check
+- Security headers
+- Response time
+
+[npmjs.com/package/@x402sentinel/test](https://npmjs.com/package/@x402sentinel/test)
+
+---
+
 ## The Problem
 
 AI agents are spending real money autonomously. The [x402 protocol](https://github.com/coinbase/x402) enables internet-native payments, but provides no built-in audit trail, budget controls, or compliance tooling.

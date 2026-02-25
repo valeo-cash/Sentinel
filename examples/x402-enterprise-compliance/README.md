@@ -24,5 +24,13 @@ npm start
 Then follow the [Setup Guide](./setup-guide.md) to
 configure alerts, reports, and team access.
 
+### Test Your Endpoints
+
+```bash
+npx @x402sentinel/test https://your-endpoint.com
+```
+
+Verify your x402 endpoints are correctly configured before going to production.
+
 ---
 Powered by [Sentinel](https://sentinel.valeocash.com)

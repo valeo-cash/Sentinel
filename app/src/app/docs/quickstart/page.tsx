@@ -54,6 +54,16 @@ const response = await secureFetch("https://api.example.com/weather");`}</code>
 });`}</code>
         </pre>
 
+        <h2>Test Your Endpoints</h2>
+        <p>Before deploying, verify your endpoints are correctly configured:</p>
+        <pre>
+          <code>{`npx @x402sentinel/test https://your-api.com/endpoint`}</code>
+        </pre>
+        <p>
+          This tests reachability, 402 response, payment schema, security
+          headers, and response time — scoring your endpoint 0-10.
+        </p>
+
         <h2>Next Steps</h2>
         <ul>
           <li>

@@ -41,5 +41,13 @@ when any agent hits 80% of its budget.
 Edit the `agents` array in `index.ts` to add your own
 agents, endpoints, and budget limits.
 
+### Test Your Endpoints
+
+```bash
+npx @x402sentinel/test https://your-endpoint.com
+```
+
+Verify your x402 endpoints are correctly configured before going to production.
+
 ---
 Powered by [Sentinel](https://sentinel.valeocash.com)

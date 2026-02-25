@@ -34,5 +34,13 @@ Open [sentinel.valeocash.com](https://sentinel.valeocash.com)
 to see every payment your LangChain agent made — amount,
 endpoint, tx hash, receipt.
 
+### Test Your Endpoints
+
+```bash
+npx @x402sentinel/test https://your-endpoint.com
+```
+
+Verify your x402 endpoints are correctly configured before going to production.
+
 ---
 Powered by [Sentinel](https://sentinel.valeocash.com)

@@ -28,5 +28,13 @@ receipts.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/valeo-cash/x402-nextjs-saas)
 
+### Test Your Endpoints
+
+```bash
+npx @x402sentinel/test https://your-endpoint.com
+```
+
+Verify your x402 endpoints are correctly configured before going to production.
+
 ---
 Powered by [Sentinel](https://sentinel.valeocash.com)

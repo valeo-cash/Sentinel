@@ -38,6 +38,14 @@ const fetch = sentinel(globalThis.fetch, {
 - [SDK on npm](https://npmjs.com/package/@x402sentinel/x402)
 - [Docs](https://sentinel.valeocash.com/docs)
 
+### Test Your Endpoints
+
+```bash
+npx @x402sentinel/test https://your-endpoint.com
+```
+
+Verify your x402 endpoints are correctly configured before going to production.
+
 ---
 Powered by [Sentinel](https://sentinel.valeocash.com) —
 the audit layer for x402.
