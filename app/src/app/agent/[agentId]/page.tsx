@@ -82,7 +82,7 @@ export default function AgentPage() {
             This is your agent&apos;s data. To claim it and unlock the full dashboard:
           </p>
           <Link
-            href={`/login?claim=${encodeURIComponent(agentId)}`}
+            href={`/register?agent=${encodeURIComponent(agentId)}`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-[#191919] font-semibold rounded-lg hover:bg-white transition-colors text-sm shrink-0"
           >
             Create Account & Claim

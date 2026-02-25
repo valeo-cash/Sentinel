@@ -1,6 +1,6 @@
 {
   "name": "create-sentinel",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "description": "Set up Sentinel x402 audit trails in 30 seconds",
   "bin": {

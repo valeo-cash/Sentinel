@@ -155,7 +155,11 @@ function LoginForm() {
   const tokenError = searchParams.get("error");
 
   useEffect(() => {
-    const claimParam = searchParams.get("claim") || searchParams.get("agent");
+    const agentParam = searchParams.get("agent");
+    if (agentParam) {
+      sessionStorage.setItem("sentinel_register_agent", agentParam);
+    }
+    const claimParam = searchParams.get("claim");
     if (claimParam) {
       sessionStorage.setItem("sentinel_claim_token", claimParam);
     }
@@ -168,6 +172,8 @@ function LoginForm() {
   }, [resendCooldown]);
 
   function getPostLoginRedirect(): string {
+    const registerAgent = sessionStorage.getItem("sentinel_register_agent");
+    if (registerAgent) return `/register?agent=${encodeURIComponent(registerAgent)}`;
     const claimToken = sessionStorage.getItem("sentinel_claim_token");
     if (claimToken) return `/claim?token=${encodeURIComponent(claimToken)}`;
     return "/dashboard/explorer";

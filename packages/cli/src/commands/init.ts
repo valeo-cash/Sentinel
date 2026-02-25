@@ -176,7 +176,7 @@ export async function initCommand() {
       `  1. Import sentinelFetch from ${exampleFile || configName}\n` +
       "  2. Use it instead of fetch for x402 calls\n" +
       `  3. View your data:\n     ${chalk.cyan(`https://sentinel.valeocash.com/agent/${answers.agentId}`)}\n` +
-      `  4. Claim your dashboard:\n     ${chalk.cyan(`https://sentinel.valeocash.com/login?agent=${answers.agentId}`)}\n\n` +
+      `  4. Claim your dashboard:\n     ${chalk.cyan(`https://sentinel.valeocash.com/register?agent=${answers.agentId}`)}\n\n` +
       chalk.dim('Run "npx create-sentinel doctor" to verify your setup.\n')
   );
 }
