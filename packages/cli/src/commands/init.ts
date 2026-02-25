@@ -59,13 +59,15 @@ export async function initCommand() {
 
   // --- Ask questions ---
   const projectName = (pkg?.name as string) || "my-agent";
+  const suffix = Math.random().toString(36).substring(2, 6);
+  const defaultAgentId = `${projectName}-${suffix}`;
 
   const answers = await prompts([
     {
       type: "text",
       name: "agentId",
       message: "Agent ID for this project?",
-      initial: projectName,
+      initial: defaultAgentId,
     },
     {
       type: "confirm",
@@ -174,7 +176,7 @@ export async function initCommand() {
       `  1. Import sentinelFetch from ${exampleFile || configName}\n` +
       "  2. Use it instead of fetch for x402 calls\n" +
       `  3. View your data:\n     ${chalk.cyan(`https://sentinel.valeocash.com/agent/${answers.agentId}`)}\n` +
-      `  4. Claim your dashboard:\n     ${chalk.cyan("https://sentinel.valeocash.com/login")}\n\n` +
+      `  4. Claim your dashboard:\n     ${chalk.cyan(`https://sentinel.valeocash.com/login?agent=${answers.agentId}`)}\n\n` +
       chalk.dim('Run "npx create-sentinel doctor" to verify your setup.\n')
   );
 }
