@@ -61,10 +61,13 @@ export async function POST(req: NextRequest) {
         "Content-Length": zipBuffer.length.toString(),
       },
     });
-  } catch (err) {
-    console.error("Compliance report generation failed:", err);
+  } catch (error) {
+    console.error("Compliance report error:", error);
+    const message = error instanceof Error
+      ? error.message + "\n" + error.stack
+      : String(error);
     return NextResponse.json(
-      { error: "Failed to generate compliance report" },
+      { error: message },
       { status: 500 }
     );
   }
