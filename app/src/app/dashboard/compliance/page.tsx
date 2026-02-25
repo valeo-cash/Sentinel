@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { FileCheck, Download, Loader2, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { FileCheck, Download, Loader2, AlertCircle, Copy, Check } from "lucide-react";
 
 function formatDateInput(date: Date): string {
   return date.toISOString().split("T")[0]!;
@@ -17,6 +17,19 @@ export default function CompliancePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState("");
+  const [firstAgentId, setFirstAgentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/agents")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        const agents = json?.data;
+        if (Array.isArray(agents) && agents.length > 0) {
+          setFirstAgentId(agents[0].externalId);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleGenerate() {
     setError(null);
@@ -174,6 +187,62 @@ export default function CompliancePage() {
             </p>
           </div>
         </div>
+      </div>
+
+      {firstAgentId && <BadgeCard agentId={firstAgentId} />}
+    </div>
+  );
+}
+
+function BadgeCard({ agentId }: { agentId: string }) {
+  const [copied, setCopied] = useState(false);
+  const badgeUrl = `https://sentinel.valeocash.com/badge/${agentId}`;
+  const agentUrl = `https://sentinel.valeocash.com/agent/${agentId}`;
+  const markdown = `[![Audited by Sentinel](${badgeUrl})](${agentUrl})`;
+
+  function handleCopy() {
+    navigator.clipboard.writeText(markdown).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-6">
+      <h2 className="text-lg font-semibold text-foreground mb-1">
+        Show your compliance status
+      </h2>
+      <p className="text-xs text-muted-foreground mb-4">
+        Add this badge to your repository README to show that payments are audited by Sentinel.
+      </p>
+      <div className="mb-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/api/v1/badge/${encodeURIComponent(agentId)}`}
+          alt="Audited by Sentinel"
+          height={20}
+        />
+      </div>
+      <div className="relative">
+        <pre className="rounded-lg bg-background border border-border p-3 pr-16 text-xs text-muted-foreground overflow-x-auto">
+          {markdown}
+        </pre>
+        <button
+          onClick={handleCopy}
+          className="absolute top-2 right-2 inline-flex items-center gap-1.5 rounded-md bg-card border border-border px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {copied ? (
+            <>
+              <Check className="w-3 h-3 text-green-500" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="w-3 h-3" />
+              Copy
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

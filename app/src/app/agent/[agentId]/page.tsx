@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Shield, ExternalLink, ArrowRight } from "lucide-react";
+import { Shield, ExternalLink, ArrowRight, Clock, Copy, Check } from "lucide-react";
+
+const VALID_AGENT_ID = /^[a-zA-Z0-9._-]+$/;
 
 interface Payment {
   id: string;
@@ -32,18 +34,24 @@ export default function AgentPage() {
   const agentId = params.agentId as string;
   const [data, setData] = useState<AgentData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  const isValid = VALID_AGENT_ID.test(agentId);
 
   useEffect(() => {
+    if (!isValid) {
+      setLoading(false);
+      return;
+    }
     fetch(`/api/v1/explorer/agents/${encodeURIComponent(agentId)}`)
       .then((res) => {
         if (!res.ok) throw new Error("Not found");
         return res.json();
       })
       .then(setData)
-      .catch(() => setError(true))
+      .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
-  }, [agentId]);
+  }, [agentId, isValid]);
 
   if (loading) {
     return (
@@ -53,14 +61,14 @@ export default function AgentPage() {
     );
   }
 
-  if (error || !data) {
+  if (!isValid) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="text-center">
           <Shield className="w-12 h-12 text-muted mx-auto mb-4" />
           <h1 className="text-xl font-semibold text-foreground mb-2">Agent not found</h1>
           <p className="text-sm text-muted mb-6">
-            No data found for agent <span className="font-mono text-foreground">{agentId}</span>
+            Invalid agent ID: <span className="font-mono text-foreground">{agentId}</span>
           </p>
           <Link
             href="/"
@@ -73,41 +81,51 @@ export default function AgentPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Claim Banner */}
-      <div className="border-b border-border bg-accent/5">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <p className="text-sm text-muted">
-            This is your agent&apos;s data. To claim it and unlock the full dashboard:
-          </p>
-          <Link
-            href={`/register?agent=${encodeURIComponent(agentId)}`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-[#191919] font-semibold rounded-lg hover:bg-white transition-colors text-sm shrink-0"
-          >
-            Create Account & Claim
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+  if (notFound || !data) {
+    return (
+      <div className="min-h-screen bg-background">
+        <ClaimBanner agentId={agentId} />
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <AgentHeader agentId={agentId} />
+
+          <div className="rounded-xl border border-border bg-card p-8 text-center mb-8">
+            <Clock className="w-10 h-10 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-lg font-semibold text-foreground mb-2">
+              Waiting for first payment
+            </h2>
+            <p className="text-sm text-muted max-w-md mx-auto mb-6">
+              This agent hasn&apos;t sent any x402 payments yet. Once it does,
+              you&apos;ll see full payment history here.
+            </p>
+
+            <div className="text-left max-w-lg mx-auto">
+              <p className="text-xs font-medium text-muted mb-2">Quick setup:</p>
+              <pre className="rounded-lg bg-background border border-border p-4 text-xs text-foreground overflow-x-auto">
+{`import { sentinel } from "@x402sentinel/x402";
+
+const sentinelFetch = sentinel(fetch, {
+  agentId: "${agentId}",
+});
+
+// Use sentinelFetch instead of fetch for x402 calls
+const res = await sentinelFetch("https://api.example.com/data");`}
+              </pre>
+            </div>
+          </div>
+
+          <BadgeSection agentId={agentId} />
+          <PageFooter />
         </div>
       </div>
+    );
+  }
 
+  return (
+    <div className="min-h-screen bg-background">
+      <ClaimBanner agentId={agentId} />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-accent" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">
-              {data.name || data.agentId}
-            </h1>
-            {data.name && (
-              <p className="text-sm text-muted font-mono">{data.agentId}</p>
-            )}
-          </div>
-        </div>
+        <AgentHeader agentId={agentId} name={data.name} />
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
           <StatCard label="Total Payments" value={data.totalPayments.toLocaleString()} />
           <StatCard label="Total Spent" value={`$${data.totalSpent}`} />
@@ -117,8 +135,7 @@ export default function AgentPage() {
           />
         </div>
 
-        {/* Recent Payments Table */}
-        <div className="rounded-xl border border-border bg-card">
+        <div className="rounded-xl border border-border bg-card mb-8">
           <div className="px-4 py-3 border-b border-border">
             <h2 className="text-sm font-medium text-foreground">Recent Payments</h2>
           </div>
@@ -164,18 +181,110 @@ export default function AgentPage() {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted">
-          <Image src="/sentinel_logo.png" alt="Sentinel" width={16} height={16} />
-          <span>Powered by</span>
-          <Link
-            href="/"
-            className="text-accent hover:text-white transition-colors inline-flex items-center gap-1"
-          >
-            Sentinel <ExternalLink className="w-3 h-3" />
-          </Link>
-        </div>
+        <BadgeSection agentId={agentId} />
+        <PageFooter />
       </div>
+    </div>
+  );
+}
+
+function ClaimBanner({ agentId }: { agentId: string }) {
+  return (
+    <div className="border-b border-border bg-accent/5">
+      <div className="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <p className="text-sm text-muted">
+          This is your agent&apos;s data. To claim it and unlock the full dashboard:
+        </p>
+        <Link
+          href={`/register?agent=${encodeURIComponent(agentId)}`}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-[#191919] font-semibold rounded-lg hover:bg-white transition-colors text-sm shrink-0"
+        >
+          Create Account & Claim
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function AgentHeader({ agentId, name }: { agentId: string; name?: string | null }) {
+  return (
+    <div className="flex items-center gap-3 mb-8">
+      <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+        <Shield className="w-5 h-5 text-accent" />
+      </div>
+      <div>
+        <h1 className="text-xl font-semibold text-foreground">
+          {name || agentId}
+        </h1>
+        {name && (
+          <p className="text-sm text-muted font-mono">{agentId}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BadgeSection({ agentId }: { agentId: string }) {
+  const [copied, setCopied] = useState(false);
+  const badgeUrl = `https://sentinel.valeocash.com/badge/${agentId}`;
+  const agentUrl = `https://sentinel.valeocash.com/agent/${agentId}`;
+  const markdown = `[![Audited by Sentinel](${badgeUrl})](${agentUrl})`;
+
+  function handleCopy() {
+    navigator.clipboard.writeText(markdown).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6 mb-8">
+      <h2 className="text-sm font-medium text-foreground mb-4">Add to your README</h2>
+      <div className="mb-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/api/v1/badge/${encodeURIComponent(agentId)}`}
+          alt="Audited by Sentinel"
+          height={20}
+        />
+      </div>
+      <div className="relative">
+        <pre className="rounded-lg bg-background border border-border p-3 pr-16 text-xs text-muted overflow-x-auto">
+          {markdown}
+        </pre>
+        <button
+          onClick={handleCopy}
+          className="absolute top-2 right-2 inline-flex items-center gap-1.5 rounded-md bg-card border border-border px-2.5 py-1.5 text-xs text-muted hover:text-foreground transition-colors"
+        >
+          {copied ? (
+            <>
+              <Check className="w-3 h-3 text-green-500" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="w-3 h-3" />
+              Copy
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PageFooter() {
+  return (
+    <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted">
+      <Image src="/sentinel_logo.png" alt="Sentinel" width={16} height={16} />
+      <span>Powered by</span>
+      <Link
+        href="/"
+        className="text-accent hover:text-white transition-colors inline-flex items-center gap-1"
+      >
+        Sentinel <ExternalLink className="w-3 h-3" />
+      </Link>
     </div>
   );
 }
