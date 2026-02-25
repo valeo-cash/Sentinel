@@ -18,6 +18,7 @@ import {
   Globe,
   Columns3,
   CalendarClock,
+  FileCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
@@ -31,6 +32,7 @@ const navItems = [
   { icon: Bot, label: "Agents", href: "/dashboard/agents" },
   { icon: Bell, label: "Alerts", href: "/dashboard/alerts" },
   { icon: Shield, label: "Policies", href: "/dashboard/policies" },
+  { icon: FileCheck, label: "Compliance", href: "/dashboard/compliance" },
   { icon: Plug, label: "Integrations", href: "/dashboard/integrations" },
   { icon: Play, label: "Playground", href: "/playground" },
 ] as const;
