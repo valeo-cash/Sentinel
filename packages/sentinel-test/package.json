@@ -1,5 +1,5 @@
 {
-  "name": "sentinel-test",
+  "name": "@x402sentinel/test",
   "version": "0.1.0",
   "type": "module",
   "description": "Test any x402 payment endpoint",
