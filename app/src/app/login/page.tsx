@@ -155,10 +155,23 @@ function LoginForm() {
   const tokenError = searchParams.get("error");
 
   useEffect(() => {
+    const claimParam = searchParams.get("claim") || searchParams.get("agent");
+    if (claimParam) {
+      sessionStorage.setItem("sentinel_claim_token", claimParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [resendCooldown]);
+
+  function getPostLoginRedirect(): string {
+    const claimToken = sessionStorage.getItem("sentinel_claim_token");
+    if (claimToken) return `/claim?token=${encodeURIComponent(claimToken)}`;
+    return "/dashboard/explorer";
+  }
 
   async function sendCode() {
     setLoading(true);
@@ -201,7 +214,7 @@ function LoginForm() {
       if (!res.ok) {
         throw new Error(data.error || "Invalid code");
       }
-      window.location.href = data.redirect || "/dashboard/explorer";
+      window.location.href = data.redirect || getPostLoginRedirect();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
       setVerifying(false);
@@ -218,7 +231,7 @@ function LoginForm() {
       const data = await res.json().catch(() => ({}));
       throw new Error((data as { error?: string }).error || "Wallet authentication failed");
     }
-    window.location.href = "/dashboard/explorer";
+    window.location.href = getPostLoginRedirect();
   }
 
   function buildSignMessage(address: string): string {

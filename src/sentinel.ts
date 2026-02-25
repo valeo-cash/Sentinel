@@ -57,7 +57,9 @@ export function sentinel(
 \u2713 Payment tracked by Sentinel
   Agent: ${agentId}
   View: ${baseUrl}/agent/${agentId}
-  Claim your data: ${baseUrl}/claim
+
+  Create account to unlock full dashboard:
+  ${baseUrl}/login
 `);
       }
 
