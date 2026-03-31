@@ -1,6 +1,6 @@
 {
   "name": "@x402sentinel/router",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "x402 Payment Router — multi-provider routes with unified receipts for AI agent payments",
   "type": "module",
   "main": "./dist/index.js",
@@ -11,12 +11,35 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "sideEffects": false,
   "files": ["dist", "README.md"],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
-    "dev": "tsup src/index.ts --format esm --dts --watch"
+    "build": "tsup src/index.ts --format esm --dts --clean --no-config",
+    "dev": "tsup src/index.ts --format esm --dts --watch --no-config"
   },
-  "keywords": ["x402", "payment", "router", "multi-provider", "sentinel", "ai-agent"],
+  "keywords": [
+    "x402",
+    "payment",
+    "router",
+    "multi-provider",
+    "sentinel",
+    "ai-agent",
+    "base",
+    "coinbase",
+    "http-402",
+    "payment-required",
+    "micropayments",
+    "receipts",
+    "audit",
+    "compliance",
+    "payments",
+    "agentic",
+    "budget",
+    "policy"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "author": "Valeo",
   "license": "MIT",
   "peerDependencies": {
@@ -31,7 +54,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/valeo-cash/Sentinel.git"
+    "url": "git+https://github.com/valeo-cash/Sentinel.git",
+    "directory": "packages/sentinel-router"
   },
   "homepage": "https://sentinel.valeocash.com"
 }

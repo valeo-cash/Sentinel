@@ -315,6 +315,41 @@ export const routeExecutions = sqliteTable(
   ]
 );
 
+// ─── Ask Sentinel Chat ──────────────────────────────────
+
+export const chatConversations = sqliteTable(
+  "chat_conversations",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id").notNull(),
+    title: text("title"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [index("chat_conv_team_idx").on(t.teamId)]
+);
+
+export const chatMessages = sqliteTable(
+  "chat_messages",
+  {
+    id: text("id").primaryKey(),
+    conversationId: text("conversation_id")
+      .notNull()
+      .references(() => chatConversations.id, { onDelete: "cascade" }),
+    role: text("role").notNull(),
+    content: text("content").notNull(),
+    actions: text("actions"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [index("chat_msg_conv_idx").on(t.conversationId)]
+);
+
 // receipts table — cryptographic proof for x402 payments
 export const receipts = sqliteTable(
   "receipts",

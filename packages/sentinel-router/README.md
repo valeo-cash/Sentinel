@@ -1,15 +1,53 @@
 # @x402sentinel/router
 
-**x402 Payment Router** — Purchase multi-provider x402 routes with one intent and one unified receipt.
+Your AI agents can now purchase multiple x402 endpoints in a single intent — with one unified, verifiable receipt.
 
-A new primitive for AI agent payments. Your agents call multiple paid APIs in a single operation. Sentinel routes the payments, enforces budget caps, and generates a cryptographically verifiable unified receipt.
+No fragmented payments across providers. Budget enforcement at both per-endpoint and total route level. A single cryptographic proof that covers the entire execution, verifiable by anyone via a public API.
 
-## Install
+---
+
+## The Problem
+
+When AI agents call multiple paid APIs in a single workflow:
+
+- Payments are fragmented — each endpoint is an isolated transaction with no connection to the others
+- Spend is unpredictable — agents discover prices at runtime, and costs vary across providers
+- Budgets are hard to enforce — concurrent payments can race past caps without coordination
+- There is no unified proof — each payment generates a separate receipt with no link between them
+- Enterprises cannot audit the workflow — no single artifact proves what happened, what was paid, and to whom
+
+---
+
+## The Solution
+
+Payment Router is a client-side SDK that orchestrates multi-endpoint x402 payment workflows:
+
+- **Discovery** — probes all endpoints for x402 payment requirements before any money moves
+- **Budget enforcement** — validates per-endpoint caps and total USD budget with an async-safe mutex (no race conditions in parallel mode)
+- **Execution strategies** — parallel, sequential, or best-effort, depending on the workflow
+- **Unified receipt** — generates a single SHA-256 hash covering all sub-payments
+- **Server signature** — Sentinel returns an HMAC-SHA256 signature over the receipt hash (no secrets in the client)
+- **Public verification** — anyone can verify a receipt via `POST /api/v1/routes/verify`
+
+---
+
+## What It Enables
+
+- Multi-provider x402 pipelines with a single function call
+- Budget-capped AI agent workflows with per-endpoint and total spend limits
+- Auditable payment execution — every route produces a frozen snapshot of config, discovery, and results
+- Shareable proof via `X-Sentinel-Receipt-Hash` header
+- Experimental single-transaction multi-leg payments (requires all endpoints on the same network and token)
+- Enterprise compliance readiness — receipts, snapshots, and signatures for audit trails
+
+---
+
+## 30-Second Quickstart
+
 ```bash
 npm install @x402sentinel/router
 ```
 
-## Quick Start
 ```typescript
 import { PaymentRouter } from "@x402sentinel/router";
 
@@ -25,108 +63,128 @@ const result = await router.execute({
   maxBudgetUsd: "$0.05",
   strategy: "parallel",
   endpoints: [
-    { label: "weather",   url: "https://weather.x402.dev/data",  maxUsd: 0.02 },
-    { label: "market",    url: "https://market.x402.dev/prices", maxUsd: 0.02 },
-    { label: "sentiment", url: "https://news.x402.dev/score",    maxUsd: 0.01 },
+    { label: "weather", url: "https://weather.x402.dev/data",  maxUsd: 0.02 },
+    { label: "market",  url: "https://market.x402.dev/prices", maxUsd: 0.02 },
   ],
 });
 
-// Access results by label
-const weather = result.results.weather.data;
-const market = result.results.market.data;
-
-// Unified receipt (server-signed)
-console.log(result.receipt.receiptHash);   // SHA-256
-console.log(result.receipt.sentinelSig);   // Server HMAC
+console.log(result.receipt.receiptHash);  // SHA-256 unified receipt
+console.log(result.receipt.sentinelSig);  // Server HMAC signature
 ```
 
-## How It Works
-Agent Intent
-│
-▼
-┌─────────────┐
-│  Discovery   │  Probe all endpoints for x402 prices
-└──────┬──────┘
-       ▼
-┌─────────────┐
-│   Budget     │  Validate total + per-endpoint caps
-│   Check      │  Reserve budget with async mutex
-└──────┬──────┘
-       ▼
-┌─────────────┐
-│  Execute     │  Pay each endpoint (multiTx default)
-│  Strategy    │  parallel / sequential / best-effort
-└──────┬──────┘
-       ▼
-┌─────────────┐
-│  Unified     │  SHA-256 hash + server-signed HMAC
-│  Receipt     │  Covers all sub-payments
-└─────────────┘
+---
 
-## Features
+## Shareable Proof
 
-### Budget as Caps (Not Splits)
+Every execution produces a receipt hash that can be shared as a single header:
 
-x402 endpoints have fixed prices. The router pays whatever each endpoint requires and validates against caps — not percentage splits.
-```typescript
-{
-  maxBudgetUsd: "$0.10",
-  endpoints: [
-    { label: "api-a", url: "...", maxUsd: 0.05 },
-    { label: "api-b", url: "...", maxUsd: 0.05 },
-  ],
-}
+```
+X-Sentinel-Receipt-Hash: a1b2c3d4e5f6...
 ```
 
-### Payment Modes
+Anyone can verify it — no authentication required:
 
-- `multiTx` (default) — each endpoint gets its own payment (most compatible)
-- `singleTx` (experimental) — one tx pays all (requires same network + token)
-
-### Execution Strategies
-
-- `parallel` — all at once (fastest)
-- `sequential` — in order by weight, stop on required failure
-- `best-effort` — all at once, succeed if any works
-
-### Cryptographic Receipts
-
-Every execution produces a unified receipt with:
-- `receiptHash` — SHA-256 computed client-side
-- `sentinelSig` — HMAC-SHA256 computed server-side (no secrets in client)
-- `subReceiptHashes[]` — links to individual payment proofs
-
-Verify any receipt via the public API:
 ```bash
 curl -X POST https://sentinel.valeocash.com/api/v1/routes/verify \
   -H "Content-Type: application/json" \
-  -d '{"receiptHash": "abc...", "sentinelSig": "def..."}'
+  -d '{"receiptHash": "a1b2c3...", "sentinelSig": "d4e5f6..."}'
 ```
 
-### Pre-flight Discovery
-```typescript
-const estimate = await router.discover({
-  name: "research-pipeline",
-  maxBudgetUsd: "$0.10",
-  endpoints: [
-    { label: "weather", url: "https://weather.x402.dev/data", maxUsd: 0.05 },
-    { label: "market",  url: "https://market.x402.dev/prices", maxUsd: 0.05 },
-  ],
-});
-
-console.log(estimate.estimatedTotalUsd);
-console.log(estimate.withinTotalBudget);
-console.log(estimate.singleTxCompatible);
+```json
+{ "verified": true, "routeName": "research-pipeline", "executionId": "rex_..." }
 ```
 
-### Shareable Proof
+Third parties can independently confirm that a payment execution happened, what it cost, and that it was signed by Sentinel.
 
-Every execution sets `X-Sentinel-Receipt-Hash`. Share it as one-line proof of payment:
-X-Sentinel-Receipt-Hash: a1b2c3d4e5f6...
+---
 
-## Dashboard
+## When To Use This
 
-Manage routes visually at sentinel.valeocash.com/dashboard/routes — create routes, discover costs, view execution history, copy SDK snippets.
+**Use if you are:**
+
+- Calling 2+ x402 endpoints in a single agent workflow
+- Enforcing spend caps per endpoint or per route
+- Building production agents that need auditable payment proof
+- Operating on Base or any x402-compatible network
+
+**Do not use if you are:**
+
+- Calling a single x402 endpoint (use `@x402sentinel/x402` directly)
+- Building without compliance or audit requirements
+
+---
+
+## Works With
+
+| Platform | Package |
+|----------|---------|
+| Base / x402 endpoints | Native support (Base, Base Sepolia, Ethereum, Polygon, Arbitrum) |
+| Express | `@x402sentinel/express` |
+| Next.js | `@x402sentinel/next` |
+| Vercel AI SDK | `@x402sentinel/vercel-ai` |
+| LangChain | `@x402sentinel/langchain` |
+
+---
+
+## Architecture
+
+```
+Intent → Discovery → Budget Ledger → Execution Strategy → Unified Receipt → Server Signature
+```
+
+1. **Discovery** — concurrent HTTP 402 probes extract price, network, token, and payTo from each endpoint
+2. **Budget Ledger** — two-phase accounting (reserved vs. spent) with async mutex for parallel safety
+3. **Execution** — calls `paymentFetch` per endpoint, retrieves payment info via `getPaymentInfo()` callback
+4. **Receipt** — SHA-256 hash of canonical JSON, with per-payment sub-hashes
+5. **Signature** — receipt posted to Sentinel, server returns HMAC-SHA256 (`sentinelSig`)
+
+---
+
+## API Overview
+
+### `new PaymentRouter(options?)`
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `paymentFetch` | `typeof fetch` | x402 payment-aware fetch function |
+| `getPaymentInfo` | `() => PaymentInfo \| null` | Retrieve payment details after each call |
+| `agentId` | `string` | Agent identifier for receipt attribution |
+| `apiKey` | `string` | Sentinel API key for server signing |
+| `parse402` | `(res, body) => DiscoveredPayment \| null` | Custom 402 response parser |
+| `resolveToken` | `(address, network) => { symbol, decimals } \| null` | Custom token resolver |
+
+### `router.execute(config)`
+
+Executes a route. Returns `RouteExecutionResult` with results keyed by label, unified receipt, discovery data, and route snapshot.
+
+### `router.discover(config)`
+
+Probes all endpoints without paying. Returns estimated costs, per-endpoint cap validation, and single-tx compatibility.
+
+### Receipt Fields
+
+| Field | Source | Description |
+|-------|--------|-------------|
+| `receiptHash` | Client | SHA-256 of canonical receipt JSON |
+| `sentinelSig` | Server | HMAC-SHA256 over `receiptHash` |
+| `subReceiptHashes` | Client | SHA-256 of each sub-payment |
+
+### Payment Modes
+
+| Mode | Description |
+|------|-------------|
+| `multiTx` | Each endpoint gets its own payment. Default. Most compatible. |
+| `singleTx` | One transaction pays all endpoints. Requires same network + token. Experimental. |
+
+---
+
+## Links
+
+- [Sentinel Dashboard](https://sentinel.valeocash.com)
+- [Documentation](https://sentinel.valeocash.com/docs)
+- [npm: @x402sentinel/x402](https://npmjs.com/package/@x402sentinel/x402)
+- [npm: @x402sentinel/test](https://npmjs.com/package/@x402sentinel/test)
+- [GitHub](https://github.com/valeo-cash/Sentinel/tree/main/packages/sentinel-router)
 
 ## License
 

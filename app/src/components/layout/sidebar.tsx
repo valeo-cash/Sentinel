@@ -20,11 +20,13 @@ import {
   Columns3,
   CalendarClock,
   FileCheck,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 
 const navItems = [
+  { icon: MessageSquare, label: "Ask Sentinel", href: "/dashboard/chat" },
   { icon: Globe, label: "Explorer", href: "/dashboard/explorer" },
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
   { icon: Columns3, label: "Custom Dashboard", href: "/dashboard/custom" },
